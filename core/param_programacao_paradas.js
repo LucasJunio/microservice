@@ -6,7 +6,6 @@ async function find(context) {
 
   if (context.data_inicio_programacao) {
     binds.data_inicio_programacao = context.data_inicio_programacao;
-    console.log(binds.data_inicio_programacao);
 
     query = `SELECT a.dt_final_paradas_anuais, a.dt_final_paradas_programada, a.nr_prazo_parada_urgente 
     FROM sau_param_programacao_paradas a 
