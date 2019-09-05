@@ -39,7 +39,7 @@ router
   .get(param_programacao_paradas.getNroAnosParadaLongoPrazo);
 router
   .route("/parada_programada/nova_classificacao_parada")
-  .get(classificacao_parada.getNovaClassificacao);
+  .get(classificacao_parada.getClassificacao);
 router
   .route("/parada_programada/nova_sub_classificacao_parada")
   .get(subclassificacao_parada.getSubClassificacao);
