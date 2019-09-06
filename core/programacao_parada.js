@@ -1,13 +1,13 @@
 const database = require("../utils/database.js");
 
-const queryNumeroParada = `SELECT CD_SEQ_PARADA FROM SAU_PROGRAMACAO_PARADA ORDER BY CD_PROGRAMACAO_PARADA DESC FETCH NEXT 1 ROWS ONLY`;
+const queryFindLastIdParada = `SELECT CD_PARADA FROM SAU_PROGRAMACAO_PARADA ORDER BY CD_PROGRAMACAO_PARADA DESC FETCH NEXT 1 ROWS ONLY`;
 
-async function findNumeroParada() {
-  console.log(queryNumeroParada);
-  const result = await database.simpleExecute(queryNumeroParada);
+async function findLastIdParada() {
+  console.log(queryFindLastIdParada);
+  const result = await database.simpleExecute(queryFindLastIdParada);
   return result.rows;
 }
-module.exports.findNumeroParada = findNumeroParada;
+module.exports.findLastIdParada = findLastIdParada;
 
 const queryInsert = `
   INSERT INTO SAU_PROGRAMACAO_PARADA (

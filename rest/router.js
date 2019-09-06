@@ -26,9 +26,6 @@ router
   .route("/parada_programada/sub_classificacao_parada")
   .get(subclassificacao_parada.getSubClassificacao);
 router
-  .route("/parada_programada/numero_parada")
-  .get(programacao_parada.getNumeroParada);
-router
   .route("/parada_programada/motivo_reprogramacao")
   .get(item_dominio.getMotivoReprogramacao);
 router
@@ -37,8 +34,11 @@ router
 router
   .route("/parada_programada/nro_anos_parada_longo_prazo")
   .get(param_programacao_paradas.getNroAnosParadaLongoPrazo);
-router.route("/parada_programada").post((req, res, next) => {
-  programacao_parada.post(req, res, next);
-});
+router
+  .route("/parada_programada")
+  .post((req, res, next) => programacao_parada.post(req, res, next));
+router
+  .route("/parada_programada/id_parada")
+  .get(programacao_parada.getLastIdParada);
 
 module.exports = router;
