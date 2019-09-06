@@ -18,6 +18,7 @@ async function post(req, res, next) {
 
     res.status(201).json(paradaProgramada);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 }

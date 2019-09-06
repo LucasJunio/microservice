@@ -55,7 +55,7 @@ const queryInsert = `
     ID_STATUS_PROGRAMACAO,
     ID_ATUAL,
     FL_REINICIAR_FLUXO,
-    DS_LOG_STATUS,
+    DS_LOG_STATUS
   ) VALUES (
     SAU_PARADA_S.nextval,
     :CD_PARADA,
@@ -96,19 +96,17 @@ const queryInsert = `
     :DS_OBSERVACAO_REPROGR_PARADA,
     :NM_AREA_ORIGEM_REPROGRAMACAO,
     :CD_USUARIO_CONCLUSAO,
-    TO_DATE(:DT_CONCLUSAO, 'yyyy-mm-dd hh24:mi:ss'),
+    :DT_CONCLUSAO,
     :CD_USUARIO_CANCELAMENTO,
     :ID_STATUS_PROGRAMACAO,
     :ID_ATUAL,
     :FL_REINICIAR_FLUXO,
-    :DS_LOG_STATUS,
+    :DS_LOG_STATUS
   )
 `;
 
 async function create(emp) {
   const paradaProgramada = Object.assign({}, emp);
-  console.log(paradaProgramada);
-
   const result = await database.simpleExecute(queryInsert, paradaProgramada);
   console.log(result);
 
