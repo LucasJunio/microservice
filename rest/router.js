@@ -37,7 +37,7 @@ router
 router
   .route("/parada_programada/nro_anos_parada_longo_prazo")
   .get(param_programacao_paradas.getNroAnosParadaLongoPrazo);
-router.route("/programacao_parada").post((req, res, next) => {
+router.route("/parada_programada").post((req, res, next) => {
   programacao_parada.post(req, res, next);
 });
 
