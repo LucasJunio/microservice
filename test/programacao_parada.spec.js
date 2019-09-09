@@ -65,17 +65,14 @@ describe("Testes de integração - Programação Parada", () => {
       .request(programacao_parada.getLastIdParada)
       .get("/api/parada_programada/id_parada")
       .end((err, res) => {
-        id = res.CD_PARADA;
-        console.log(res);
-        
+        id = res.body.CD_PARADA;
         chai.expect(err).to.be.null;
         chai.expect(res).to.have.status(200);
         chai.expect(res.body).to.containSubset([schema]);
         done();
       });
   });
-  console.log(id);
-  
+
   data = {...data, CD_PARADA: id + 1};
 
   it("/parada_programada - POST", () => {
