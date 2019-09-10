@@ -11,18 +11,15 @@ module.exports.findLastIdParada = findLastIdParada;
 
 async function updateCancelamento(context) {
   let query = "";
+  let result = "";
 
-  if (
-    context.id_programacao_parada &&
-    context.dt_cancelamento &&
-    context.ds_motivo_cancelamento &&
-    context.id_status_cancelamento
-  ) {
+  if (context.id_programacao_parada) {
     query += `\nUPDATE SAU_PROGRAMACAO_PARADA SET DT_CANCELAMENTO = TO_DATE('${context.dt_cancelamento}', 'yyyy-mm-dd hh24:mi:ss'), DS_MOTIVO_CANCELAMENTO = '${context.ds_motivo_cancelamento}', ID_STATUS_CANCELAMENTO = '${context.id_status_cancelamento}'`;
     query += `\nWHERE CD_PARADA = ${context.id_programacao_parada}`;
-  }
-  const result = await database.simpleExecute(query);
+    console.log(query);
 
+    result = await database.simpleExecute(query);
+  }
   return result.rowsAffected;
 }
 
