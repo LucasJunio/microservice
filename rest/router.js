@@ -40,5 +40,8 @@ router
 router
   .route("/parada_programada/id_parada")
   .get(programacao_parada.getLastIdParada);
+router
+  .route("/parada_programada/cancelamento")
+  .put(programacao_parada.putCancelamento);
 
 module.exports = router;

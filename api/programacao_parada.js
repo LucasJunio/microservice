@@ -12,6 +12,18 @@ async function getLastIdParada(req, res, next) {
 
 module.exports.getLastIdParada = getLastIdParada;
 
+async function putCancelamento(req, res, next) {
+  try {
+    const rows = await parada_programada.updateCancelamento(req.body);
+
+    res.status(200).json(rows);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports.putCancelamento = putCancelamento;
+
 async function post(req, res, next) {
   try {
     const paradaProgramada = await parada_programada.create(req.body);
