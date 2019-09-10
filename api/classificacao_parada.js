@@ -13,15 +13,3 @@ async function getClassificacao(req, res, next) {
 }
 
 module.exports.getClassificacao = getClassificacao;
-
-async function getNovaClassificacao(req, res, next) {
-  try {
-    const rows = await classificacao_parada.findNovaClassificacao();
-
-    res.status(200).json(rows);
-  } catch (err) {
-    next(err);
-  }
-}
-
-module.exports.getNovaClassificacao = getNovaClassificacao;
