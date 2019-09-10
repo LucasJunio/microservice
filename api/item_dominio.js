@@ -3,6 +3,7 @@ const item_dominio = require("../core/item_dominio.js");
 async function getTipoParada(req, res, next) {
   try {
     const context = {};
+
     context.targetDate = req.query.dt_inicio_programacao;
     context.refDate = req.query.dt_ref_mapa;
     context.annualDate = req.query.dtFinalParadasAnuais;

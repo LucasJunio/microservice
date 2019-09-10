@@ -1,4 +1,5 @@
 const database = require("../utils/database.js");
+const verify = require("../utils/verifyType");
 
 const baseQuery = `SELECT ds_item_dominio, cd_item_dominio FROM sau_item_dominio`;
 
@@ -13,10 +14,8 @@ async function findTipoParada(context) {
     context.urgentDeadline &&
     context.years
   ) {
-    //verificar o tipo
-    let tipo = "PA";
-    query += `\nAND CD_ITEM_DOMINIO = '${tipo}'`;
-    console.log(context);
+    let type = verify.verifyType(context);
+    query += `\nAND CD_ITEM_DOMINIO = '${type}'`;
   }
   query += `\nORDER BY 1`;
 
