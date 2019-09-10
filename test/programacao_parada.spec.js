@@ -18,8 +18,7 @@ const schemaPutCancelamento = {
 const dataCancelamento = {
   id_programacao_parada: 2,
   dt_cancelamento: "2019-10-10 10:50:00",
-  ds_motivo_cancelamento: "teste",
-  id_status_cancelamento: "A"
+  ds_motivo_cancelamento: "teste"
 };
 
 let data = {
@@ -78,6 +77,19 @@ describe("Testes de integração - Programação Parada", async () => {
         chai.expect(err).to.be.null;
         chai.expect(res).to.have.status(200);
         chai.expect(res.body).to.containSubset([schema]);
+        done();
+      });
+  });
+
+  it("/parada_programada/cancelamento - PUT Cancelamento", () => {
+    chai
+      .request(programacao_parada.putCancelamento)
+      .put("/api/parada_programada/cancelamento")
+      .send({ ...dataCancelamento, id_status_cancelamento: "Em cancelamento" })
+      .end((err, res) => {
+        chai.expect(err).to.be.null;
+        chai.expect(res).to.have.status(200);
+        chai.expect(res.body).to.containSubset(schemaPutCancelamento);
         done();
       });
   });
