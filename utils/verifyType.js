@@ -30,8 +30,6 @@ function verifyType(context) {
       }
     }
   }
-
-  return type;
 }
 
 module.exports.verifyType = verifyType;
