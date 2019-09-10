@@ -7,12 +7,12 @@ async function findTipoParada(context) {
   let query = baseQuery + `\nWHERE cd_dominio = 'TIPO_PARADA'`;
 
   if (
-    context.targetDate !== "undefined" &&
-    context.refDate !== "undefined" &&
-    context.annualDate !== "undefined" &&
-    context.scheduledDate !== "undefined" &&
-    context.urgentDeadline !== "undefined" &&
-    context.years !== "undefined"
+    context.targetDate !== undefined &&
+    context.refDate !== undefined &&
+    context.annualDate !== undefined &&
+    context.scheduledDate !== undefined &&
+    context.urgentDeadline !== undefined &&
+    context.years !== undefined
   ) {
     let type = verify.verifyType(context);
     query += `\nAND CD_ITEM_DOMINIO = '${type}'`;
