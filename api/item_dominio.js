@@ -2,7 +2,16 @@ const item_dominio = require("../core/item_dominio.js");
 
 async function getTipoParada(req, res, next) {
   try {
-    const rows = await item_dominio.findTipoParada();
+    const context = {};
+
+    context.targetDate = req.query.dt_inicio_programacao;
+    context.refDate = req.query.dt_ref_mapa;
+    context.annualDate = req.query.dtFinalParadasAnuais;
+    context.scheduledDate = req.query.dtFinalParadasProgramada;
+    context.urgentDeadline = req.query.nrPrazoParadaUrgente;
+    context.years = req.query.anosParadaLongoPrazo;
+
+    const rows = await item_dominio.findTipoParada(context);
 
     res.status(200).json(rows);
   } catch (err) {
