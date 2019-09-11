@@ -11,7 +11,7 @@ const schema = {
   CD_PARADA: cd => cd
 };
 
-const schemaPutCancelamento = {
+const schemaPut = {
   rowsAffected: rows => rows
 };
 
@@ -19,6 +19,16 @@ const dataCancelamento = {
   id_programacao_parada: 2,
   dt_cancelamento: "2019-10-10 10:50:00",
   ds_motivo_cancelamento: "teste"
+};
+
+const dataReprogramacao = {
+  id_programacao_parada: 5,
+  dt_inicio_reprogramacao: "2019-10-10 10:50:00",
+  dt_termino_reprogramacao: "2019-10-10 10:50:00",
+  id_origem_reprogramacao: "123",
+  id_motivo_reprogramacao: "COM",
+  cd_classificacao: 22,
+  cd_subclassificacao: 253
 };
 
 let data = {
@@ -89,7 +99,7 @@ describe("Testes de integração - Programação Parada", async () => {
       .end((err, res) => {
         chai.expect(err).to.be.null;
         chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset(schemaPutCancelamento);
+        chai.expect(res.body).to.containSubset(schemaPut);
         done();
       });
   });
@@ -102,7 +112,20 @@ describe("Testes de integração - Programação Parada", async () => {
       .end((err, res) => {
         chai.expect(err).to.be.null;
         chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset(schemaPutCancelamento);
+        chai.expect(res.body).to.containSubset(schemaPut);
+        done();
+      });
+  });
+
+  it("/parada_programada/reprogramacao - PUT Reprogramação", () => {
+    chai
+      .request(programacao_parada.putReprogramacao)
+      .put("/api/parada_programada/reprogramacao")
+      .send({ dataReprogramacao })
+      .end((err, res) => {
+        chai.expect(err).to.be.null;
+        chai.expect(res).to.have.status(200);
+        chai.expect(res.body).to.containSubset(schemaPut);
         done();
       });
   });

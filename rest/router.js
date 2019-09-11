@@ -43,5 +43,8 @@ router
 router
   .route("/parada_programada/cancelamento")
   .put(programacao_parada.putCancelamento);
+router
+  .route("/parada_programada/reprogramacao")
+  .put(programacao_parada.putReprogramacao);
 
 module.exports = router;

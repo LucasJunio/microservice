@@ -9,6 +9,8 @@ async function findLastIdParada() {
 }
 module.exports.findLastIdParada = findLastIdParada;
 
+let queryUpdate = `UPDATE SAU_PROGRAMACAO_PARADA`;
+
 async function updateCancelamento(context) {
   let query = "";
   let result = "";
@@ -18,11 +20,12 @@ async function updateCancelamento(context) {
     context.dt_cancelamento &&
     context.ds_motivo_cancelamento
   ) {
-    query += `\nUPDATE SAU_PROGRAMACAO_PARADA SET DT_CANCELAMENTO = TO_DATE('${context.dt_cancelamento}', 'yyyy-mm-dd hh24:mi:ss'), DS_MOTIVO_CANCELAMENTO = '${context.ds_motivo_cancelamento}'`;
+    query = queryUpdate;
+    query += `\nSET DT_CANCELAMENTO = TO_DATE('${context.dt_cancelamento}', 'yyyy-mm-dd hh24:mi:ss'), DS_MOTIVO_CANCELAMENTO = '${context.ds_motivo_cancelamento}'`;
+    query += context.id_status_cancelamento
+      ? `, ID_STATUS_CANCELAMENTO = '${context.id_status_cancelamento}'`
+      : "";
 
-    if (context.id_status_cancelamento) {
-      query += `, ID_STATUS_CANCELAMENTO = '${context.id_status_cancelamento}'`;
-    }
     query += `\nWHERE CD_PARADA = ${context.id_programacao_parada}`;
     console.log(query);
 
@@ -32,6 +35,46 @@ async function updateCancelamento(context) {
 }
 
 module.exports.updateCancelamento = updateCancelamento;
+
+async function updateReprogramação(context) {
+  let query = "";
+  let result = "";
+
+  if (
+    context.id_programacao_parada &&
+    context.dt_inicio_reprogramacao &&
+    context.dt_termino_reprogramacao
+  ) {
+    query = queryUpdate;
+    query += `\nSET DT_HORA_INICIO_REPROGRAMACAO = TO_DATE('${context.dt_inicio_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss'), DT_HORA_TERMINO_REPROGRAMACAO = TO_DATE('${context.dt_termino_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss')`;
+    query += context.id_origem_reprogramacao
+      ? `, ID_ORIGEM_REPROGRAMACAO = '${context.id_origem_reprogramacao}'`
+      : "";
+    query += context.id_motivo_reprogramacao
+      ? `, ID_MOTIVO_REPROGRAMACAO = '${context.id_motivo_reprogramacao}'`
+      : "";
+    query += context.cd_classificacao
+      ? `, CD_CLASSIF_REPROGR_PARADA = '${context.cd_classificacao}'`
+      : "";
+    query += context.cd_subclassificacao
+      ? `, CD_SUBCLAS_REPROGR_PARADA = '${context.cd_subclassificacao}'`
+      : "";
+    query += context.ds_nova_descricao
+      ? `, DS_NOVA_DESCRICAO_PROGR_PARADA = '${context.ds_nova_descricao}'`
+      : "";
+    query += context.ds_observacao
+      ? `, DS_OBSERVACAO_REPROGR_PARADA = '${context.ds_observacao}'`
+      : "";
+
+    query += `\nWHERE CD_PARADA = ${context.id_programacao_parada}`;
+    console.log(query);
+
+    result = await database.simpleExecute(query);
+  }
+  return result.rowsAffected;
+}
+
+module.exports.updateReprogramação = updateReprogramação;
 
 const queryInsert = `
   INSERT INTO SAU_PROGRAMACAO_PARADA (
