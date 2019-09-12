@@ -12,6 +12,20 @@ async function getLastIdParada(req, res, next) {
 
 module.exports.getLastIdParada = getLastIdParada;
 
+async function getLastIdSeq(req, res, next) {
+  try {
+    const context = {};
+    context.cd_parada = req.query.id_parada;
+    const rows = await parada_programada.findLastIdSeq(context);
+
+    res.status(200).json(rows);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports.getLastIdSeq = getLastIdSeq;
+
 async function putCancelamento(req, res, next) {
   try {
     const rows = await parada_programada.updateCancelamento(req.body);

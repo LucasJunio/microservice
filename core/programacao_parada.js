@@ -10,6 +10,21 @@ async function findLastIdParada() {
 }
 module.exports.findLastIdParada = findLastIdParada;
 
+const queryFindIdSeq = `SELECT cd_seq_parada FROM SAU_PROGRAMACAO_PARADA`;
+
+async function findLastIdSeq(context) {
+  let query = "";
+  if (context.cd_parada) {
+    query += queryFindIdSeq;
+    query += `\nWHERE cd_parada = ${context.cd_parada} ORDER BY cd_seq_parada DESC FETCH NEXT 1 ROWS ONLY`;
+    result = await database.simpleExecute(query);
+  }
+  console.log(query);
+
+  return result.rows;
+}
+module.exports.findLastIdSeq = findLastIdSeq;
+
 let queryUpdate = `UPDATE SAU_PROGRAMACAO_PARADA`;
 
 async function updateCancelamento(context) {

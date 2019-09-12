@@ -50,5 +50,8 @@ router
 router
   .route("/parada_programada/programacao_parada_unidade")
   .post((req, res, next) => programacao_parada_unidade.post(req, res, next));
+router
+  .route("/parada_programada/id_parada_seq")
+  .get(programacao_parada.getLastIdSeq);
 
 module.exports = router;
