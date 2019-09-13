@@ -7,8 +7,12 @@ const programacao_parada = require("../api/programacao_parada");
 chai.use(http);
 chai.use(subSet);
 
-const schema = {
+const schemaId = {
   CD_PARADA: cd => cd
+};
+
+const schemaIdSeq = {
+  CD_SEQ_PARADA: cd => cd
 };
 
 const schemaPut = {
@@ -86,7 +90,19 @@ describe("Testes de integração - Programação Parada", async () => {
       .end((err, res) => {
         chai.expect(err).to.be.null;
         chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset([schema]);
+        chai.expect(res.body).to.containSubset([schemaId]);
+        done();
+      });
+  });
+
+  it("/parada_programada/id_parada_seq - GET", () => {
+    chai
+      .request(programacao_parada.getLastIdSeq)
+      .get("/api/parada_programada/id_parada_seq")
+      .end((err, res) => {
+        chai.expect(err).to.be.null;
+        chai.expect(res).to.have.status(200);
+        chai.expect(res.body).to.containSubset([schemaIdSeq]);
         done();
       });
   });
