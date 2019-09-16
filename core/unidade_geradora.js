@@ -1,6 +1,6 @@
 const database = require("../utils/database.js");
 
-const baseQuery = `SELECT sg_unidade_geradora unidade_geradora
+const baseQuery = `SELECT SG_UNIDADE_GERADORA DS_ITEM_DOMINIO, CD_UNIDADE_GERADORA CD_ITEM_DOMINIO
 FROM sau_unidade_geradora 
 WHERE fl_ativo = '1' `;
 

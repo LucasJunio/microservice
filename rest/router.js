@@ -7,6 +7,8 @@ const programacao_parada = require("../api/programacao_parada");
 const param_programacao_paradas = require("../api/param_programacao_paradas");
 const classificacao_parada = require("../api/classificacao_parada.js");
 const subclassificacao_parada = require("../api/subclassificacao_parada.js");
+const programacao_parada_unidade = require("../api/programacao_parada_unidade");
+const pgi = require("../api/pgi");
 
 router.get("/", (req, res) => {
   res.json({
@@ -46,5 +48,12 @@ router
 router
   .route("/parada_programada/reprogramacao")
   .put(programacao_parada.putReprogramacao);
+router
+  .route("/parada_programada/programacao_parada_unidade")
+  .post((req, res, next) => programacao_parada_unidade.post(req, res, next));
+router
+  .route("/parada_programada/id_parada_seq")
+  .get(programacao_parada.getLastIdSeq);
+router.route("/parada_programada/num_pgi").get(pgi.getNumPGI);
 
 module.exports = router;
