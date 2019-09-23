@@ -24,7 +24,7 @@ async function getNumPGI(context) {
 
     result = await database.simpleExecute(query);
   }
-  console.log(result);
+  console.log(result.rows);
   return result;
 }
 

@@ -98,7 +98,6 @@ const queryInsert = `
       CD_PARADA,
       CD_SEQ_PARADA,
       CD_USINA,
-      SG_USINA,
       DT_CRIACAO_PARADA,
       ID_TIPO_PARADA,
       ID_STATUS,
@@ -139,13 +138,13 @@ const queryInsert = `
       ID_ATUAL,
       FL_REINICIAR_FLUXO,
       DS_LOG_STATUS,
-      NR_REPROGRAMACOES_APROVADAS
+      NR_REPROGRAMACOES_APROVADAS,
+      CD_UNIDADE_GERADORA
     ) VALUES (
       SAU_PARADA_S.nextval,
       :CD_PARADA,
       :CD_SEQ_PARADA,
       :CD_USINA,
-      :SG_USINA,
       TO_DATE(:DT_CRIACAO_PARADA, 'yyyy-mm-dd hh24:mi:ss'),
       :ID_TIPO_PARADA,
       :ID_STATUS,
@@ -186,27 +185,19 @@ const queryInsert = `
       :ID_ATUAL,
       :FL_REINICIAR_FLUXO,
       :DS_LOG_STATUS,
-      :NR_REPROGRAMACOES_APROVADAS
-      ) RETURNING CD_PROGRAMACAO_PARADA INTO :id_programacao_parada
+      :NR_REPROGRAMACOES_APROVADAS,
+      :CD_UNIDADE_GERADORA
+      )
 `;
 
 async function create(emp) {
   const paradaProgramada = Object.assign({}, emp);
 
-  paradaProgramada.id_programacao_parada = {
-    dir: oracledb.BIND_OUT,
-    type: oracledb.NUMBER
-  };
-
   const result = await database.simpleExecute(queryInsert, paradaProgramada);
-
-  const id = {
-    id: result.outBinds.id_programacao_parada[0]
-  };
 
   console.log(result);
 
-  return id;
+  return result;
 }
 
 module.exports.create = create;
