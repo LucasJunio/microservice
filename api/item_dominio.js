@@ -44,3 +44,15 @@ async function getStatusParada(req, res, next) {
 }
 
 module.exports.getStatusParada = getStatusParada;
+
+async function getTags(req, res, next) {
+  try {
+    const rows = await item_dominio.findTags();
+
+    res.status(200).json(rows);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports.getTags = getTags;
