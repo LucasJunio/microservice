@@ -60,12 +60,34 @@ describe("Teste das funcoes - Tipo de Parada Programada", () => {
     chai.expect(type).to.equal("PL");
   });
 
+  it("Deve retornar o tipo retorna PL, com ano vazio", () => {
+    const type = verify.verifyType({
+      ...data,
+      targetDate: "2022-10-10 10:50:00",
+      annualDate: "2020-08-31T03:00:00.000Z",
+      scheduledDate: "2020-08-31T03:00:00.000Z",
+      years: undefined
+    });
+    chai.expect(type).to.equal("PL");
+  });
+
   it("Deve retornar o tipo retorna PA - Anual", () => {
     const type = verify.verifyType({
       ...data,
       targetDate: "2020-10-10 10:50:00",
       annualDate: "2021-08-31T03:00:00.000Z",
       scheduledDate: "2021-08-31T03:00:00.000Z"
+    });
+    chai.expect(type).to.equal("PA");
+  });
+
+  it("Deve retornar o tipo retorna PA, com ano vazio", () => {
+    const type = verify.verifyType({
+      ...data,
+      targetDate: "2020-10-10 10:50:00",
+      annualDate: "2021-08-31T03:00:00.000Z",
+      scheduledDate: "2021-08-31T03:00:00.000Z",
+      years: undefined
     });
     chai.expect(type).to.equal("PA");
   });
