@@ -2,7 +2,7 @@ const chai = require("chai");
 const http = require("chai-http");
 const subSet = require("chai-subset");
 
-const classificacao_parada = require("../api/classificacao_parada");
+const app = "http://localhost:4000";
 
 chai.use(http);
 chai.use(subSet);
@@ -13,28 +13,24 @@ const schema = {
 };
 
 describe("Testes de integração - Classificação Parada", () => {
-  it("/parada_programada/classificacao_parada - GET", () => {
-    chai
-      .request(classificacao_parada.getClassificacao)
-      .get("/api/parada_programada/classificacao_parada")
-      .end((err, res) => {
-        chai.expect(err).to.be.null;
-        chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset([schema]);
-        done();
-      });
+  it("/parada_programada/classificacao_parada - GET", async () => {
+    const response = await chai
+      .request(app)
+      .get("/api/parada_programada/classificacao_parada");
+
+    chai.expect(response.status).to.be.equals(200);
+    chai.expect(response.body.length).to.not.be.equals(0);
+    chai.expect(response.body).to.containSubset([schema]);
   });
 
-  it("/parada_programada/classificacao_parada - GET com id usina", () => {
-    chai
-      .request(classificacao_parada.getClassificacao)
+  it("/parada_programada/classificacao_parada - GET com id usina", async () => {
+    const response = await chai
+      .request(app)
       .get("/api/parada_programada/classificacao_parada")
-      .query("usina=ECLA")
-      .end((err, res) => {
-        chai.expect(err).to.be.null;
-        chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset([schema]);
-        done();
-      });
+      .query("usina=ECLA");
+
+    chai.expect(response.status).to.be.equals(200);
+    chai.expect(response.body.length).not.to.be.equals(0);
+    chai.expect(response.body).to.containSubset([schema]);
   });
 });

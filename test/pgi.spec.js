@@ -8,15 +8,15 @@ chai.use(http);
 chai.use(subSet);
 
 const schema = {
-  CD_SUBCLASSIFICACAO_PARADA: cd => cd,
-  DS_SUBCLASSIFICACAO_PARADA: ds => ds
+  NUM_PGI: num => num
 };
 
-describe("Testes de integração - Subclassificacao Parada", () => {
-  it("/parada_programada/sub_classificacao_parada - GET", async () => {
+describe("Testes de integração - PGI", () => {
+  it("/parada_programada/num_pgi - GET", async () => {
     const response = await chai
       .request(app)
-      .get("/api/parada_programada/sub_classificacao_parada");
+      .get("/api/parada_programada/num_pgi")
+      .query("id_parada=1");
 
     chai.expect(response.status).to.be.equals(200);
     chai.expect(response.body).to.containSubset([schema]);
