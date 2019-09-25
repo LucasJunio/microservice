@@ -4,11 +4,13 @@ async function get(req, res, next) {
   try {
     const context = {};
     context.data_inicio_programacao = req.query.data_inicio_programacao;
+    console.log(req.query.data_inicio_programacao);
+
     const rows = await param_programacao_paradas.find(context);
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
@@ -19,8 +21,8 @@ async function getNroAnosParadaLongoPrazo(req, res, next) {
     const rows = await param_programacao_paradas.findNroAnosParadaLongoPrazo();
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 

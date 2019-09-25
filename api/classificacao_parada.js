@@ -7,8 +7,8 @@ async function getClassificacao(req, res, next) {
     const rows = await classificacao_parada.findClassificacao(context);
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 

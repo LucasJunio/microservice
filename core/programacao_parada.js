@@ -4,7 +4,6 @@ const oracledb = require("oracledb");
 const queryFindLastIdParada = `SELECT CD_PARADA FROM SAU_PROGRAMACAO_PARADA ORDER BY CD_PROGRAMACAO_PARADA DESC FETCH NEXT 1 ROWS ONLY`;
 
 async function findLastIdParada() {
-  console.log(queryFindLastIdParada);
   const result = await database.simpleExecute(queryFindLastIdParada);
   return result.rows;
 }
@@ -108,7 +107,7 @@ const queryInsert = `
       CD_CLASSIFICACAO_PROGR_PARADA,
       CD_SUBCLASSIF_PROGR_PARADA,
       DS_SUBCLASSIF_PROGR_PARADA,
-      DS_DESCRICAO_PROGR_PARADA,
+      DS_PROGRAMACAO_PARADA,
       DS_OBSERVACAO,
       DT_HORA_INICIO_SERVICO,
       DT_HORA_TERMINO_SERVICO,
@@ -155,7 +154,7 @@ const queryInsert = `
       :CD_CLASSIFICACAO_PROGR_PARADA,
       :CD_SUBCLASSIF_PROGR_PARADA,
       :DS_SUBCLASSIF_PROGR_PARADA,
-      :DS_DESCRICAO_PROGR_PARADA,
+      :DS_PROGRAMACAO_PARADA,
       :DS_OBSERVACAO,
       TO_DATE(:DT_HORA_INICIO_SERVICO, 'yyyy-mm-dd hh24:mi:ss'),
       TO_DATE(:DT_HORA_TERMINO_SERVICO, 'yyyy-mm-dd hh24:mi:ss'),

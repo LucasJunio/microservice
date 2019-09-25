@@ -14,8 +14,8 @@ async function getTipoParada(req, res, next) {
     const rows = await item_dominio.findTipoParada(context);
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
@@ -26,8 +26,8 @@ async function getMotivoReprogramacao(req, res, next) {
     const rows = await item_dominio.findMotivoReprogramacao();
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
@@ -38,8 +38,8 @@ async function getStatusParada(req, res, next) {
     const rows = await item_dominio.findStatusParada();
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
@@ -50,8 +50,8 @@ async function getTags(req, res, next) {
     const rows = await item_dominio.findTags();
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 

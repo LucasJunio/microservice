@@ -5,8 +5,8 @@ async function getLastIdParada(req, res, next) {
     const rows = await programacao_parada.findLastIdParada();
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
@@ -19,8 +19,8 @@ async function getLastIdSeq(req, res, next) {
     const rows = await programacao_parada.findLastIdSeq(context);
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
@@ -31,8 +31,8 @@ async function putCancelamento(req, res, next) {
     const rows = await programacao_parada.updateCancelamento(req.body);
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
@@ -43,8 +43,8 @@ async function putReprogramacao(req, res, next) {
     const rows = await programacao_parada.updateReprogramação(req.body);
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 
@@ -71,9 +71,8 @@ async function post(req, res, next) {
     }
 
     res.status(201).json(id);
-  } catch (err) {
-    console.log(err);
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 

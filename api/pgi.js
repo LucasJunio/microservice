@@ -7,8 +7,8 @@ async function getNumPGI(req, res, next) {
     const rows = await pgi.getNumPGI(context);
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).json(error.message);
   }
 }
 
