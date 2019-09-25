@@ -86,7 +86,7 @@ async function updateReprogramação(context) {
 
     result = await database.simpleExecute(query);
   }
-  return result.rowsAffected;
+  return result;
 }
 
 module.exports.updateReprogramação = updateReprogramação;

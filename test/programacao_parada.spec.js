@@ -108,6 +108,7 @@ describe("programação_parada", () => {
         .get("/api/parada_programada/id_parada");
 
       chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).to.be.equals(1);
       chai.expect(response.body).to.containSubset([schemaId]);
     });
   });
@@ -120,6 +121,7 @@ describe("programação_parada", () => {
         .query("id_parada=1");
 
       chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).to.be.equals(1);
       chai.expect(response.body).to.containSubset([schemaIdSeq]);
     });
   });
@@ -135,6 +137,7 @@ describe("programação_parada", () => {
         });
 
       chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body).to.be.equals(1);
     });
 
     it("Deve retornar Ok ao atualizar os dados de cancelamento ", async () => {

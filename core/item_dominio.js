@@ -47,14 +47,14 @@ async function findTags() {
         "button_save",
         "button_search",
         "button_new",
-        //"button_restartFlow",
-        //"button_approveFlow",
+        "button_restartFlow",
+        "button_approveFlow",
         "button_linkCancel",
         "button_reprogramming"
       ],
       collapses: [
         "identificacao",
-        //"historico",
+        "historico",
         "programacao",
         "execucao",
         "cancelamento"

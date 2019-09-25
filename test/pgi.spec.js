@@ -22,5 +22,13 @@ describe("pgi", () => {
       chai.expect(response.status).to.be.equals(200);
       chai.expect(response.body).to.containSubset([schema]);
     });
+
+    it("Deve retornar vazio sem cd_parada", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/num_pgi");
+
+      chai.expect(response.status).to.be.equals(400);
+    });
   });
 });

@@ -19,7 +19,7 @@ const schema = {
 
 describe("param_programacao_paradas", () => {
   describe("GET /parada_programada/param_programacao_paradas", () => {
-    it("Deve retornar os parametros para o tipo de programação", async () => {
+    it("Deve retornar os parametros para o tipo de programação com data de inicio de progrmação", async () => {
       const response = await chai
         .request(app)
         .get("/api/parada_programada/param_programacao_paradas")
@@ -28,6 +28,15 @@ describe("param_programacao_paradas", () => {
       chai.expect(response.status).to.be.equals(200);
       chai.expect(response.body.length).to.be.equals(1);
       chai.expect(response.body).to.containSubset([schemaParam]);
+    });
+
+    it("Deve retornar vazio sem data de inicio de progrmação", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/param_programacao_paradas");
+
+      chai.expect(response.status).to.be.equals(400);
+      chai.expect(response.body).to.be.empty;
     });
   });
 
