@@ -40,7 +40,7 @@ module.exports.putCancelamento = putCancelamento;
 
 async function putReprogramacao(req, res, next) {
   try {
-    const rows = await programacao_parada.updateReprogramação(req.body);
+    const rows = await programacao_parada.updateReprogramacao(req.body);
 
     res.status(200).json(rows);
   } catch (error) {

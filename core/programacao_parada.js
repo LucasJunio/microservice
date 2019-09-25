@@ -51,7 +51,7 @@ async function updateCancelamento(context) {
 
 module.exports.updateCancelamento = updateCancelamento;
 
-async function updateReprogramação(context) {
+async function updateReprogramacao(context) {
   let query = "";
   let result = "";
 
@@ -89,7 +89,7 @@ async function updateReprogramação(context) {
   return result;
 }
 
-module.exports.updateReprogramação = updateReprogramação;
+module.exports.updateReprogramacao = updateReprogramacao;
 
 const queryInsert = `
     INSERT INTO SAU_PROGRAMACAO_PARADA (
