@@ -2,7 +2,7 @@ const chai = require("chai");
 const http = require("chai-http");
 const subSet = require("chai-subset");
 
-const usinas = require("../api/usinas");
+const app = "http://localhost:4000";
 
 chai.use(http);
 chai.use(subSet);
@@ -12,16 +12,14 @@ const schema = {
   CD_ITEM_DOMINIO: cd => cd
 };
 
-describe("Testes de integração - Usinas", () => {
-  it("/usinas - GET", () => {
-    chai
-      .request(usinas.get)
-      .get("/api/usinas")
-      .end((err, res) => {
-        chai.expect(err).to.be.null;
-        chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset([schema]);
-        done();
-      });
+describe("usinas", () => {
+  describe("GET /usinas", () => {
+    it("Deve retornar uma lista de usinas", async () => {
+      const response = await chai.request(app).get("/api/usinas");
+
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).to.not.be.equals(0);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 });

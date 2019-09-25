@@ -20,12 +20,11 @@ async function getNumPGI(context) {
 
   if (context.cd_parada) {
     query = `SELECT num_pgi FROM sau_pgi`;
-    query += `\nWHERE cd_parada = ${context.cd_parada} FETCH NEXT 1 ROWS ONLY`;
-
-    result = await database.simpleExecute(query);
+    query += `\nWHERE CD_PROGRAMACAO_PARADA = ${context.cd_parada} FETCH NEXT 1 ROWS ONLY`;
   }
-  console.log(result);
-  return result;
+  result = await database.simpleExecute(query);
+  console.log(result.rows);
+  return result.rows;
 }
 
 module.exports.getNumPGI = getNumPGI;

@@ -9,8 +9,8 @@ async function getSubClassificacao(req, res, next) {
     const rows = await subclassificacao_parada.findSubClassificacao(context);
 
     res.status(200).json(rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 }
 

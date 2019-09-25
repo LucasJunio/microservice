@@ -2,7 +2,7 @@ const chai = require("chai");
 const http = require("chai-http");
 const subSet = require("chai-subset");
 
-const classificacao_parada = require("../api/classificacao_parada");
+const app = "http://localhost:4000";
 
 chai.use(http);
 chai.use(subSet);
@@ -11,30 +11,27 @@ const schema = {
   CD_CLASSIFICACAO_PARADA: cd => cd,
   DS_CLASSIFICACAO_PARADA: ds => ds
 };
+describe("classificacao_parada", () => {
+  describe("GET /parada_programada/classificacao_parada", () => {
+    it("Deve retornar uma lista de classificação de parada programada", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/classificacao_parada");
 
-describe("Testes de integração - Classificação Parada", () => {
-  it("/parada_programada/classificacao_parada - GET", () => {
-    chai
-      .request(classificacao_parada.getClassificacao)
-      .get("/api/parada_programada/classificacao_parada")
-      .end((err, res) => {
-        chai.expect(err).to.be.null;
-        chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset([schema]);
-        done();
-      });
-  });
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).to.not.be.equals(0);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
 
-  it("/parada_programada/classificacao_parada - GET com id usina", () => {
-    chai
-      .request(classificacao_parada.getClassificacao)
-      .get("/api/parada_programada/classificacao_parada")
-      .query("usina=ECLA")
-      .end((err, res) => {
-        chai.expect(err).to.be.null;
-        chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset([schema]);
-        done();
-      });
+    it("Deve retornar uma lista de classificação de parada programada com sg da usina", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/classificacao_parada")
+        .query("usina=ECLA");
+
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).not.to.be.equals(0);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 });

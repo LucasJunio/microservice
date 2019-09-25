@@ -4,7 +4,6 @@ const oracledb = require("oracledb");
 const queryFindLastIdParada = `SELECT CD_PARADA FROM SAU_PROGRAMACAO_PARADA ORDER BY CD_PROGRAMACAO_PARADA DESC FETCH NEXT 1 ROWS ONLY`;
 
 async function findLastIdParada() {
-  console.log(queryFindLastIdParada);
   const result = await database.simpleExecute(queryFindLastIdParada);
   return result.rows;
 }
@@ -52,7 +51,7 @@ async function updateCancelamento(context) {
 
 module.exports.updateCancelamento = updateCancelamento;
 
-async function updateReprogramação(context) {
+async function updateReprogramacao(context) {
   let query = "";
   let result = "";
 
@@ -87,10 +86,10 @@ async function updateReprogramação(context) {
 
     result = await database.simpleExecute(query);
   }
-  return result.rowsAffected;
+  return result;
 }
 
-module.exports.updateReprogramação = updateReprogramação;
+module.exports.updateReprogramacao = updateReprogramacao;
 
 const queryInsert = `
     INSERT INTO SAU_PROGRAMACAO_PARADA (
@@ -98,7 +97,6 @@ const queryInsert = `
       CD_PARADA,
       CD_SEQ_PARADA,
       CD_USINA,
-      SG_USINA,
       DT_CRIACAO_PARADA,
       ID_TIPO_PARADA,
       ID_STATUS,
@@ -109,7 +107,7 @@ const queryInsert = `
       CD_CLASSIFICACAO_PROGR_PARADA,
       CD_SUBCLASSIF_PROGR_PARADA,
       DS_SUBCLASSIF_PROGR_PARADA,
-      DS_DESCRICAO_PROGR_PARADA,
+      DS_PROGRAMACAO_PARADA,
       DS_OBSERVACAO,
       DT_HORA_INICIO_SERVICO,
       DT_HORA_TERMINO_SERVICO,
@@ -139,13 +137,13 @@ const queryInsert = `
       ID_ATUAL,
       FL_REINICIAR_FLUXO,
       DS_LOG_STATUS,
-      NR_REPROGRAMACOES_APROVADAS
+      NR_REPROGRAMACOES_APROVADAS,
+      CD_UNIDADE_GERADORA
     ) VALUES (
       SAU_PARADA_S.nextval,
       :CD_PARADA,
       :CD_SEQ_PARADA,
       :CD_USINA,
-      :SG_USINA,
       TO_DATE(:DT_CRIACAO_PARADA, 'yyyy-mm-dd hh24:mi:ss'),
       :ID_TIPO_PARADA,
       :ID_STATUS,
@@ -156,7 +154,7 @@ const queryInsert = `
       :CD_CLASSIFICACAO_PROGR_PARADA,
       :CD_SUBCLASSIF_PROGR_PARADA,
       :DS_SUBCLASSIF_PROGR_PARADA,
-      :DS_DESCRICAO_PROGR_PARADA,
+      :DS_PROGRAMACAO_PARADA,
       :DS_OBSERVACAO,
       TO_DATE(:DT_HORA_INICIO_SERVICO, 'yyyy-mm-dd hh24:mi:ss'),
       TO_DATE(:DT_HORA_TERMINO_SERVICO, 'yyyy-mm-dd hh24:mi:ss'),
@@ -186,27 +184,30 @@ const queryInsert = `
       :ID_ATUAL,
       :FL_REINICIAR_FLUXO,
       :DS_LOG_STATUS,
-      :NR_REPROGRAMACOES_APROVADAS
-      ) RETURNING CD_PROGRAMACAO_PARADA INTO :id_programacao_parada
+      :NR_REPROGRAMACOES_APROVADAS,
+      :CD_UNIDADE_GERADORA
+      )
 `;
 
 async function create(emp) {
-  const paradaProgramada = Object.assign({}, emp);
+  if (
+    emp.CD_PARADA &&
+    emp.CD_SEQ_PARADA &&
+    emp.CD_USINA &&
+    emp.DT_HORA_INICIO_PROGRAMACAO &&
+    emp.DT_HORA_TERMINO_PROGRAMACAO &&
+    emp.ID_TIPO_PROGRAMACAO &&
+    emp.CD_CLASSIFICACAO_PROGR_PARADA &&
+    emp.CD_UNIDADE_GERADORA
+  ) {
+    const paradaProgramada = Object.assign({}, emp);
 
-  paradaProgramada.id_programacao_parada = {
-    dir: oracledb.BIND_OUT,
-    type: oracledb.NUMBER
-  };
+    const result = await database.simpleExecute(queryInsert, paradaProgramada);
 
-  const result = await database.simpleExecute(queryInsert, paradaProgramada);
+    console.log(result);
 
-  const id = {
-    id: result.outBinds.id_programacao_parada[0]
-  };
-
-  console.log(result);
-
-  return id;
+    return result;
+  }
 }
 
 module.exports.create = create;

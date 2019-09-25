@@ -2,7 +2,7 @@ const chai = require("chai");
 const http = require("chai-http");
 const subSet = require("chai-subset");
 
-const subclassificacao_parada = require("../api/subclassificacao_parada");
+const app = "http://localhost:4000";
 
 chai.use(http);
 chai.use(subSet);
@@ -12,16 +12,15 @@ const schema = {
   DS_SUBCLASSIFICACAO_PARADA: ds => ds
 };
 
-describe("Testes de integração - Subclassificacao Parada", () => {
-  it("/parada_programada/sub_classificacao_parada - GET", () => {
-    chai
-      .request(subclassificacao_parada.getSubClassificacao)
-      .get("/api/parada_programada/sub_classificacao_parada")
-      .end((err, res) => {
-        chai.expect(err).to.be.null;
-        chai.expect(res).to.have.status(200);
-        chai.expect(res.body).to.containSubset([schema]);
-        done();
-      });
+describe("subclassificao_parada", () => {
+  describe("GET /parada_programada/sub_classificacao_parada", () => {
+    it("Deve retornar cd_subclassificacao e ds_subclassificacao", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/sub_classificacao_parada");
+
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 });
