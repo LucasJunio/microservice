@@ -190,13 +190,24 @@ const queryInsert = `
 `;
 
 async function create(emp) {
-  const paradaProgramada = Object.assign({}, emp);
+  if (
+    emp.CD_PARADA &&
+    emp.CD_SEQ_PARADA &&
+    emp.CD_USINA &&
+    emp.DT_HORA_INICIO_PROGRAMACAO &&
+    emp.DT_HORA_TERMINO_PROGRAMACAO &&
+    emp.ID_TIPO_PROGRAMACAO &&
+    emp.CD_CLASSIFICACAO_PROGR_PARADA &&
+    emp.CD_UNIDADE_GERADORA
+  ) {
+    const paradaProgramada = Object.assign({}, emp);
 
-  const result = await database.simpleExecute(queryInsert, paradaProgramada);
+    const result = await database.simpleExecute(queryInsert, paradaProgramada);
 
-  console.log(result);
+    console.log(result);
 
-  return result;
+    return result;
+  }
 }
 
 module.exports.create = create;

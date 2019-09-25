@@ -11,12 +11,12 @@ const data = {
 };
 
 describe("Teste das funcoes - Tipo de Parada Programada", () => {
-  it("Verifica se o tipo retorna PI - Intempestiva", () => {
+  it("Deve retornar o tipo retorna PI quando data atual é maior que a data de inicio de programação", () => {
     const type = verify.verifyType(data);
     chai.expect(type).to.equal("PI");
   });
 
-  it("Verifica se o tipo retorna PI - Intempestiva", () => {
+  it("Deve retornar o tipo retorna PI quando data atual é igual a data de inicio de programação", () => {
     const type = verify.verifyType({
       ...data,
       refDate: "2019-10-10 10:50:00"
@@ -24,7 +24,7 @@ describe("Teste das funcoes - Tipo de Parada Programada", () => {
     chai.expect(type).to.equal("PI");
   });
 
-  it("Verifica se o tipo retorna PP - Programada", () => {
+  it("Deve retornar o tipo retorna PP", () => {
     const type = verify.verifyType({
       ...data,
       targetDate: "2019-11-21 10:50:00"
@@ -32,7 +32,7 @@ describe("Teste das funcoes - Tipo de Parada Programada", () => {
     chai.expect(type).to.equal("PP");
   });
 
-  it("Verifica se o tipo retorna PU - Urgente", () => {
+  it("Deve retornar o tipo retorna PU", () => {
     const type = verify.verifyType({
       ...data,
       targetDate: "2019-10-21 10:50:00"
@@ -40,7 +40,7 @@ describe("Teste das funcoes - Tipo de Parada Programada", () => {
     chai.expect(type).to.equal("PU");
   });
 
-  it("Verifica se o tipo retorna PL - Longo Prazo", () => {
+  it("Deve retornar o tipo retorna PL, quando o ano atual + ano parada de longo prazo é igual o ano de inicio de programação", () => {
     const type = verify.verifyType({
       ...data,
       targetDate: "2021-10-10 10:50:00",
@@ -50,7 +50,7 @@ describe("Teste das funcoes - Tipo de Parada Programada", () => {
     chai.expect(type).to.equal("PL");
   });
 
-  it("Verifica se o tipo retorna PL - Longo Prazo", () => {
+  it("Deve retornar o tipo retorna PL, quando o ano atual + ano parada de longo prazo é menor o ano de inicio de programação", () => {
     const type = verify.verifyType({
       ...data,
       targetDate: "2022-10-10 10:50:00",
@@ -60,7 +60,7 @@ describe("Teste das funcoes - Tipo de Parada Programada", () => {
     chai.expect(type).to.equal("PL");
   });
 
-  it("Verifica se o tipo retorna PA - Anual", () => {
+  it("Deve retornar o tipo retorna PA - Anual", () => {
     const type = verify.verifyType({
       ...data,
       targetDate: "2020-10-10 10:50:00",

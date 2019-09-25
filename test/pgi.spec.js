@@ -11,14 +11,16 @@ const schema = {
   NUM_PGI: num => num
 };
 
-describe("Testes de integração - PGI", () => {
-  it("/parada_programada/num_pgi - GET", async () => {
-    const response = await chai
-      .request(app)
-      .get("/api/parada_programada/num_pgi")
-      .query("id_parada=1");
+describe("pgi", () => {
+  describe("GET /parada_programada/num_pgi", () => {
+    it("Deve retornar o numero de pgi de acordo com cd_parada", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/num_pgi")
+        .query("id_parada=1");
 
-    chai.expect(response.status).to.be.equals(200);
-    chai.expect(response.body).to.containSubset([schema]);
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 });

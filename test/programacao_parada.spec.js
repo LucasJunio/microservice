@@ -15,6 +15,10 @@ const schemaIdSeq = {
   CD_SEQ_PARADA: cd => cd
 };
 
+const schemaPost = {
+  cd: cd => [cd]
+};
+
 const dataCancelamento = {
   id_programacao_parada: 2,
   dt_cancelamento: "2019-10-10 10:50:00",
@@ -96,60 +100,73 @@ let data = {
     NR_REPROGRAMACOES_APROVADAS: 0
   }
 };
+describe("programação_parada", () => {
+  describe("GET /parada_programada/id_parada", () => {
+    it("Deve retornar cd_parada", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/id_parada");
 
-describe("Testes de integração - Programação Parada", () => {
-  it("/parada_programada/id_parada - GET", async () => {
-    const response = await chai
-      .request(app)
-      .get("/api/parada_programada/id_parada");
-
-    chai.expect(response.status).to.be.equals(200);
-    chai.expect(response.body).to.containSubset([schemaId]);
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body).to.containSubset([schemaId]);
+    });
   });
 
-  it("/parada_programada/id_parada_seq - GET", async () => {
-    const response = await chai
-      .request(app)
-      .get("/api/parada_programada/id_parada_seq")
-      .query("id_parada=1");
+  describe("GET /parada_programada/id_parada_seq", () => {
+    it("Deve retornar cd_parada_seq", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/id_parada_seq")
+        .query("id_parada=1");
 
-    chai.expect(response.status).to.be.equals(200);
-    chai.expect(response.body).to.containSubset([schemaIdSeq]);
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body).to.containSubset([schemaIdSeq]);
+    });
   });
 
-  it("/parada_programada/cancelamento - PUT Cancelamento", async () => {
-    const response = await chai
-      .request(app)
-      .put("/api/parada_programada/cancelamento")
-      .send({ ...dataCancelamento, id_status_cancelamento: "Em cancelamento" });
+  describe("PUT /parada_programada/cancelamento", () => {
+    it("Deve retornar Ok ao atualizar os dados de cancelamento com id_status_cancelamento", async () => {
+      const response = await chai
+        .request(app)
+        .put("/api/parada_programada/cancelamento")
+        .send({
+          ...dataCancelamento,
+          id_status_cancelamento: "Em cancelamento"
+        });
 
-    chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.status).to.be.equals(200);
+    });
+
+    it("Deve retornar Ok ao atualizar os dados de cancelamento ", async () => {
+      const response = await chai
+        .request(app)
+        .put("/api/parada_programada/cancelamento")
+        .send({ dataCancelamento });
+
+      chai.expect(response.status).to.be.equals(200);
+    });
   });
 
-  it("/parada_programada/cancelamento - PUT Cancelamento", async () => {
-    const response = await chai
-      .request(app)
-      .put("/api/parada_programada/cancelamento")
-      .send({ dataCancelamento });
+  describe("PUT /parada_programada/reprogramacao", () => {
+    it("Deve retornar Ok ao atualizar os dados de reprogramação", async () => {
+      const response = await chai
+        .request(app)
+        .put("/api/parada_programada/reprogramacao")
+        .send({ dataReprogramacao });
 
-    chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.status).to.be.equals(200);
+    });
   });
 
-  it("/parada_programada/reprogramacao - PUT Reprogramação", async () => {
-    const response = await chai
-      .request(app)
-      .put("/api/parada_programada/reprogramacao")
-      .send({ dataReprogramacao });
+  describe("POST /parada_programada", () => {
+    it("Deve retornar status 201 e o(s) cd_parada ", async () => {
+      const response = await chai
+        .request(app)
+        .post("/api/parada_programada")
+        .send(data);
 
-    chai.expect(response.status).to.be.equals(200);
-  });
-
-  it("/parada_programada - POST", async () => {
-    const response = await chai
-      .request(app)
-      .post("/api/parada_programada")
-      .send(data);
-
-    chai.expect(response.status).to.be.equals(201);
+      chai.expect(response.status).to.be.equals(201);
+      chai.expect(response.body).to.containSubset(schemaPost);
+    });
   });
 });

@@ -12,13 +12,15 @@ const schema = {
   DS_SUBCLASSIFICACAO_PARADA: ds => ds
 };
 
-describe("Testes de integração - Subclassificacao Parada", () => {
-  it("/parada_programada/sub_classificacao_parada - GET", async () => {
-    const response = await chai
-      .request(app)
-      .get("/api/parada_programada/sub_classificacao_parada");
+describe("subclassificao_parada", () => {
+  describe("GET /parada_programada/sub_classificacao_parada", () => {
+    it("Deve retornar cd_subclassificacao e ds_subclassificacao", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/sub_classificacao_parada");
 
-    chai.expect(response.status).to.be.equals(200);
-    chai.expect(response.body).to.containSubset([schema]);
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 });

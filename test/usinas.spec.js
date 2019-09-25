@@ -12,11 +12,14 @@ const schema = {
   CD_ITEM_DOMINIO: cd => cd
 };
 
-describe("Testes de integração - Usinas", () => {
-  it("/usinas - GET", async () => {
-    const response = await chai.request(app).get("/api/usinas");
+describe("usinas", () => {
+  describe("GET /usinas", () => {
+    it("Deve retornar uma lista de usinas", async () => {
+      const response = await chai.request(app).get("/api/usinas");
 
-    chai.expect(response.status).to.be.equals(200);
-    chai.expect(response.body).to.containSubset([schema]);
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).to.not.be.equals(0);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 });

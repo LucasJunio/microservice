@@ -12,34 +12,40 @@ const schema = {
   CD_ITEM_DOMINIO: cd => cd
 };
 
-describe("Testes de integração - item dominio", () => {
-  it("/parada_programada/tipo_parada - GET", async () => {
-    const response = await chai
-      .request(app)
-      .get("/api/parada_programada/tipo_parada");
+describe("item_dominio", () => {
+  describe("GET /parada_programada/tipo_parada", () => {
+    it("Deve retornar uma lista de tipos de paradas", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/tipo_parada");
 
-    chai.expect(response.status).to.be.equals(200);
-    chai.expect(response.body.length).to.not.be.equals(0);
-    chai.expect(response.body).to.containSubset([schema]);
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).to.not.be.equals(0);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 
-  it("/parada_programada/motivo_reprogramacao - GET", async () => {
-    const response = await chai
-      .request(app)
-      .get("/api/parada_programada/motivo_reprogramacao");
+  describe("GET /parada_programada/motivo_reprogramacao", () => {
+    it("Deve retornar uma lista de motivo de reprogramação", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/motivo_reprogramacao");
 
-    chai.expect(response.status).to.be.equals(200);
-    chai.expect(response.body.length).to.not.be.equals(0);
-    chai.expect(response.body).to.containSubset([schema]);
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).to.not.be.equals(0);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 
-  it("/parada_programada/status_parada - GET", async () => {
-    const response = await chai
-      .request(app)
-      .get("/api/parada_programada/status_parada");
+  describe("GET /parada_programada/status_parada", () => {
+    it("Deve retornar uma lista de status de parada programada", async () => {
+      const response = await chai
+        .request(app)
+        .get("/api/parada_programada/status_parada");
 
-    chai.expect(response.status).to.be.equals(200);
-    chai.expect(response.body.length).to.not.be.equals(0);
-    chai.expect(response.body).to.containSubset([schema]);
+      chai.expect(response.status).to.be.equals(200);
+      chai.expect(response.body.length).to.not.be.equals(0);
+      chai.expect(response.body).to.containSubset([schema]);
+    });
   });
 });
