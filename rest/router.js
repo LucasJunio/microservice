@@ -8,6 +8,7 @@ const param_programacao_paradas = require("../api/param_programacao_paradas");
 const classificacao_parada = require("../api/classificacao_parada.js");
 const subclassificacao_parada = require("../api/subclassificacao_parada.js");
 const pgi = require("../api/pgi");
+const historico = require("../api/historico.js");
 
 router.get("/", (req, res) => {
   res.json({
@@ -52,5 +53,6 @@ router
   .get(programacao_parada.getLastIdSeq);
 router.route("/parada_programada/num_pgi").get(pgi.getNumPGI);
 router.route("/parada_programada/tags").get(item_dominio.getTags);
+router.route("/parada_programada/historico").get(historico.getHistorico);
 
 module.exports = router;
