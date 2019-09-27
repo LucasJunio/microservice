@@ -3,7 +3,7 @@ const database = require("../utils/database.js");
 async function find() {
   const result = [
     {
-      aprovação: [
+      aprovacao: [
         {
           id: "0",
           nome: "JOSE VICENTE MIRANDA RESCIGNO",
@@ -59,7 +59,7 @@ async function find() {
           historico: []
         }
       ],
-      reprogramação: [
+      reprogramacao: [
         {
           id: "3",
           nome: "JOSE VICENTE MIRANDA RESCIGNO",
