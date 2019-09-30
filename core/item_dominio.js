@@ -65,3 +65,103 @@ async function findTags() {
 }
 
 module.exports.findTags = findTags;
+
+async function findPerfil() {
+  const result = [
+    {
+      id: 0,
+      perfil: "OPE"
+    },
+    {
+      id: 1,
+      perfil: "USINA"
+    },
+    {
+      id: 2,
+      perfil: "PGP"
+    }
+  ];
+  return result;
+}
+
+module.exports.findPerfil = findPerfil;
+
+async function findTela() {
+  const result = [
+    {
+      id: 0,
+      tela: "PP"
+    },
+    {
+      id: 1,
+      tela: "PGI"
+    },
+    {
+      id: 2,
+      tela: "MAPA"
+    }
+  ];
+  return result;
+}
+
+module.exports.findTela = findTela;
+
+async function findUsuario() {
+  const result = [
+    {
+      id: 0,
+      usuario: "Usuário 1"
+    },
+    {
+      id: 1,
+      usuario: "Usuário 2"
+    },
+    {
+      id: 2,
+      usuario: "Usuário 3"
+    }
+  ];
+  return result;
+}
+
+module.exports.findUsuario = findUsuario;
+
+async function findDominio() {
+  const result = [
+    {
+      id: 0,
+      dominio: "Dominio 1"
+    },
+    {
+      id: 1,
+      dominio: "Dominio 2"
+    },
+    {
+      id: 2,
+      dominio: "Dominio 3"
+    }
+  ];
+  return result;
+}
+
+module.exports.findDominio = findDominio;
+
+async function findItemDominio() {
+  const result = [
+    {
+      id: 0,
+      itemDominio: "Item Dominio 1"
+    },
+    {
+      id: 1,
+      itemDominio: "Item Dominio 2"
+    },
+    {
+      id: 2,
+      itemDominio: "Item Dominio 3"
+    }
+  ];
+  return result;
+}
+
+module.exports.findItemDominio = findItemDominio;
