@@ -1,4 +1,4 @@
-let PORT = 80;
+let PORT = 8080;
 
 if (
   process.env.NODE_ENV === "development" ||
