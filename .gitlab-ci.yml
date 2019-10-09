@@ -1,0 +1,106 @@
+image: docker:latest
+
+variables:
+  REPOSITORY_URL: 471159076011.dkr.ecr.us-east-2.amazonaws.com
+  REPOSITORY_NAME: sau-pp-api
+  EKS_CLUSTER: zallpy-eks
+  KUBE_NAMESPACE: dev
+  ENVIRONMENT_URL: https://sau-pp.zallpylabs.com
+
+stages:
+  - lint
+  - build
+  - release
+  - deploy
+  - migrations
+
+cache:
+  paths:
+    - node_modules/
+
+eslint:
+  image: node:8
+  stage: lint
+  only:
+    - /^release/.*$/
+  script:
+    - npm i eslint
+    - node_modules/eslint/bin/eslint.js .
+  allow_failure: true
+
+install_dependencies:
+  image: node:8
+  stage: build
+  only:
+    - /^release/.*$/
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+
+image_build:
+  stage: release
+  only:
+    - /^release/.*$/
+  before_script:
+    - apk add --no-cache curl jq python py-pip
+    - pip install awscli
+  script:
+    - $(aws ecr get-login --no-include-email --region us-east-2)
+    - docker build -t $REPOSITORY_URL/$REPOSITORY_NAME:latest .
+    - docker tag $REPOSITORY_URL/$REPOSITORY_NAME:latest $REPOSITORY_URL/$REPOSITORY_NAME:${CI_PIPELINE_ID}
+    - test ! -z "${CI_COMMIT_TAG}" && docker push $REPOSITORY_NAME:latest
+    - docker push $REPOSITORY_URL/$REPOSITORY_NAME:${CI_PIPELINE_ID}
+
+deploy_release_kube:
+  image: lwolf/kubectl_deployer:latest
+  stage: deploy
+  only:
+    - /^release/.*$/
+  environment:
+    name: release/$CI_BUILD_REF_NAME
+    url: $ENVIRONMENT_URL
+    on_stop: stop_deploy
+  script:
+    - kubectl config set-cluster $EKS_CLUSTER --server="$K8S_URL" --insecure-skip-tls-verify=true
+    - kubectl config set-credentials admin --token="$K8S_TOKEN"
+    - kubectl config set-context default-context --cluster=$EKS_CLUSTER --user=admin
+    - kubectl config use-context default-context
+    - kubectl get cs
+    - cd kubernetes/
+    - sed -i "s/__VERSION__/${CI_PIPELINE_ID}/" zallpy-deployment.yaml zallpy-ingress.yaml zallpy-service.yaml
+    - |
+      if kubectl apply -f zallpy-deployment.yaml | grep -q unchanged; then
+          echo "=> Patching deployment to force image update."
+          kubectl patch -f zallpy-deployment.yaml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
+      else
+          echo "=> Deployment apply has changed the object, no need to force image update."
+      fi
+    - kubectl apply -f zallpy-service.yaml || true
+    - kubectl apply -f zallpy-ingress.yaml
+    - kubectl rollout status -f zallpy-deployment.yaml
+    - kubectl get all,ing -l app=$REPOSITORY_NAME -n $KUBE_NAMESPACE
+
+stop_deploy:
+  image: lwolf/kubectl_deployer:latest
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+  only:
+    - /^release/.*$/
+  except:
+    - master
+    - tags
+  environment:
+    name: release/$CI_BUILD_REF_NAME
+    action: stop
+  script:
+    - kubectl config set-cluster $EKS_CLUSTER --server="$K8S_URL" --insecure-skip-tls-verify=true
+    - kubectl config set-credentials admin --token="$K8S_TOKEN"
+    - kubectl config set-context default-context --cluster=$EKS_CLUSTER --user=admin
+    - kubectl config use-context default-context
+    - kubectl version
+    - kubectl delete ing -l app=$REPOSITORY_NAME -n $KUBE_NAMESPACE
+    - kubectl delete all -l app=$REPOSITORY_NAME -n $KUBE_NAMESPACE
