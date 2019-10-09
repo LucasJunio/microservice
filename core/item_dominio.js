@@ -90,15 +90,18 @@ async function findTela() {
   const result = [
     {
       id: 0,
-      tela: "PP"
+      tela: "PP",
+      value: false
     },
     {
       id: 1,
-      tela: "PGI"
+      tela: "PGI",
+      value: false
     },
     {
       id: 2,
-      tela: "MAPA"
+      tela: "MAPA",
+      value: false
     }
   ];
   return result;
@@ -150,15 +153,18 @@ async function findItemDominio() {
   const result = [
     {
       id: 0,
-      itemDominio: "Item Dominio 1"
+      itemDominio: "Item Dominio 1",
+      value: false
     },
     {
       id: 1,
-      itemDominio: "Item Dominio 2"
+      itemDominio: "Item Dominio 2",
+      value: false
     },
     {
       id: 2,
-      itemDominio: "Item Dominio 3"
+      itemDominio: "Item Dominio 3",
+      value: false
     }
   ];
   return result;
