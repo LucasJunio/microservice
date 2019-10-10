@@ -171,3 +171,12 @@ async function findItemDominio() {
 }
 
 module.exports.findItemDominio = findItemDominio;
+
+async function findSituacao() {
+  let query =
+    baseQuery + `\nWHERE cd_dominio = 'SITUACAO_PROG_PARADA' ORDER BY 1`;
+  const result = await database.simpleExecute(query);
+  return result.rows;
+}
+
+module.exports.findSituacao = findSituacao;
