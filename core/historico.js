@@ -28,29 +28,6 @@ async function find() {
                 data: "05/09/2019 14:30h"
               }
             ]
-          },
-          {
-            id: "1",
-            dataInicio: "13/09/19 09:00h",
-            dataTermino: "19/09/19 17:00h",
-            servico: "inspeção anual da unidade geradora",
-            historico: [
-              {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "01/09/2019 08:57h"
-              },
-              {
-                titulo: "Aprovação PGP",
-                usuario: "Pedro",
-                data: "02/09/2019 10:00h"
-              },
-              {
-                titulo: "Aprovação OPE",
-                usuario: "Maria",
-                data: "05/09/2019 14:30h"
-              }
-            ]
           }
         ]
       },
