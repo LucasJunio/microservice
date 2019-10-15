@@ -8,57 +8,49 @@ async function find() {
         itens: [
           {
             id: "0",
-            nome: "JOSE VICENTE MIRANDA RESCIGNO",
-            dominio: "GPP_UsuárioChave",
-            chave: "UsuarioChave",
-            data: "28/05/19 - 11:48h",
-            status: "Aprovado",
+            dataInicio: "13/09/19 09:00h",
+            dataTermino: "19/09/19 17:00h",
+            servico: "inspeção anual da unidade geradora",
             historico: [
               {
                 titulo: "Aprovação usina",
                 usuario: "João",
-                data: "10/09/2019 08:57h"
+                data: "01/09/2019 08:57h"
               },
               {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
+                titulo: "Aprovação PGP",
+                usuario: "Pedro",
+                data: "02/09/2019 10:00h"
               },
               {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
+                titulo: "Aprovação OPE",
+                usuario: "Maria",
+                data: "05/09/2019 14:30h"
               }
             ]
           },
           {
             id: "1",
-            nome: "JOSE VICENTE MIRANDA RESCIGNO",
-            dominio: "GPP_UsuárioChave",
-            chave: "UsuarioChave",
-            data: "28/05/19 - 11:48h",
-            status: "Aprovado",
+            dataInicio: "13/09/19 09:00h",
+            dataTermino: "19/09/19 17:00h",
+            servico: "inspeção anual da unidade geradora",
             historico: [
               {
                 titulo: "Aprovação usina",
                 usuario: "João",
-                data: "10/09/2019 08:57h"
+                data: "01/09/2019 08:57h"
               },
               {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
+                titulo: "Aprovação PGP",
+                usuario: "Pedro",
+                data: "02/09/2019 10:00h"
+              },
+              {
+                titulo: "Aprovação OPE",
+                usuario: "Maria",
+                data: "05/09/2019 14:30h"
               }
             ]
-          },
-          {
-            id: "2",
-            nome: "JOSE VICENTE MIRANDA RESCIGNO",
-            dominio: "GPP_UsuárioChave",
-            chave: "UsuarioChave",
-            data: "28/05/19 - 11:48h",
-            status: "Aprovado",
-            historico: []
           }
         ]
       },
@@ -66,12 +58,39 @@ async function find() {
         title: "Reprogramação",
         itens: [
           {
+            id: "2",
+            dataInicio: "25/09/19 09:00h",
+            dataTermino: "05/10/19 17:00h",
+            justificativa:
+              "verificação da necessidade de manutenção no gerador",
+            servico:
+              "inspeção anual da unidade geradora + manutenção de efeito corona do gerador",
+            historico: [
+              {
+                titulo: "Aprovação usina",
+                usuario: "João",
+                data: "10/09/2019 08:57h"
+              },
+              {
+                titulo: "Aprovação PGP",
+                usuario: "Pedro",
+                data: "10/09/2019 10:00h"
+              },
+              {
+                titulo: "Aprovação OPE",
+                usuario: "Maria",
+                data: "10/09/2019 14:30h"
+              }
+            ]
+          },
+          {
             id: "3",
-            nome: "JOSE VICENTE MIRANDA RESCIGNO",
-            dominio: "GPP_UsuárioChave",
-            chave: "UsuarioChave",
-            data: "28/05/19 - 11:48h",
-            status: "Aprovado",
+            dataInicio: "25/09/19 09:00h",
+            dataTermino: "05/10/19 17:00h",
+            justificativa:
+              "verificação da necessidade de manutenção no gerador",
+            servico:
+              "inspeção anual da unidade geradora + manutenção de efeito corona do gerador",
             historico: [
               {
                 titulo: "Aprovação usina",
@@ -79,45 +98,11 @@ async function find() {
                 data: "10/09/2019 08:57h"
               },
               {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
-              },
-              {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
+                titulo: "Devolvido inicio fluxo PGP",
+                usuario: "Pedro",
+                data: "10/09/2019 10:00h"
               }
             ]
-          },
-          {
-            id: "4",
-            nome: "JOSE VICENTE MIRANDA RESCIGNO",
-            dominio: "GPP_UsuárioChave",
-            chave: "UsuarioChave",
-            data: "28/05/19 - 11:48h",
-            status: "Aprovado",
-            historico: [
-              {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
-              },
-              {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
-              }
-            ]
-          },
-          {
-            id: "5",
-            nome: "JOSE VICENTE MIRANDA RESCIGNO",
-            dominio: "GPP_UsuárioChave",
-            chave: "UsuarioChave",
-            data: "28/05/19 - 11:48h",
-            status: "Aprovado",
-            historico: []
           }
         ]
       },
@@ -125,27 +110,26 @@ async function find() {
         title: "Cancelamento",
         itens: [
           {
-            id: "6",
-            nome: "JOSE VICENTE MIRANDA RESCIGNO",
-            dominio: "GPP_UsuárioChave",
-            chave: "UsuarioChave",
-            data: "28/05/19 - 11:48h",
-            status: "Aprovado",
+            id: "4",
+            data: "25/09/2019",
+            usuario: "Maria",
+            justificativa:
+              "decisão alta direção em postergar a manutenção para efetuar modernização da unidade geradora em 2021",
             historico: [
               {
                 titulo: "Aprovação usina",
                 usuario: "João",
-                data: "10/09/2019 08:57h"
+                data: "26/10/2019 08:57h"
               },
               {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
+                titulo: "Aprovação PGP",
+                usuario: "Pedro",
+                data: "27/10/2019 10:00h"
               },
               {
-                titulo: "Aprovação usina",
-                usuario: "João",
-                data: "10/09/2019 08:57h"
+                titulo: "Aprovação OPE",
+                usuario: "Maria",
+                data: "30/10/2019 14:30h"
               }
             ]
           }
