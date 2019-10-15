@@ -59,5 +59,6 @@ router.route("/permissao/tela").get(item_dominio.getTela);
 router.route("/permissao/usuario").get(item_dominio.getUsuario);
 router.route("/permissao/dominio").get(item_dominio.getDominio);
 router.route("/permissao/item_dominio").get(item_dominio.getItemDominio);
+router.route("/parada_programada/situacao").get(item_dominio.getSituacao);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const database = require("../utils/database.js");
 
-let queryClassificacao = `SELECT l_cpu.cd_classificacao_parada, l_cpu.ds_classificacao_parada FROM sau_classificacao_parada l_cpu WHERE fl_ativo = 1 
+let queryClassificacao = `SELECT l_cpu.cd_classificacao_parada cd_item_dominio, l_cpu.ds_classificacao_parada ds_item_dominio FROM sau_classificacao_parada l_cpu WHERE fl_ativo = 1 
 AND (cd_aplicacao_parada = 'A')`;
 
 async function findClassificacao(context) {

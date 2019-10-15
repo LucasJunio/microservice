@@ -127,3 +127,15 @@ async function getItemDominio(req, res, next) {
 }
 
 module.exports.getItemDominio = getItemDominio;
+
+async function getSituacao(req, res, next) {
+  try {
+    const rows = await item_dominio.findSituacao();
+
+    res.status(200).json(rows);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+}
+
+module.exports.getSituacao = getSituacao;
