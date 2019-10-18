@@ -1,20 +1,14 @@
-
-# DEPLOYMENT
-apiVersion: apps/v1
-kind: Deployment
+---
+#DEPLOYMENT CONFIG
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
 metadata:
   name: __APP_NAME__
   namespace: __APP_NAMESPACE__
 spec:
-  replicas: 2
   selector:
-    matchLabels:
-      app: __APP_NAME__
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+    app: __APP_NAME__
+  replicas: 1
   template:
     metadata:
       labels:
@@ -23,16 +17,26 @@ spec:
       containers:
         - name: __APP_NAME__
           image: "__DOCKER_SERVER__/__APP_NAMESPACE__/__DOCKER_IMAGE__:__buildNumber__"
-          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: SAU_PP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: endpoint-sau
+                  key: sau-pp-endpoint
+              envFrom:
+                secretRef:
+                  name: endpoint-sau
+            - name: SAU_PGI_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: endpoint-sau
+                  key: sau-pgi-endpoint
+              envFrom:
+                secretRef:
+                  name: endpoint-sau
           ports:
-            - containerPort: 80
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            successThreshold: 1
+            - containerPort: 8080
+              protocol: TCP
 
 ---
 # SERVICE
@@ -43,9 +47,9 @@ metadata:
   namespace: __APP_NAMESPACE__
 spec:
   ports:
-    - name: http
-      port: 80
-      targetPort: 80
+    - name: 8080-tcp
+      port: 8080
+      targetPort: 8080
       protocol: TCP
   selector:
     app: __APP_NAME__
@@ -61,11 +65,9 @@ metadata:
 spec:
   host: __HOSTNAME__
   port:
-    targetPort: http
+    targetPort: 8080-tcp
   to:
     kind: Service
     name: __APP_NAME__
     weight: 100
   wildcardPolicy: None
-
-
