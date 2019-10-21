@@ -52,25 +52,29 @@ module.exports.putReprogramacao = putReprogramacao;
 
 async function post(req, res, next) {
   try {
-    const list_unidade_geradora = req.body.list_unidade_geradora;
-    let id = { cd: [] };
+    const { form, unidadesGeradoras } = req.body.data;
+    let rows;
 
-    for (const unidadeGeradora of list_unidade_geradora) {
-      const cd_unidade_geradora = unidadeGeradora.value;
+    for (const unidadeGeradora of unidadesGeradoras) {
+      const cd_unidade_geradora = unidadeGeradora.CD_ITEM_DOMINIO;
 
       let cd_parada = await programacao_parada.findLastIdParada();
-      cd_parada = cd_parada.length === 0 ? 1 : cd_parada[0].CD_PARADA + 1;
+      cd_parada = cd_parada.length === 0 ? 1 : cd_parada[0].CD_ITEM_DOMINIO + 1;
 
-      await programacao_parada.create({
-        ...req.body.obj_parada,
+      rows = await programacao_parada.create({
+        ...form,
         CD_PARADA: cd_parada,
         CD_UNIDADE_GERADORA: cd_unidade_geradora
       });
 
-      id = { cd: [...id.cd, cd_parada] };
+      if (!rows) {
+        res.status(400).json("Erro ao salvar");
+        return;
+      }
+      console.log(rows);
     }
 
-    res.status(201).json(id);
+    res.status(201).json(rows);
   } catch (error) {
     res.status(400).send(error.message);
   }
