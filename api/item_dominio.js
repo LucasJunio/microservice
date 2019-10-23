@@ -6,9 +6,7 @@ async function getTipoParada(req, res, next) {
   try {
     const context = {};
 
-    context.data_inicio_programacao = moment(
-      req.query.dt_inicio_programacao
-    ).format("DD/MM/YYYY");
+    context.data_inicio_programacao = moment(req.query.dt_inicio_programacao).format("DD/MM/YYYY");
 
     const rowsProgParada = await param_prog_paradas.find(context);
 
@@ -67,63 +65,3 @@ async function getTags(req, res, next) {
 }
 
 module.exports.getTags = getTags;
-
-async function getPerfil(req, res, next) {
-  try {
-    const rows = await item_dominio.findPerfil();
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-}
-
-module.exports.getPerfil = getPerfil;
-
-async function getTela(req, res, next) {
-  try {
-    const rows = await item_dominio.findTela();
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-}
-
-module.exports.getTela = getTela;
-
-async function getUsuario(req, res, next) {
-  try {
-    const rows = await item_dominio.findUsuario();
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-}
-
-module.exports.getUsuario = getUsuario;
-
-async function getDominio(req, res, next) {
-  try {
-    const rows = await item_dominio.findDominio();
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-}
-
-module.exports.getDominio = getDominio;
-
-async function getItemDominio(req, res, next) {
-  try {
-    const rows = await item_dominio.findItemDominio();
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-}
-
-module.exports.getItemDominio = getItemDominio;
