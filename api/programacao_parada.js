@@ -90,17 +90,19 @@ async function getAll(req, res, next) {
       .filter(key => query[key] !== "")
       .map(key => {
         if (key === "dt_criacao_parada") {
-          [`${key}=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`];
+          return [
+            `dt_criacao_parada=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
+          ];
         } else if (key === "dt_hora_inicio_programacao") {
-          [
+          return [
             `dt_hora_inicio_programacao>=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
           ];
         } else if (key === "dt_hora_termino_programacao") {
-          [
+          return [
             `dt_hora_inicio_programacao<=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
           ];
         } else {
-          [`${[key]}=${query[key]}`];
+          return [`${[key]}=${query[key]}`];
         }
       });
 

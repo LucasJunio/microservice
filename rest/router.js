@@ -53,6 +53,7 @@ router
 router
   .route("/parada_programada")
   .post((req, res, next) => programacao_parada.post(req, res, next));
+router.route("/parada_programada").get(programacao_parada.getAll);
 router
   .route("/parada_programada/id_parada")
   .get(programacao_parada.getLastIdParada);
