@@ -68,12 +68,4 @@ router
 router.route("/parada_programada/num_pgi").get(pgi.getNumPGI);
 router.route("/parada_programada/tags").get(item_dominio.getTags);
 router.route("/parada_programada/historico").get(historico.getHistorico);
-router.route("/permissao/perfil").get(item_dominio.getPerfil);
-router.route("/permissao/tela").get(item_dominio.getTela);
-router.route("/permissao/usuario").get(item_dominio.getUsuario);
-router.route("/permissao/dominio").get(item_dominio.getDominio);
-router.route("/permissao/item_dominio").get(item_dominio.getItemDominio);
-router.route("/parada_programada/situacao").get(item_dominio.getSituacao);
-router.route("/parada_programada").get(programacao_parada.getAll);
-
 module.exports = router;
