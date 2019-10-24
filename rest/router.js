@@ -32,5 +32,4 @@ router.route("/parada_programada/id_parada_seq").get(programacao_parada.getLastI
 router.route("/parada_programada/num_pgi").get(pgi.getNumPGI);
 router.route("/parada_programada/tags").get(item_dominio.getTags);
 router.route("/parada_programada/historico").get(historico.getHistorico);
-
 module.exports = router;

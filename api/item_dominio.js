@@ -65,3 +65,15 @@ async function getTags(req, res, next) {
 }
 
 module.exports.getTags = getTags;
+
+async function getSituacao(req, res, next) {
+  try {
+    const rows = await item_dominio.findSituacao();
+
+    res.status(200).json(rows);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+}
+
+module.exports.getSituacao = getSituacao;

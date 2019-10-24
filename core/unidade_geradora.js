@@ -1,19 +1,18 @@
 const database = require("../utils/database.js");
 
 const baseQuery = `SELECT SG_UNIDADE_GERADORA DS_ITEM_DOMINIO, CD_UNIDADE_GERADORA CD_ITEM_DOMINIO
-FROM sau_unidade_geradora 
-WHERE fl_ativo = '1' `;
+FROM sau_unidade_geradora`;
 
 async function find(context) {
-  let query = baseQuery;
+  let query = "";
   const binds = {};
 
   if (context.id) {
+    query += baseQuery;
     binds.usinas_id = context.id;
-    query += `\nand SG_USINA = :usinas_id`;
+    query += `\nWHERE cd_usina = :usinas_id`;
+    query += `\nAND fl_ativo = 1 ORDER BY 1`;
   }
-
-  query += `\nORDER BY cd_unidade_geradora`;
 
   console.log(query);
   const result = await database.simpleExecute(query, binds);
