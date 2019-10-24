@@ -4,7 +4,6 @@ async function get(req, res, next) {
   try {
     const context = {};
     context.data_inicio_programacao = req.query.data_inicio_programacao;
-    console.log(req.query.data_inicio_programacao);
 
     const rows = await param_programacao_paradas.find(context);
 
