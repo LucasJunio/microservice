@@ -34,6 +34,19 @@ async function findMotivoReprogramacao() {
 }
 module.exports.findMotivoReprogramacao = findMotivoReprogramacao;
 
+async function findMotivoReprogramacaoById(context) {
+  if (context.id) {
+    let query = baseQuery;
+    query += `\nWHERE do.id_dominio = 'MOTIVO_REPROG_PARADA'`;
+    query += `\nAND id.cd_item_dominio = ${context.id}`;
+    const result = await database.simpleExecute(query);
+    return result.rows;
+  } else {
+    return false;
+  }
+}
+module.exports.findMotivoReprogramacaoById = findMotivoReprogramacaoById;
+
 async function findStatusParada() {
   let query =
     baseQuery + `\nWHERE do.id_dominio = 'STATUS_PROG_PARADA'` + endQuery;
@@ -41,6 +54,21 @@ async function findStatusParada() {
   return result.rows;
 }
 module.exports.findStatusParada = findStatusParada;
+
+async function findStatusParadaById(context) {
+  let query = baseQuery;
+  if (context.id) {
+    query += `\nWHERE do.id_dominio = 'STATUS_PROG_PARADA'`;
+    query += `\nAND id.cd_item_dominio = ${context.id}`;
+    console.log(query);
+
+    const result = await database.simpleExecute(query);
+    return result.rows;
+  } else {
+    return false;
+  }
+}
+module.exports.findStatusParadaById = findStatusParadaById;
 
 async function findTags() {
   const result = [

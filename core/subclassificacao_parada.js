@@ -1,10 +1,11 @@
 const database = require("../utils/database.js");
 
 let querySubClassificacao = `SELECT cd_subclassificacao_parada cd_item_dominio, ds_subclassificacao_parada ds_item_dominio 
-FROM sau_subclassificacao_parada WHERE fl_ativo = 1`;
+FROM sau_subclassificacao_parada `;
 
 async function findSubClassificacao(context) {
   let query = querySubClassificacao;
+  query += "\nWHERE fl_ativo = 1";
   const binds = {};
 
   if (context.sg_usina && context.cd_classificacao_parada) {
@@ -21,3 +22,16 @@ async function findSubClassificacao(context) {
   return result.rows;
 }
 module.exports.findSubClassificacao = findSubClassificacao;
+
+async function findById(context) {
+  let query = querySubClassificacao;
+
+  if (context.id) {
+    query += `\nWHERE cd_subclassificacao_parada = ${context.id}`;
+    const result = await database.simpleExecute(query);
+    return result.rows;
+  } else {
+    return false;
+  }
+}
+module.exports.findById = findById;

@@ -20,3 +20,17 @@ async function find(context) {
 }
 
 module.exports.find = find;
+
+async function findById(context) {
+  let query = baseQuery;
+
+  if (context.id) {
+    query += `\nWHERE CD_UNIDADE_GERADORA = ${context.id} ORDER BY 1`;
+    const result = await database.simpleExecute(query);
+    return result.rows;
+  } else {
+    return false;
+  }
+}
+
+module.exports.findById = findById;
