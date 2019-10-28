@@ -69,4 +69,5 @@ router
 router.route("/parada_programada/num_pgi").get(pgi.getNumPGI);
 router.route("/parada_programada/tags").get(item_dominio.getTags);
 router.route("/parada_programada/historico").get(historico.getHistorico);
+router.route("/parada_programada/situacao").get(item_dominio.getSituacao);
 module.exports = router;
