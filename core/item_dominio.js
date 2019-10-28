@@ -27,52 +27,40 @@ async function findTipoParada(context) {
 module.exports.findTipoParada = findTipoParada;
 
 async function findMotivoReprogramacao() {
-  let query = baseQuery + `\nWHERE do.id_dominio = 'MOTIVO_REPROG_PARADA'` + endQuery;
+  let query =
+    baseQuery + `\nWHERE do.id_dominio = 'MOTIVO_REPROG_PARADA'` + endQuery;
   const result = await database.simpleExecute(query);
   return result.rows;
 }
 module.exports.findMotivoReprogramacao = findMotivoReprogramacao;
 
-async function findMotivoReprogramacaoById(context) {
-  if (context.id) {
-    let query = baseQuery;
-    query += `\nWHERE do.id_dominio = 'MOTIVO_REPROG_PARADA'`;
-    query += `\nAND id.cd_item_dominio = ${context.id}`;
-    const result = await database.simpleExecute(query);
-    return result.rows;
-  } else {
-    return false;
-  }
-}
-module.exports.findMotivoReprogramacaoById = findMotivoReprogramacaoById;
-
 async function findStatusParada() {
-  let query = baseQuery + `\nWHERE do.id_dominio = 'STATUS_PROG_PARADA'` + endQuery;
+  let query =
+    baseQuery + `\nWHERE do.id_dominio = 'STATUS_PROG_PARADA'` + endQuery;
   const result = await database.simpleExecute(query);
   return result.rows;
 }
 module.exports.findStatusParada = findStatusParada;
 
-async function findStatusParadaById(context) {
-  let query = baseQuery;
-  if (context.id) {
-    query += `\nWHERE do.id_dominio = 'STATUS_PROG_PARADA'`;
-    query += `\nAND id.cd_item_dominio = ${context.id}`;
-    console.log(query);
-
-    const result = await database.simpleExecute(query);
-    return result.rows;
-  } else {
-    return false;
-  }
-}
-module.exports.findStatusParadaById = findStatusParadaById;
-
 async function findTags() {
   const result = [
     {
-      buttons: ["button_save", "button_search", "button_new", "button_restartFlow", "button_approveFlow", "button_linkCancel", "button_reprogramming"],
-      collapses: ["identificacao", "historico", "programacao", "execucao", "cancelamento"]
+      buttons: [
+        "button_save",
+        "button_search",
+        "button_new",
+        "button_restartFlow",
+        "button_approveFlow",
+        "button_linkCancel",
+        "button_reprogramming"
+      ],
+      collapses: [
+        "identificacao",
+        "historico",
+        "programacao",
+        "execucao",
+        "cancelamento"
+      ]
     }
   ];
   return result;
@@ -81,7 +69,8 @@ async function findTags() {
 module.exports.findTags = findTags;
 
 async function findSituacao() {
-  let query = baseQuery + `\nWHERE do.id_dominio = 'SITUACAO_PROG_PARADA'` + endQuery;
+  let query =
+    baseQuery + `\nWHERE do.id_dominio = 'SITUACAO_PROG_PARADA'` + endQuery;
   const result = await database.simpleExecute(query);
   return result.rows;
 }

@@ -19,16 +19,3 @@ async function findClassificacao(context) {
   return result.rows;
 }
 module.exports.findClassificacao = findClassificacao;
-
-async function findById(context) {
-  let query = queryClassificacao;
-
-  if (context.id) {
-    query += `\nWHERE l_cpu.cd_classificacao_parada = ${context.id}`;
-    const result = await database.simpleExecute(query);
-    return result.rows;
-  } else {
-    return false;
-  }
-}
-module.exports.findById = findById;

@@ -115,3 +115,22 @@ async function getAll(req, res, next) {
 }
 
 module.exports.getAll = getAll;
+
+async function getById(req, res, next) {
+  try {
+    const { query } = req;
+    const context = {};
+    let rows;
+
+    if (query.id) {
+      context.id = query.id;
+      rows = await programacao_parada.findById(context);
+    }
+
+    res.status(200).json(rows);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+}
+
+module.exports.getById = getById;
