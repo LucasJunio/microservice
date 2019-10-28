@@ -81,3 +81,37 @@ async function post(req, res, next) {
 }
 
 module.exports.post = post;
+
+async function getAll(req, res, next) {
+  try {
+    const { query } = req;
+
+    const context = Object.keys(query)
+      .filter(key => query[key] !== "")
+      .map(key => {
+        if (key === "dt_criacao_parada") {
+          return [
+            `dt_criacao_parada=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
+          ];
+        } else if (key === "dt_hora_inicio_programacao") {
+          return [
+            `dt_hora_inicio_programacao>=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
+          ];
+        } else if (key === "dt_hora_termino_programacao") {
+          return [
+            `dt_hora_inicio_programacao<=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
+          ];
+        } else {
+          return [`${[key]}=${query[key]}`];
+        }
+      });
+
+    const rows = await programacao_parada.findAll(context);
+
+    res.status(200).json(rows);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+}
+
+module.exports.getAll = getAll;

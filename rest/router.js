@@ -16,20 +16,58 @@ router.get("/", (req, res) => {
   });
 });
 router.route("/usinas").get(usinas.get);
+router.route("/usinas/id").get(usinas.getById);
 router.route("/unidade_geradora").get(unidade_geradora.get);
+router.route("/unidade_geradora/id").get(unidade_geradora.getById);
 router.route("/parada_programada/tipo_parada").get(item_dominio.getTipoParada);
-router.route("/parada_programada/status_parada").get(item_dominio.getStatusParada);
-router.route("/parada_programada/classificacao_parada").get(classificacao_parada.getClassificacao);
-router.route("/parada_programada/sub_classificacao_parada").get(subclassificacao_parada.getSubClassificacao);
-router.route("/parada_programada/motivo_reprogramacao").get(item_dominio.getMotivoReprogramacao);
-router.route("/parada_programada/param_programacao_paradas").get(param_programacao_paradas.get);
-router.route("/parada_programada/nro_anos_parada_longo_prazo").get(param_programacao_paradas.getNroAnosParadaLongoPrazo);
-router.route("/parada_programada").post((req, res, next) => programacao_parada.post(req, res, next));
-router.route("/parada_programada/id_parada").get(programacao_parada.getLastIdParada);
-router.route("/parada_programada/cancelamento").put(programacao_parada.putCancelamento);
-router.route("/parada_programada/reprogramacao").put(programacao_parada.putReprogramacao);
-router.route("/parada_programada/id_parada_seq").get(programacao_parada.getLastIdSeq);
+router
+  .route("/parada_programada/status_parada")
+  .get(item_dominio.getStatusParada);
+router
+  .route("/parada_programada/status_parada/id")
+  .get(item_dominio.getStatusParadaById);
+router
+  .route("/parada_programada/classificacao_parada")
+  .get(classificacao_parada.getClassificacao);
+router
+  .route("/parada_programada/classificacao_parada/id")
+  .get(classificacao_parada.getById);
+router
+  .route("/parada_programada/sub_classificacao_parada")
+  .get(subclassificacao_parada.getSubClassificacao);
+router
+  .route("/parada_programada/sub_classificacao_parada/id")
+  .get(subclassificacao_parada.getById);
+router
+  .route("/parada_programada/motivo_reprogramacao")
+  .get(item_dominio.getMotivoReprogramacao);
+router
+  .route("/parada_programada/motivo_reprogramacao/id")
+  .get(item_dominio.getMotivoReprogramacaoById);
+router
+  .route("/parada_programada/param_programacao_paradas")
+  .get(param_programacao_paradas.get);
+router
+  .route("/parada_programada/nro_anos_parada_longo_prazo")
+  .get(param_programacao_paradas.getNroAnosParadaLongoPrazo);
+router
+  .route("/parada_programada")
+  .post((req, res, next) => programacao_parada.post(req, res, next));
+router.route("/parada_programada").get(programacao_parada.getAll);
+router
+  .route("/parada_programada/id_parada")
+  .get(programacao_parada.getLastIdParada);
+router
+  .route("/parada_programada/cancelamento")
+  .put(programacao_parada.putCancelamento);
+router
+  .route("/parada_programada/reprogramacao")
+  .put(programacao_parada.putReprogramacao);
+router
+  .route("/parada_programada/id_parada_seq")
+  .get(programacao_parada.getLastIdSeq);
 router.route("/parada_programada/num_pgi").get(pgi.getNumPGI);
 router.route("/parada_programada/tags").get(item_dominio.getTags);
 router.route("/parada_programada/historico").get(historico.getHistorico);
+router.route("/parada_programada/situacao").get(item_dominio.getSituacao);
 module.exports = router;

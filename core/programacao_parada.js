@@ -1,5 +1,5 @@
 const database = require("../utils/database.js");
-const oracledb = require("oracledb");
+const moment = require("moment");
 
 const queryFindLastIdParada = `SELECT CD_PARADA CD_ITEM_DOMINIO FROM SAU_PROGRAMACAO_PARADA ORDER BY CD_PROGRAMACAO_PARADA DESC FETCH NEXT 1 ROWS ONLY`;
 
@@ -219,3 +219,25 @@ async function create(emp) {
 }
 
 module.exports.create = create;
+
+const queryFindAlll = `SELECT * FROM SAU_PROGRAMACAO_PARADA`;
+
+async function findAll(context) {
+  let query = queryFindAlll;
+  if (context.length !== 0) {
+    context.forEach((element, index) => {
+      index === 0
+        ? (query += `\nWHERE ${element}`)
+        : (query += `\nAND ${element}`);
+    });
+  }
+
+  query += "\nORDER BY 1";
+  console.log(query);
+
+  const result = await database.simpleExecute(query);
+
+  return result;
+}
+
+module.exports.findAll = findAll;
