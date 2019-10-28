@@ -220,10 +220,12 @@ async function create(emp) {
 
 module.exports.create = create;
 
-const queryFindAlll = `SELECT * FROM SAU_PROGRAMACAO_PARADA`;
+const queryFindAll = `SELECT SIDS.DS_ITEM_DOMINIO AS STATUS, SIDTP.DS_ITEM_DOMINIO AS TIPO_PARADA, SPP.* FROM SAU_PROGRAMACAO_PARADA SPP
+INNER JOIN SAU_ITEM_DOMINIO SIDTP ON (SPP.ID_TIPO_PARADA = SIDTP.CD_ITEM_DOMINIO )
+INNER JOIN SAU_ITEM_DOMINIO SIDS ON (SPP.ID_STATUS = SIDS.CD_ITEM_DOMINIO)`;
 
 async function findAll(context) {
-  let query = queryFindAlll;
+  let query = queryFindAll;
   if (context.length !== 0) {
     context.forEach((element, index) => {
       index === 0
@@ -232,7 +234,7 @@ async function findAll(context) {
     });
   }
 
-  query += "\nORDER BY 1";
+  query += "\nORDER BY SPP.CD_PARADA";
   console.log(query);
 
   const result = await database.simpleExecute(query);
@@ -241,3 +243,15 @@ async function findAll(context) {
 }
 
 module.exports.findAll = findAll;
+
+const queryFindById = `SELECT * FROM SAU_PROGRAMACAO_PARADA`;
+
+async function findById(context) {
+  let query = queryFindById;
+  query += `\nWHERE CD_PARADA=${context.id}`;
+  console.log(query);
+  const result = await database.simpleExecute(query);
+  return result;
+}
+
+module.exports.findById = findById;

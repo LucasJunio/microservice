@@ -22,16 +22,3 @@ async function findSubClassificacao(context) {
   return result.rows;
 }
 module.exports.findSubClassificacao = findSubClassificacao;
-
-async function findById(context) {
-  let query = querySubClassificacao;
-
-  if (context.id) {
-    query += `\nWHERE cd_subclassificacao_parada = ${context.id}`;
-    const result = await database.simpleExecute(query);
-    return result.rows;
-  } else {
-    return false;
-  }
-}
-module.exports.findById = findById;

@@ -6,7 +6,9 @@ async function getTipoParada(req, res, next) {
   try {
     const context = {};
 
-    context.data_inicio_programacao = moment(req.query.dt_inicio_programacao).format("DD/MM/YYYY");
+    context.data_inicio_programacao = moment(
+      req.query.dt_inicio_programacao
+    ).format("DD/MM/YYYY");
 
     const rowsProgParada = await param_prog_paradas.find(context);
 
@@ -42,20 +44,6 @@ async function getMotivoReprogramacao(req, res, next) {
 
 module.exports.getMotivoReprogramacao = getMotivoReprogramacao;
 
-async function getMotivoReprogramacaoById(req, res, next) {
-  try {
-    const context = {};
-    context.id = req.query.id;
-    const rows = await item_dominio.findMotivoReprogramacaoById(context);
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-}
-
-module.exports.getMotivoReprogramacaoById = getMotivoReprogramacaoById;
-
 async function getStatusParada(req, res, next) {
   try {
     const rows = await item_dominio.findStatusParada();
@@ -67,20 +55,6 @@ async function getStatusParada(req, res, next) {
 }
 
 module.exports.getStatusParada = getStatusParada;
-
-async function getStatusParadaById(req, res, next) {
-  try {
-    const context = {};
-    context.id = req.query.id;
-    const rows = await item_dominio.findStatusParadaById(context);
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-}
-
-module.exports.getStatusParadaById = getStatusParadaById;
 
 async function getTags(req, res, next) {
   try {
