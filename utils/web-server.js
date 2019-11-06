@@ -2,7 +2,7 @@ const http = require("http");
 const express = require("express");
 const webServerConfig = require("../config/web-server.js");
 const router = require("../rest/router");
-const cors = require("./cors");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 
 let httpServer;
@@ -14,16 +14,19 @@ function initialize() {
 
     // Mount the router at /api so all its routes start with /api
     app.use(cors());
-    app.use(bodyParser.json());
+    app.options("*", cors());
+    app.use(
+      bodyParser.urlencoded({
+        extended: true
+      })
+    );
     app.use("/api", router);
     // Parse incoming JSON requests and revive JSON.
 
     httpServer
       .listen(webServerConfig.port)
       .on("listening", () => {
-        console.log(
-          `Web server listening on localhost:${webServerConfig.port}`
-        );
+        console.log(`Web server listening on localhost:${webServerConfig.port}`);
 
         resolve();
       })
