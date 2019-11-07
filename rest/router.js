@@ -41,5 +41,8 @@ router.route("/parada_programada/tags").get(item_dominio.getTags);
 router.route("/parada_programada/historico").get(historico.getHistorico);
 router.route("/parada_programada/situacao").get(item_dominio.getSituacao);
 router.route("/parada_programada/id").get(programacao_parada.getById);
-router.route("/parada_programada/status").put(programacao_parada.putStatus);
+router.route("/parada_programada/status").put((req, res, next) => {
+  console.log(req.body)
+  programacao_parada.putStatus(req, res, next)}
+  );
 module.exports = router;

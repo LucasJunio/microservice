@@ -40,6 +40,7 @@ module.exports.putCancelamento = putCancelamento;
 
 async function putStatus(req, res, next) {
   try {
+    console.log(req);
     const rows = await programacao_parada.updateStatus(req.body);
 
     res.status(200).json(rows);

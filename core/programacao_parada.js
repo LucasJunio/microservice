@@ -1,6 +1,4 @@
 const database = require("../utils/database.js");
-const moment = require("moment");
-
 const queryFindLastIdParada = `SELECT CD_PARADA CD_ITEM_DOMINIO FROM SAU_PROGRAMACAO_PARADA ORDER BY CD_PROGRAMACAO_PARADA DESC FETCH NEXT 1 ROWS ONLY`;
 
 async function findLastIdParada() {
@@ -85,11 +83,11 @@ async function updateCancelamento(context) {
     query = queryInsertBase;
     query += `\n SELECT SAU_PARADA_S.nextval,
     CD_PARADA,
-    CD_SEQ_PARADA+1,
+    CD_SEQ_PARADA+1 as CD_SEQ_PARADA,
     CD_USINA,
     DT_CRIACAO_PARADA,
     ID_TIPO_PARADA,
-    ${context.status},
+    ${context.status} as ID_STATUS,
     DT_HORA_INICIO_PROGRAMACAO,
     DT_HORA_TERMINO_PROGRAMACAO,
     ID_TIPO_PROGRAMACAO,
@@ -103,9 +101,9 @@ async function updateCancelamento(context) {
     DS_SERVICO_EXECUTADO,
     DS_NUM_CEL_ANEEL,
     FL_COMUNICAR_ANEEL,
-    TO_DATE('${context.dt_cancelamento}', 'yyyy-mm-dd hh24:mi:ss'),
-    '${context.ds_motivo_cancelamento}',
-    ${context.status},
+    TO_DATE('${context.dt_cancelamento}', 'yyyy-mm-dd hh24:mi:ss') as DT_CANCELAMENTO,
+    '${context.ds_motivo_cancelamento}' as DS_MOTIVO_CANCELAMENTO,
+    ${context.status} as ID_STATUS_CANCELAMENTO,,
     NM_AREA_ORIGEM_CANCELAMENTO,
     DT_HORA_INICIO_REPROGRAMACAO,
     DT_HORA_TERMINO_REPROGRAMACAO,
@@ -128,7 +126,7 @@ async function updateCancelamento(context) {
     USER_CREATE,
     DATE_CREATE,
     USER_UPDATE,
-    TO_CHAR(SYSDATE, 'dd/mm/yyyy'),
+    TO_CHAR(SYSDATE, 'dd/mm/yyyy') as DATE_UPDATE,
     NR_REPROGRAMACOES_APROVADAS,
     CD_UNIDADE_GERADORA,
     ID_CONJUNTO_USINA,
@@ -147,16 +145,17 @@ module.exports.updateCancelamento = updateCancelamento;
 async function updateStatus(context) {
   let query = "";
   let result = "";
+  console.log(context);
 
   if (context.id_programacao_parada && context.status) {
     query = queryInsertBase;
     query += `\n SELECT SAU_PARADA_S.nextval,
     CD_PARADA,
-    CD_SEQ_PARADA+1,
+    CD_SEQ_PARADA+1 as CD_SEQ_PARADA,
     CD_USINA,
     DT_CRIACAO_PARADA,
     ID_TIPO_PARADA,
-    ${context.status},
+    ${context.status} as ID_STATUS,
     DT_HORA_INICIO_PROGRAMACAO,
     DT_HORA_TERMINO_PROGRAMACAO,
     ID_TIPO_PROGRAMACAO,
@@ -195,7 +194,7 @@ async function updateStatus(context) {
     USER_CREATE,
     DATE_CREATE,
     USER_UPDATE,
-    TO_CHAR(SYSDATE, 'dd/mm/yyyy'),
+    DATE_UPDATE,
     NR_REPROGRAMACOES_APROVADAS,
     CD_UNIDADE_GERADORA,
     ID_CONJUNTO_USINA,
@@ -203,9 +202,11 @@ async function updateStatus(context) {
     (select * from (SELECT cd_seq_parada from SAU_PROGRAMACAO_PARADA where cd_parada = ${context.id_programacao_parada}  order by cd_seq_parada DESC  )where rownum = 1)
     `;
 
-    console.log(query);
+    console.log("abc");
 
     result = await database.simpleExecute(query);
+    console.log(result);
+    console.log("aaaasdasdasd");
   }
   return result.rowsAffected;
 }
@@ -220,11 +221,11 @@ async function updateReprogramacao(context) {
     query = queryInsertBase;
     query += `\n SELECT SAU_PARADA_S.nextval,
     CD_PARADA,
-    CD_SEQ_PARADA+1,
+    CD_SEQ_PARADA+1 as CD_SEQ_PARADA,
     CD_USINA,
     DT_CRIACAO_PARADA,
     ID_TIPO_PARADA,
-    ${context.status},
+    ${context.status} as ID_STATUS,
     DT_HORA_INICIO_PROGRAMACAO,
     DT_HORA_TERMINO_PROGRAMACAO,
     ID_TIPO_PROGRAMACAO,
@@ -242,16 +243,16 @@ async function updateReprogramacao(context) {
     DS_MOTIVO_CANCELAMENTO,
     ID_STATUS_CANCELAMENTO,
     NM_AREA_ORIGEM_CANCELAMENTO,
-    TO_DATE('${context.dt_inicio_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss'),
-    TO_DATE('${context.dt_termino_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss')
-    ID_STATUS_REPROGRAMACAO,`;
-    query += context.id_origem_reprogramacao ? `'${context.id_origem_reprogramacao}',` : "'',";
-    query += context.id_motivo_reprogramacao ? `'${context.id_motivo_reprogramacao}',` : "'',";
-    query += context.ds_motivo_reprogramacao ? `'${context.ds_motivo_reprogramacao}',` : "'',";
-    query += context.cd_classificacao ? `'${context.cd_classificacao}',` : "'',";
-    query += context.cd_subclassificacao ? `'${context.cd_subclassificacao}',` : "'',";
-    query += context.ds_nova_descricao ? `'${context.ds_nova_descricao}',` : "'',";
-    query += context.ds_observacao ? `'${context.ds_observacao}',` : "'',";
+    TO_DATE('${context.dt_inicio_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss') as DT_HORA_INICIO_REPROGRAMACAO,
+    TO_DATE('${context.dt_termino_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss') as DT_HORA_TERMINO_REPROGRAMACAO
+    ${context.status} as ID_STATUS_REPROGRAMACAO,`;
+    query += context.id_origem_reprogramacao ? `'${context.id_origem_reprogramacao}' as ID_ORIGEM_REPROGRAMACAO,` : "ID_ORIGEM_REPROGRAMACAO,";
+    query += context.id_motivo_reprogramacao ? `'${context.id_motivo_reprogramacao} as ID_MOTIVO_REPROGRAMACAO',` : "ID_MOTIVO_REPROGRAMACAO,";
+    query += context.ds_motivo_reprogramacao ? `'${context.ds_motivo_reprogramacao}' as DS_MOTIVO_REPROGRAMACAO,` : "DS_MOTIVO_REPROGRAMACAO,";
+    query += context.cd_classificacao ? `'${context.cd_classificacao}' as CD_CLASSIF_REPROGR_PARADA,` : "CD_CLASSIF_REPROGR_PARADA,";
+    query += context.cd_subclassificacao ? `'${context.cd_subclassificacao}' as CD_SUBCLAS_REPROGR_PARADA,` : "CD_SUBCLAS_REPROGR_PARADA,";
+    query += context.ds_nova_descricao ? `'${context.ds_nova_descricao}' as DS_NOVA_DESCRICAO_PROGR_PARADA,` : "DS_NOVA_DESCRICAO_PROGR_PARADA,";
+    query += context.ds_observacao ? `'${context.ds_observacao}' as DS_OBSERVACAO_REPROGR_PARADA,` : "DS_OBSERVACAO_REPROGR_PARADA,";
     `
     NM_AREA_ORIGEM_REPROGRAMACAO,
     CD_USUARIO_CONCLUSAO,
@@ -353,7 +354,14 @@ async function create(emp) {
 
 module.exports.create = create;
 
-const queryFindAll = `(SELECT * FROM ( SELECT SIDS.DS_ITEM_DOMINIO AS STATUS, SIDTP.DS_ITEM_DOMINIO AS TIPO_PARADA, SPP.* FROM SAU_PROGRAMACAO_PARADA SPP
+const queryFindAll = `
+SELECT SIDS.DS_ITEM_DOMINIO AS STATUS,
+SIDTP.DS_ITEM_DOMINIO AS TIPO_PARADA, 
+SPP.CD_PARADA as CD_PARADA,
+SPP.DT_HORA_INICIO_PROGRAMACAO as DT_HORA_INICIO_PROGRAMACAO , 
+SPP.DT_HORA_TERMINO_PROGRAMACAO as DT_HORA_TERMINO_PROGRAMACAO, 
+SPP.DS_PROGRAMACAO_PARADA as DS_PROGRAMACAO_PARADA
+FROM SAU_PROGRAMACAO_PARADA SPP
 INNER JOIN SAU_ITEM_DOMINIO SIDTP ON (SPP.ID_TIPO_PARADA = SIDTP.CD_ITEM_DOMINIO )
 INNER JOIN SAU_ITEM_DOMINIO SIDS ON (SPP.ID_STATUS = SIDS.CD_ITEM_DOMINIO)`;
 
@@ -363,9 +371,11 @@ async function findAll(context) {
     context.forEach((element, index) => {
       index === 0 ? (query += `\n WHERE ${element}`) : (query += `\nAND ${element}`);
     });
+    query += " AND SPP.CD_SEQ_PARADA = (select max(CD_SEQ_PARADA) from SAU_PROGRAMACAO_PARADA where CD_PARADA= SPP.CD_PARADA)";
+  } else {
+    query += " WHERE SPP.CD_SEQ_PARADA = (select max(CD_SEQ_PARADA) from SAU_PROGRAMACAO_PARADA where CD_PARADA= SPP.CD_PARADA)";
   }
-
-  query += "\nORDER BY SPP.CD_PARADA AND cd_seq_parada) WHERE rownum = 1)";
+  query += "\nORDER BY SPP.CD_PARADA DESC, SPP.CD_SEQ_PARADA DESC";
   console.log(query);
 
   const result = await database.simpleExecute(query);
