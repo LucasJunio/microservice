@@ -52,7 +52,8 @@ module.exports.putStatus = putStatus;
 
 async function putReprogramacao(req, res, next) {
   try {
-    const rows = await programacao_parada.updateReprogramacao(req.body);
+    const { form } = req.body;
+    const rows = await programacao_parada.updateReprogramacao(form);
 
     res.status(200).json(rows);
   } catch (error) {
@@ -64,7 +65,7 @@ module.exports.putReprogramacao = putReprogramacao;
 
 async function post(req, res, next) {
   try {
-    const { form, unidadesGeradoras } = req.body.data;
+    const { form, unidadesGeradoras } = req.body;
     let rows;
 
     for (const unidadeGeradora of unidadesGeradoras) {

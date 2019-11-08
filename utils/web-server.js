@@ -15,11 +15,13 @@ function initialize() {
     // Mount the router at /api so all its routes start with /api
     app.use(cors());
     app.options("*", cors());
+    // app.use(express.bodyParser());
     app.use(
       bodyParser.urlencoded({
-        extended: true
+        extended: false
       })
     );
+    app.use(bodyParser.json());
     app.use("/api", router);
     // Parse incoming JSON requests and revive JSON.
 

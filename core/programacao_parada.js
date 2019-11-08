@@ -1,5 +1,5 @@
 const database = require("../utils/database.js");
-const queryFindLastIdParada = `SELECT CD_PARADA CD_ITEM_DOMINIO FROM SAU_PROGRAMACAO_PARADA ORDER BY CD_PROGRAMACAO_PARADA DESC FETCH NEXT 1 ROWS ONLY`;
+const queryFindLastIdParada = `SELECT CD_PARADA CD_ITEM_DOMINIO FROM SAU_PROGRAMACAO_PARADA ORDER BY CD_PARADA DESC, CD_PROGRAMACAO_PARADA DESC FETCH NEXT 1 ROWS ONLY`;
 
 async function findLastIdParada() {
   const result = await database.simpleExecute(queryFindLastIdParada);
@@ -216,8 +216,11 @@ module.exports.updateStatus = updateStatus;
 async function updateReprogramacao(context) {
   let query = "";
   let result = "";
-
-  if (context.id_programacao_parada && context.dt_inicio_reprogramacao && context.dt_termino_reprogramacao) {
+  console.log(context);
+  console.log(context.cd_parada);
+  console.log(context.dt_inicio_reprogramacao);
+  console.log(context.dt_termino_reprogramacao);
+  if (context.cd_parada && context.dt_inicio_reprogramacao && context.dt_termino_reprogramacao) {
     query = queryInsertBase;
     query += `\n SELECT SAU_PARADA_S.nextval,
     CD_PARADA,
@@ -225,7 +228,7 @@ async function updateReprogramacao(context) {
     CD_USINA,
     DT_CRIACAO_PARADA,
     ID_TIPO_PARADA,
-    ${context.status} as ID_STATUS,
+    '${context.status}' as ID_STATUS,
     DT_HORA_INICIO_PROGRAMACAO,
     DT_HORA_TERMINO_PROGRAMACAO,
     ID_TIPO_PROGRAMACAO,
@@ -244,16 +247,16 @@ async function updateReprogramacao(context) {
     ID_STATUS_CANCELAMENTO,
     NM_AREA_ORIGEM_CANCELAMENTO,
     TO_DATE('${context.dt_inicio_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss') as DT_HORA_INICIO_REPROGRAMACAO,
-    TO_DATE('${context.dt_termino_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss') as DT_HORA_TERMINO_REPROGRAMACAO
-    ${context.status} as ID_STATUS_REPROGRAMACAO,`;
+    TO_DATE('${context.dt_termino_reprogramacao}', 'yyyy-mm-dd hh24:mi:ss') as DT_HORA_TERMINO_REPROGRAMACAO,
+    '${context.status}' as ID_STATUS_REPROGRAMACAO,`;
     query += context.id_origem_reprogramacao ? `'${context.id_origem_reprogramacao}' as ID_ORIGEM_REPROGRAMACAO,` : "ID_ORIGEM_REPROGRAMACAO,";
-    query += context.id_motivo_reprogramacao ? `'${context.id_motivo_reprogramacao} as ID_MOTIVO_REPROGRAMACAO',` : "ID_MOTIVO_REPROGRAMACAO,";
+    query += context.id_motivo_reprogramacao ? `'${context.id_motivo_reprogramacao}' as ID_MOTIVO_REPROGRAMACAO,` : "ID_MOTIVO_REPROGRAMACAO,";
     query += context.ds_motivo_reprogramacao ? `'${context.ds_motivo_reprogramacao}' as DS_MOTIVO_REPROGRAMACAO,` : "DS_MOTIVO_REPROGRAMACAO,";
     query += context.cd_classificacao ? `'${context.cd_classificacao}' as CD_CLASSIF_REPROGR_PARADA,` : "CD_CLASSIF_REPROGR_PARADA,";
     query += context.cd_subclassificacao ? `'${context.cd_subclassificacao}' as CD_SUBCLAS_REPROGR_PARADA,` : "CD_SUBCLAS_REPROGR_PARADA,";
     query += context.ds_nova_descricao ? `'${context.ds_nova_descricao}' as DS_NOVA_DESCRICAO_PROGR_PARADA,` : "DS_NOVA_DESCRICAO_PROGR_PARADA,";
     query += context.ds_observacao ? `'${context.ds_observacao}' as DS_OBSERVACAO_REPROGR_PARADA,` : "DS_OBSERVACAO_REPROGR_PARADA,";
-    `
+    query += `
     NM_AREA_ORIGEM_REPROGRAMACAO,
     CD_USUARIO_CONCLUSAO,
     DT_CONCLUSAO,
@@ -265,19 +268,21 @@ async function updateReprogramacao(context) {
     USER_CREATE,
     DATE_CREATE,
     USER_UPDATE,
-    TO_CHAR(SYSDATE, 'dd/mm/yyyy'),
-    NR_REPROGRAMACOES_APROVADAS+1,
+    DATE_UPDATE,
+    NR_REPROGRAMACOES_APROVADAS+1 as NR_REPROGRAMACOES_APROVADAS,
     CD_UNIDADE_GERADORA,
     ID_CONJUNTO_USINA,
-    VERSION from SAU_PROGRAMACAO_PARADA where cd_parada = ${context.id_programacao_parada} and cd_seq_parada = 
-    (select * from (SELECT cd_seq_parada from SAU_PROGRAMACAO_PARADA where cd_parada = ${context.id_programacao_parada}  order by cd_seq_parada DESC  )where rownum = 1)
+    VERSION from SAU_PROGRAMACAO_PARADA where cd_parada = ${context.cd_parada} and cd_seq_parada = 
+    (select * from (SELECT cd_seq_parada from SAU_PROGRAMACAO_PARADA where cd_parada = ${context.cd_parada}  order by cd_seq_parada DESC  )where rownum = 1)
     `;
 
     console.log(query);
 
     result = await database.simpleExecute(query);
+    console.log(result);
+    console.log("aaaasdasdasd");
   }
-  return result;
+  return result.rowsAffected;
 }
 
 module.exports.updateReprogramacao = updateReprogramacao;
@@ -341,8 +346,6 @@ const queryInsert =
 
 async function create(emp) {
   if (emp.CD_PARADA && emp.CD_SEQ_PARADA && emp.CD_USINA && emp.DT_HORA_INICIO_PROGRAMACAO && emp.DT_HORA_TERMINO_PROGRAMACAO && emp.CD_CLASSIFICACAO_PROGR_PARADA && emp.CD_UNIDADE_GERADORA) {
-    console.log(emp);
-
     const paradaProgramada = Object.assign({}, emp);
     const result = await database.simpleExecute(queryInsert, paradaProgramada);
 
