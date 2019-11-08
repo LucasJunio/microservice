@@ -38,9 +38,22 @@ async function putCancelamento(req, res, next) {
 
 module.exports.putCancelamento = putCancelamento;
 
+async function putStatus(req, res, next) {
+  try {
+    console.log(req);
+    const rows = await programacao_parada.updateStatus(req.body);
+
+    res.status(200).json(rows);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+}
+module.exports.putStatus = putStatus;
+
 async function putReprogramacao(req, res, next) {
   try {
-    const rows = await programacao_parada.updateReprogramacao(req.body);
+    const { form } = req.body;
+    const rows = await programacao_parada.updateReprogramacao(form);
 
     res.status(200).json(rows);
   } catch (error) {
@@ -52,7 +65,7 @@ module.exports.putReprogramacao = putReprogramacao;
 
 async function post(req, res, next) {
   try {
-    const { form, unidadesGeradoras } = req.body.data;
+    const { form, unidadesGeradoras } = req.body;
     let rows;
 
     for (const unidadeGeradora of unidadesGeradoras) {
@@ -90,17 +103,11 @@ async function getAll(req, res, next) {
       .filter(key => query[key] !== "")
       .map(key => {
         if (key === "dt_criacao_parada") {
-          return [
-            `dt_criacao_parada=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
-          ];
+          return [`dt_criacao_parada=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`];
         } else if (key === "dt_hora_inicio_programacao") {
-          return [
-            `dt_hora_inicio_programacao>=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
-          ];
+          return [`dt_hora_inicio_programacao>=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`];
         } else if (key === "dt_hora_termino_programacao") {
-          return [
-            `dt_hora_inicio_programacao<=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`
-          ];
+          return [`dt_hora_inicio_programacao<=TO_DATE('${query[key]}', 'yyyy-mm-dd hh24:mi:ss')`];
         } else {
           return [`${[key]}=${query[key]}`];
         }
