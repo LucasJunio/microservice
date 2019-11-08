@@ -261,7 +261,7 @@ async function updateReprogramacao(context) {
     CD_USUARIO_CONCLUSAO,
     DT_CONCLUSAO,
     CD_USUARIO_CANCELAMENTO,
-    ID_STATUS_PROGRAMACAO,
+    'R' as ID_STATUS_PROGRAMACAO,
     ID_ATUAL,
     FL_REINICIAR_FLUXO,
     DS_LOG_STATUS,
@@ -269,7 +269,7 @@ async function updateReprogramacao(context) {
     DATE_CREATE,
     USER_UPDATE,
     DATE_UPDATE,
-    NR_REPROGRAMACOES_APROVADAS+1 as NR_REPROGRAMACOES_APROVADAS,
+    NR_REPROGRAMACOES_APROVADAS,
     CD_UNIDADE_GERADORA,
     ID_CONJUNTO_USINA,
     VERSION from SAU_PROGRAMACAO_PARADA where cd_parada = ${context.cd_parada} and cd_seq_parada = 
