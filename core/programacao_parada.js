@@ -126,7 +126,7 @@ async function updateCancelamento(context) {
     USER_CREATE,
     DATE_CREATE,
     USER_UPDATE,
-    TO_CHAR(SYSDATE, 'dd/mm/yyyy') as DATE_UPDATE,
+    TO_CHAR(SYSDATE, 'dd/Month/yyyy') as DATE_UPDATE,
     NR_REPROGRAMACOES_APROVADAS,
     CD_UNIDADE_GERADORA,
     ID_CONJUNTO_USINA,
@@ -194,7 +194,7 @@ async function updateStatus(context) {
     USER_CREATE,
     DATE_CREATE,
     USER_UPDATE,
-    DATE_UPDATE,
+    TO_CHAR(SYSDATE, 'dd/Month/yyyy') as DATE_UPDATE,
     NR_REPROGRAMACOES_APROVADAS,
     CD_UNIDADE_GERADORA,
     ID_CONJUNTO_USINA,
@@ -268,7 +268,7 @@ async function updateReprogramacao(context) {
     USER_CREATE,
     DATE_CREATE,
     USER_UPDATE,
-    DATE_UPDATE,
+    TO_CHAR(SYSDATE, 'dd/Month/yyyy') as DATE_UPDATE,
     NR_REPROGRAMACOES_APROVADAS,
     CD_UNIDADE_GERADORA,
     ID_CONJUNTO_USINA,
@@ -279,8 +279,6 @@ async function updateReprogramacao(context) {
     console.log(query);
 
     result = await database.simpleExecute(query);
-    console.log(result);
-    console.log("aaaasdasdasd");
   }
   return result.rowsAffected;
 }
