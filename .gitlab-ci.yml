@@ -49,9 +49,9 @@ image_build:
   script:
     - $(aws ecr get-login --no-include-email --region us-east-2)
     - docker build -t $REPOSITORY_URL/$REPOSITORY_NAME:latest .
-    - docker tag $REPOSITORY_URL/$REPOSITORY_NAME:latest $REPOSITORY_URL/$REPOSITORY_NAME:${CI_PIPELINE_ID}
+    - docker tag $REPOSITORY_URL/$REPOSITORY_NAME:latest $REPOSITORY_URL/$REPOSITORY_NAME:${CI_PIPELINE_IID}
     - test ! -z "${CI_COMMIT_TAG}" && docker push $REPOSITORY_NAME:latest
-    - docker push $REPOSITORY_URL/$REPOSITORY_NAME:${CI_PIPELINE_ID}
+    - docker push $REPOSITORY_URL/$REPOSITORY_NAME:${CI_PIPELINE_IID}
 
 deploy_release_kube:
   image: lwolf/kubectl_deployer:latest
@@ -61,7 +61,6 @@ deploy_release_kube:
   environment:
     name: release/$CI_BUILD_REF_NAME
     url: $ENVIRONMENT_URL
-    on_stop: stop_deploy
   script:
     - kubectl config set-cluster $EKS_CLUSTER --server="$K8S_URL" --insecure-skip-tls-verify=true
     - kubectl config set-credentials admin --token="$K8S_TOKEN"
@@ -69,7 +68,7 @@ deploy_release_kube:
     - kubectl config use-context default-context
     - kubectl get cs
     - cd kubernetes/
-    - sed -i "s/__VERSION__/${CI_PIPELINE_ID}/" zallpy-deployment.yaml zallpy-ingress.yaml zallpy-service.yaml
+    - sed -i "s/__VERSION__/${CI_PIPELINE_IID}/" zallpy-deployment.yaml zallpy-ingress.yaml zallpy-service.yaml
     - |
       if kubectl apply -f zallpy-deployment.yaml | grep -q unchanged; then
           echo "=> Patching deployment to force image update."
