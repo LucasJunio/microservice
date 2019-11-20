@@ -25,7 +25,6 @@ function simpleExecute(statement, binds = [], opts = {}) {
       console.log("------------------------------ SQL QUERY ------------------------------");
       console.log(statement);
       console.log("-----------------------------------------------------------------------");
-
       const result = await conn.execute(statement, binds, opts);
 
       resolve(result);
