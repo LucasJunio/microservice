@@ -1,12 +1,14 @@
+const {onBadRequest, onSuccess} = require("../utils/handlers");
+
 const programacao_parada = require("../core/programacao_parada.js");
 
 async function getLastIdParada(req, res, next) {
   try {
     const rows = await programacao_parada.findLastIdParada();
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -18,9 +20,9 @@ async function getLastIdSeq(req, res, next) {
     context.cd_parada = req.query.id_parada;
     const rows = await programacao_parada.findLastIdSeq(context);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -30,9 +32,9 @@ async function putCancelamento(req, res, next) {
   try {
     const rows = await programacao_parada.updateCancelamento(req.body);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -43,9 +45,9 @@ async function putStatus(req, res, next) {
     console.log(req);
     const rows = await programacao_parada.updateStatus(req.body);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 module.exports.putStatus = putStatus;
@@ -55,9 +57,9 @@ async function putReprogramacao(req, res, next) {
     const { form } = req.body;
     const rows = await programacao_parada.updateReprogramacao(form);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -68,6 +70,7 @@ async function post(req, res, next) {
     const { form, unidadesGeradoras } = req.body;
     let rows;
 
+    console.log('unidadesGeradoras', unidadesGeradoras)
     for (const unidadeGeradora of unidadesGeradoras) {
       const cd_unidade_geradora = unidadeGeradora.CD_ITEM_DOMINIO;
 
@@ -81,15 +84,15 @@ async function post(req, res, next) {
       });
 
       if (!rows) {
-        res.status(400).json("Erro ao salvar");
+        onBadRequest("Erro ao salvar");
         return;
       }
       console.log(rows);
     }
 
-    res.status(201).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -115,9 +118,9 @@ async function getAll(req, res, next) {
 
     const rows = await programacao_parada.findAll(context);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -134,9 +137,9 @@ async function getById(req, res, next) {
       rows = await programacao_parada.findById(context);
     }
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 

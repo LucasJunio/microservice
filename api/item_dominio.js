@@ -1,3 +1,5 @@
+const {onBadRequest, onSuccess} = require("../utils/handlers");
+
 const item_dominio = require("../core/item_dominio.js");
 const param_prog_paradas = require("../core/param_programacao_paradas.js");
 const moment = require("moment");
@@ -24,9 +26,9 @@ async function getTipoParada(req, res, next) {
 
     const rows = await item_dominio.findTipoParada(context);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -36,9 +38,9 @@ async function getMotivoReprogramacao(req, res, next) {
   try {
     const rows = await item_dominio.findMotivoReprogramacao();
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -48,9 +50,9 @@ async function getStatusParada(req, res, next) {
   try {
     const rows = await item_dominio.findStatusParada();
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -60,9 +62,9 @@ async function getTags(req, res, next) {
   try {
     const rows = await item_dominio.findTags();
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -72,9 +74,9 @@ async function getSituacao(req, res, next) {
   try {
     const rows = await item_dominio.findSituacao();
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 

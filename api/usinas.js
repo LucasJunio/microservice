@@ -1,3 +1,5 @@
+const {onBadRequest, onSuccess} = require("../utils/handlers");
+
 const usinas = require("../core/usinas.js");
 
 async function get(req, res, next) {
@@ -6,9 +8,9 @@ async function get(req, res, next) {
 
     const rows = await usinas.find(context);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 

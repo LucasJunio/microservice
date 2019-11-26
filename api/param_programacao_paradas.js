@@ -1,3 +1,5 @@
+const {onBadRequest, onSuccess} = require("../utils/handlers");
+
 const param_programacao_paradas = require("../core/param_programacao_paradas.js");
 
 async function get(req, res, next) {
@@ -6,10 +8,9 @@ async function get(req, res, next) {
     context.data_inicio_programacao = req.query.data_inicio_programacao;
 
     const rows = await param_programacao_paradas.find(context);
-
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
@@ -18,10 +19,9 @@ module.exports.get = get;
 async function getNroAnosParadaLongoPrazo(req, res, next) {
   try {
     const rows = await param_programacao_paradas.findNroAnosParadaLongoPrazo();
-
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 

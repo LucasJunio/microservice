@@ -1,3 +1,5 @@
+const {onBadRequest, onSuccess} = require("../utils/handlers");
+
 const subclassificacao_parada = require("../core/subclassificacao_parada.js");
 
 async function getSubClassificacao(req, res, next) {
@@ -8,9 +10,9 @@ async function getSubClassificacao(req, res, next) {
 
     const rows = await subclassificacao_parada.findSubClassificacao(context);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).send(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
