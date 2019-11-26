@@ -1,3 +1,5 @@
+const {onBadRequest, onSuccess} = require("../utils/handlers");
+
 const pgi = require("../core/pgi.js");
 
 async function getNumPGI(req, res, next) {
@@ -6,9 +8,9 @@ async function getNumPGI(req, res, next) {
     context.cd_parada = req.query.id_parada;
     const rows = await pgi.getNumPGI(context);
 
-    res.status(200).json(rows);
+    onSuccess(res, rows);
   } catch (error) {
-    res.status(400).json(error.message);
+    onBadRequest(res, error.message);
   }
 }
 
