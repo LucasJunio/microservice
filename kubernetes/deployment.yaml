@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: __APP_NAME__
-          image: "__DOCKER_SERVER__/__APP_NAMESPACE__/__DOCKER_IMAGE__:__buildNumber__"
+          image: "__DOCKER_SERVER__/__APP_NAMESPACE__/__DOCKER_IMAGE__:__branchName__-__buildNumber__"
           env:
             - name: SAU_PP_HOST
               valueFrom:
