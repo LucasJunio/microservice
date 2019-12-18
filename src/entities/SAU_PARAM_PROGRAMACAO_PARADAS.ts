@@ -1,18 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  RelationId
-} from 'typeorm'
+import { Column, Entity } from 'typeorm'
 
 @Entity('SAU_PARAM_PROGRAMACAO_PARADAS')
 export class SAU_PARAM_PROGRAMACAO_PARADAS {

@@ -1,18 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  RelationId
-} from 'typeorm'
+import { Column, Entity, OneToMany } from 'typeorm'
 import { SAU_PROGRAMACAO_PARADA } from './SAU_PROGRAMACAO_PARADA'
 import { SAU_SUBCLASSIFICACAO_PARADA } from './SAU_SUBCLASSIFICACAO_PARADA'
 

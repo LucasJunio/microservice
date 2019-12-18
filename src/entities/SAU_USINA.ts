@@ -1,18 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  RelationId
-} from 'typeorm'
+import { Column, Entity, Index, OneToMany } from 'typeorm'
 import { SAU_AGRUP_CONJUNTO_USINA } from './SAU_AGRUP_CONJUNTO_USINA'
 import { SAU_ATIVIDADE_ONS } from './SAU_ATIVIDADE_ONS'
 import { SAU_UNIDADE_GERADORA } from './SAU_UNIDADE_GERADORA'

@@ -9,7 +9,8 @@
     "lint": "tslint src/src/**/*.ts -t verbose --force",
     "test": "NODE_ENV=test nodemon --watch . --ext ts -r ts-node/register --exec \"mocha -r ts-node/register test/**/*.test.ts\"",
     "unit-test": "NODE_ENV=test mocha --opts test/mocha.opts test/unit/unit.test.ts",
-    "unit-coverage": "nyc --reporter=html npm run unit-test"
+    "unit-coverage": "nyc --reporter=html npm run unit-test",
+    "lint-fix": "tslint --fix --project ."
   },
   "dependencies": {
     "aws-sdk": "^2.553.0",

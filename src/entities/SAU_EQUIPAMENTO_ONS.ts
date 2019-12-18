@@ -1,18 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  RelationId
-} from 'typeorm'
+import { Column, Entity, OneToMany } from 'typeorm'
 import { SAU_EQUIPAMENTO_PGI } from './SAU_EQUIPAMENTO_PGI'
 
 @Entity('SAU_EQUIPAMENTO_ONS')
