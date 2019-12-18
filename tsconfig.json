@@ -13,9 +13,7 @@
     "resolveJsonModule": true,
     "sourceRoot": ""
   },
-  "exclude": [
-    "test/**/*.ts"
-  ],
+  "exclude": ["test/**/*.ts"],
   "compileOnSave": false,
   "buildOnSave": false
 }
