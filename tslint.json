@@ -8,7 +8,7 @@
     "prettier": [true, ".prettierrc"],
     "max-line-length": {
       "severity": "error",
-      "options": [120]
+      "options": [130]
     },
     "indent": false,
     "no-implicit-dependencies": false,
