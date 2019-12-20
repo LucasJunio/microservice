@@ -42,13 +42,12 @@ async function findStatusParada() {
 module.exports.findStatusParada = findStatusParada;
 
 async function findTags() {
-  const result = [
+  return [
     {
       buttons: ["button_save", "button_search", "button_new", "button_restartFlow", "button_approveFlow", "button_linkCancel", "button_reprogramming"],
       collapses: ["identificacao", "historico", "programacao", "execucao", "cancelamento"]
     }
-  ];
-  return result;
+  ]
 }
 
 module.exports.findTags = findTags;

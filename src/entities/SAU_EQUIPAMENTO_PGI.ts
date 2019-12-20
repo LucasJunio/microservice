@@ -118,12 +118,13 @@ export class SAU_EQUIPAMENTO_PGI {
   })
   public NR_RESTRICAO_OPERATIVA: number | null
 
-  @Column('varchar2', {
-    nullable: true,
-    length: 15,
-    name: 'ID_UNIDADE_MEDIDA'
-  })
-  public ID_UNIDADE_MEDIDA: string | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauEquipamentoPgis2,
+    {}
+  )
+  @JoinColumn({ name: 'ID_UNIDADE_MEDIDA' })
+  public idUnidadeMedida: SAU_ITEM_LOOKUP | null
 
   @Column('date', {
     nullable: true,

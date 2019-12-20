@@ -1,4 +1,5 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
+import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_CLASSIFICACAO_PARADA } from './SAU_CLASSIFICACAO_PARADA'
 import { SAU_PGI } from './SAU_PGI'
 
@@ -33,41 +34,47 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public CD_USINA: number
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_CRIACAO_PARADA'
   })
   public DT_CRIACAO_PARADA: Date | null
 
-  @Column('number', {
-    nullable: true,
-    name: 'ID_TIPO_PARADA'
-  })
-  public ID_TIPO_PARADA: number | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas2,
+    {}
+  )
+  @JoinColumn({ name: 'ID_TIPO_PARADA' })
+  public idTipoParada: SAU_ITEM_LOOKUP | null
 
-  @Column('number', {
-    nullable: true,
-    name: 'ID_STATUS'
-  })
-  public ID_STATUS: number | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas,
+    {}
+  )
+  @JoinColumn({ name: 'ID_STATUS' })
+  public idStatus: SAU_ITEM_LOOKUP | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: false,
     name: 'DT_HORA_INICIO_PROGRAMACAO'
   })
   public DT_HORA_INICIO_PROGRAMACAO: Date
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: false,
     name: 'DT_HORA_TERMINO_PROGRAMACAO'
   })
   public DT_HORA_TERMINO_PROGRAMACAO: Date
 
-  @Column('number', {
-    nullable: true,
-    name: 'ID_TIPO_PROGRAMACAO'
-  })
-  public ID_TIPO_PROGRAMACAO: number | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas3,
+    {}
+  )
+  @JoinColumn({ name: 'ID_TIPO_PROGRAMACAO' })
+  public idTipoProgramacao: SAU_ITEM_LOOKUP | null
 
   @Column('varchar2', {
     nullable: true,
@@ -106,13 +113,13 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public DS_OBSERVACAO: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_HORA_INICIO_SERVICO'
   })
   public DT_HORA_INICIO_SERVICO: Date | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_HORA_TERMINO_SERVICO'
   })
@@ -141,7 +148,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public FL_COMUNICAR_ANEEL: number | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_CANCELAMENTO'
   })
@@ -154,11 +161,13 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public DS_MOTIVO_CANCELAMENTO: string | null
 
-  @Column('number', {
-    nullable: true,
-    name: 'ID_STATUS_CANCELAMENTO'
-  })
-  public ID_STATUS_CANCELAMENTO: number | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas6,
+    {}
+  )
+  @JoinColumn({ name: 'ID_STATUS_CANCELAMENTO' })
+  public idStatusCancelamento: SAU_ITEM_LOOKUP | null
 
   @Column('varchar2', {
     nullable: true,
@@ -167,35 +176,41 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public NM_AREA_ORIGEM_CANCELAMENTO: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_HORA_INICIO_REPROGRAMACAO'
   })
   public DT_HORA_INICIO_REPROGRAMACAO: Date | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_HORA_TERMINO_REPROGRAMACAO'
   })
   public DT_HORA_TERMINO_REPROGRAMACAO: Date | null
 
-  @Column('number', {
-    nullable: true,
-    name: 'ID_STATUS_REPROGRAMACAO'
-  })
-  public ID_STATUS_REPROGRAMACAO: number | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas7,
+    {}
+  )
+  @JoinColumn({ name: 'ID_STATUS_REPROGRAMACAO' })
+  public idStatusReprogramacao: SAU_ITEM_LOOKUP | null
 
-  @Column('number', {
-    nullable: true,
-    name: 'ID_ORIGEM_REPROGRAMACAO'
-  })
-  public ID_ORIGEM_REPROGRAMACAO: number | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas5,
+    {}
+  )
+  @JoinColumn({ name: 'ID_ORIGEM_REPROGRAMACAO' })
+  public idOrigemReprogramacao: SAU_ITEM_LOOKUP | null
 
-  @Column('number', {
-    nullable: true,
-    name: 'ID_MOTIVO_REPROGRAMACAO'
-  })
-  public ID_MOTIVO_REPROGRAMACAO: number | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas4,
+    {}
+  )
+  @JoinColumn({ name: 'ID_MOTIVO_REPROGRAMACAO' })
+  public idMotivoReprogramacao: SAU_ITEM_LOOKUP | null
 
   @Column('varchar2', {
     nullable: true,
@@ -299,7 +314,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public USER_CREATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -312,7 +327,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public USER_UPDATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_UPDATE'
   })

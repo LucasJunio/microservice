@@ -15,7 +15,7 @@ export class SauParamProgramacaoParadaRepository implements ISauParamProgramacao
     this.sauParamProgramacaoParadaRepository = getRepository(SAU_PARAM_PROGRAMACAO_PARADAS)
   }
 
-  public async getParamProgramacaoParada(year: string): Promise<SAU_PARAM_PROGRAMACAO_PARADAS> {
+  public getParamProgramacaoParada(year: string): Promise<SAU_PARAM_PROGRAMACAO_PARADAS> {
     return this.sauParamProgramacaoParadaRepository
       .createQueryBuilder()
       .select(['dt_final_paradas_anuais', 'dt_final_paradas_programada', 'nr_prazo_parada_urgente'])

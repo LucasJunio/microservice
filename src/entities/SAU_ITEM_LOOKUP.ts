@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { SAU_LOOKUP } from './SAU_LOOKUP'
 import { SAU_EQUIPAMENTO_PGI } from './SAU_EQUIPAMENTO_PGI'
 import { SAU_PGI } from './SAU_PGI'
+import { SAU_PROGRAMACAO_PARADA } from './SAU_PROGRAMACAO_PARADA'
 
 @Entity('SAU_ITEM_LOOKUP')
 export class SAU_ITEM_LOOKUP {
@@ -84,6 +85,12 @@ export class SAU_ITEM_LOOKUP {
   public sauEquipamentoPgis: SAU_EQUIPAMENTO_PGI[]
 
   @OneToMany(
+    () => SAU_EQUIPAMENTO_PGI,
+    (SAU_EQUIPAMENTO_PGI: SAU_EQUIPAMENTO_PGI) => SAU_EQUIPAMENTO_PGI.idUnidadeMedida
+  )
+  public sauEquipamentoPgis2: SAU_EQUIPAMENTO_PGI[]
+
+  @OneToMany(
     () => SAU_PGI,
     (SAU_PGI: SAU_PGI) => SAU_PGI.idCaracterizacao
   )
@@ -130,4 +137,46 @@ export class SAU_ITEM_LOOKUP {
     (SAU_PGI: SAU_PGI) => SAU_PGI.idTipo
   )
   public sauPgis8: SAU_PGI[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idStatus
+  )
+  public sauProgramacaoParadas: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idTipoParada
+  )
+  public sauProgramacaoParadas2: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idTipoProgramacao
+  )
+  public sauProgramacaoParadas3: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idMotivoReprogramacao
+  )
+  public sauProgramacaoParadas4: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idOrigemReprogramacao
+  )
+  public sauProgramacaoParadas5: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idStatusCancelamento
+  )
+  public sauProgramacaoParadas6: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idStatusReprogramacao
+  )
+  public sauProgramacaoParadas7: SAU_PROGRAMACAO_PARADA[]
 }

@@ -2,6 +2,21 @@ import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
 import { SAU_PGI } from '../entities/SAU_PGI'
 
+const tableRelations = [
+  'cdUnidadeGeradora',
+  'idStatus',
+  'cdAgenteSolic',
+  'cdAgenteResp',
+  'idTipoCadastro',
+  'idClassifiIntervencao',
+  'cdProgramacaoParada',
+  'idTempoRetorno',
+  'idPeriodicidade',
+  'idNatureza',
+  'idTipo',
+  'idCaracterizacao'
+]
+
 export interface ISauPgiRepository {
   getPgi(numPgi: string): Promise<SAU_PGI>
   getNumPGI(numParada: number): Promise<SAU_PGI>
@@ -20,7 +35,8 @@ export class SauPgiRepository implements ISauPgiRepository {
     return this.sauPgiRepository.findOne({
       where: {
         NUM_PGI: numPgi
-      }
+      },
+      relations: tableRelations
     })
   }
   public getNumPGI(numParada: number): Promise<SAU_PGI> {
