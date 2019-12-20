@@ -6,10 +6,6 @@
   },
   "rules": {
     "prettier": [true, ".prettierrc"],
-    "max-line-length": {
-      "severity": "error",
-      "options": [130]
-    },
     "indent": false,
     "no-implicit-dependencies": false,
     "arrow-parens": [true, "ban-single-arg-parens"],

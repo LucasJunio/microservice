@@ -11,5 +11,6 @@ export const TYPE = {
   SauParamProgramacaoParadaRepository: Symbol.for('SauParamProgramacaoParadaRepository'),
   SauPgiRepository: Symbol.for('SauPgiRepository'),
   SauItemLookUpRepository: Symbol.for('SauItemLookUpRepository'),
-  SauSubClassificacaoParadaRepository: Symbol.for('SauSubClassificacaoParadaRepository')
+  SauSubClassificacaoParadaRepository: Symbol.for('SauSubClassificacaoParadaRepository'),
+  SauProgramacaoParadaRepository: Symbol.for('SauProgramacaoParadaRepository')
 }

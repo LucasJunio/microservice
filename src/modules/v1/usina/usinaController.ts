@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { inject } from 'inversify'
-import { controller, httpGet, httpPost, response, requestParam, interfaces, requestBody } from 'inversify-express-utils'
+import { controller, httpGet, response, interfaces } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import Handlers from '../../../core/Handlers'
 import { UsinaService } from './usinaService'
