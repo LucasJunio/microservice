@@ -1,4 +1,4 @@
-import { inject, injectable, id } from 'inversify'
+import { inject, injectable } from 'inversify'
 import { SauClassificacaoParadaRepository } from '../../../repositories/sauClassificacaoParadaRepository'
 import { SAU_CLASSIFICACAO_PARADA } from '../../../entities/SAU_CLASSIFICACAO_PARADA'
 import { TYPE } from '../../../constants/types'
@@ -25,6 +25,8 @@ export interface IParadaProgramadaService {
   saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA>
   getById(id: number): Promise<SAU_PROGRAMACAO_PARADA>
   getAll(): Promise<SAU_PROGRAMACAO_PARADA[]>
+  getLastIdSeqParada(cdParada: number): Promise<SAU_PROGRAMACAO_PARADA[]>
+  getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]>
 }
 
 @injectable()
@@ -91,5 +93,13 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   public getAll(): Promise<SAU_PROGRAMACAO_PARADA[]> {
     return this.sauProgramacaoParadaRepository.getAll()
+  }
+
+  public getLastIdSeqParada(cdParada: number): Promise<SAU_PROGRAMACAO_PARADA[]> {
+    return this.sauProgramacaoParadaRepository.getLastIdSeqParada(cdParada)
+  }
+
+  public getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]> {
+    return this.sauProgramacaoParadaRepository.getLastIdParada()
   }
 }

@@ -1,6 +1,7 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm'
 import { SAU_AGRUP_CONJUNTO_USINA } from './SAU_AGRUP_CONJUNTO_USINA'
 import { SAU_ATIVIDADE_ONS } from './SAU_ATIVIDADE_ONS'
+import { SAU_PROGRAMACAO_PARADA } from './SAU_PROGRAMACAO_PARADA'
 import { SAU_UNIDADE_GERADORA } from './SAU_UNIDADE_GERADORA'
 
 @Entity('SAU_USINA')
@@ -181,9 +182,9 @@ export class SAU_USINA {
   @Column('varchar2', {
     nullable: false,
     length: 50,
-    name: 'NM_USIMA'
+    name: 'NM_USINA'
   })
-  public NM_USIMA: string
+  public NM_USINA: string
 
   @Column('number', {
     nullable: false,
@@ -408,6 +409,12 @@ export class SAU_USINA {
     (SAU_ATIVIDADE_ONS: SAU_ATIVIDADE_ONS) => SAU_ATIVIDADE_ONS.cdUsina
   )
   public sauAtividadeOnss: SAU_ATIVIDADE_ONS[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.cdUsina
+  )
+  public sauProgramacaoParadas: SAU_PROGRAMACAO_PARADA[]
 
   @OneToMany(
     () => SAU_UNIDADE_GERADORA,

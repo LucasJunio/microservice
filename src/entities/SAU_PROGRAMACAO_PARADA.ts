@@ -1,10 +1,11 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
+import { SAU_USINA } from './SAU_USINA'
 import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_CLASSIFICACAO_PARADA } from './SAU_CLASSIFICACAO_PARADA'
 import { SAU_PGI } from './SAU_PGI'
 
 @Entity('SAU_PROGRAMACAO_PARADA')
-@Index('SAU_PROGRAMACAO_PARADA_IX1', ['CD_USINA', 'DT_HORA_INICIO_REPROGRAMACAO'])
+@Index('SAU_PROGRAMACAO_PARADA_IX1', ['cdUsina', 'DT_HORA_INICIO_REPROGRAMACAO'])
 export class SAU_PROGRAMACAO_PARADA {
   @Column('number', {
     nullable: false,
@@ -27,12 +28,13 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public CD_SEQ_PARADA: number
 
-  @Column('number', {
-    nullable: false,
-    unique: true,
-    name: 'CD_USINA'
-  })
-  public CD_USINA: number
+  @ManyToOne(
+    () => SAU_USINA,
+    (SAU_USINA: SAU_USINA) => SAU_USINA.sauProgramacaoParadas,
+    { nullable: false }
+  )
+  @JoinColumn({ name: 'CD_USINA' })
+  public cdUsina: SAU_USINA | null
 
   @Column('date', {
     nullable: true,
@@ -42,7 +44,7 @@ export class SAU_PROGRAMACAO_PARADA {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas2,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas6,
     {}
   )
   @JoinColumn({ name: 'ID_TIPO_PARADA' })
@@ -50,7 +52,7 @@ export class SAU_PROGRAMACAO_PARADA {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas4,
     {}
   )
   @JoinColumn({ name: 'ID_STATUS' })
@@ -70,7 +72,7 @@ export class SAU_PROGRAMACAO_PARADA {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas3,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas7,
     {}
   )
   @JoinColumn({ name: 'ID_TIPO_PROGRAMACAO' })
@@ -163,7 +165,7 @@ export class SAU_PROGRAMACAO_PARADA {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas6,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas3,
     {}
   )
   @JoinColumn({ name: 'ID_STATUS_CANCELAMENTO' })
@@ -190,7 +192,7 @@ export class SAU_PROGRAMACAO_PARADA {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas7,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas5,
     {}
   )
   @JoinColumn({ name: 'ID_STATUS_REPROGRAMACAO' })
@@ -198,7 +200,7 @@ export class SAU_PROGRAMACAO_PARADA {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas5,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas2,
     {}
   )
   @JoinColumn({ name: 'ID_ORIGEM_REPROGRAMACAO' })
@@ -206,7 +208,7 @@ export class SAU_PROGRAMACAO_PARADA {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas4,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauProgramacaoParadas,
     {}
   )
   @JoinColumn({ name: 'ID_MOTIVO_REPROGRAMACAO' })

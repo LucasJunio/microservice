@@ -3,6 +3,7 @@ import { Repository, getRepository } from 'typeorm'
 import { SAU_PROGRAMACAO_PARADA } from '../entities/SAU_PROGRAMACAO_PARADA'
 
 const tableRelations = [
+  'cdUsina',
   'cdClassificacaoProgrParada',
   'idTipoParada',
   'idStatus',
@@ -17,6 +18,8 @@ export interface ISauProgramacaoParadaRepository {
   saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA>
   getById(id: number): Promise<SAU_PROGRAMACAO_PARADA>
   getAll(): Promise<SAU_PROGRAMACAO_PARADA[]>
+  getLastIdSeqParada(cdParada: number): Promise<SAU_PROGRAMACAO_PARADA[]>
+  getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]>
 }
 
 @injectable()
@@ -40,6 +43,30 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
   public getAll(): Promise<SAU_PROGRAMACAO_PARADA[]> {
     return this.sauProgramacaoParadaRepository.find({
       relations: tableRelations
+    })
+  }
+
+  public getLastIdSeqParada(cdParada: number): Promise<SAU_PROGRAMACAO_PARADA[]> {
+    return this.sauProgramacaoParadaRepository.find({
+      select: ['CD_SEQ_PARADA'],
+      where: {
+        CD_PARADA: cdParada
+      },
+      order: {
+        CD_SEQ_PARADA: 'DESC'
+      },
+      take: 1
+    })
+  }
+
+  public getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]> {
+    return this.sauProgramacaoParadaRepository.find({
+      select: ['CD_PARADA'],
+      order: {
+        CD_PARADA: 'DESC',
+        CD_PROGRAMACAO_PARADA: 'DESC'
+      },
+      take: 1
     })
   }
 }
