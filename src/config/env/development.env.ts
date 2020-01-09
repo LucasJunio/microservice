@@ -7,7 +7,7 @@ module.exports = {
   username: 'SAU',
   password: 'omsaudes',
   sid: 'OMDES',
-  serverPort: 5000,
+  serverPort: 4000,
   path: 'src',
   extension: 'ts'
 }

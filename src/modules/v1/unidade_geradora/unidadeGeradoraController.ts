@@ -6,7 +6,7 @@ import Handlers from '../../../core/Handlers'
 import { UnidadeGeradoraService } from './unidadeGeradoraService'
 
 @controller('/api/v1/unidade_geradora')
-export class UsinaController implements interfaces.Controller {
+export class UnidadeGeradoraController implements interfaces.Controller {
   @inject(TYPE.UnidadeGeradoraService)
   private readonly unidadeGeradoraService: UnidadeGeradoraService
 

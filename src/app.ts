@@ -7,9 +7,9 @@ import * as fileUpload from 'express-fileupload'
 import { Container } from 'inversify'
 import { InversifyExpressServer } from 'inversify-express-utils'
 import * as morgan from 'morgan'
-import config from './config/config'
 import { bindings } from './inversify.config'
 import { logger } from './util/Logger'
+const config = require('./config/config')()
 
 export const Server = (async () => {
   try {
@@ -44,11 +44,11 @@ export const Server = (async () => {
     })
     const server = app.build()
 
-    const port = config().serverPort || 5000
+    const port = config.serverPort || 5000
     const serverPort = normalizePort(port)
 
     server.listen(serverPort, () => {
-      logger.info(`SAU-Backend listening on port ${config().serverPort}!`)
+      logger.info(`SAU-Backend listening on port ${config.serverPort}!`)
     })
   } catch (error) {
     logger.error(`SAU-Backend Initialize error: ${error}`)

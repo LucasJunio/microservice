@@ -4,6 +4,4 @@ if (process.env.NODE_ENV === 'production') {
   extension = 'js'
 }
 
-const config = () => require(`./env/${process.env.NODE_ENV}.env.${extension}`)
-
-export default config
+module.exports = () => require(`./env/${process.env.NODE_ENV}.env.${extension}`)
