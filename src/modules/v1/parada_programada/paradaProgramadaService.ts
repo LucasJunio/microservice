@@ -17,7 +17,7 @@ export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]>
   getParamProgramacaoParada(year: string): Promise<SAU_PARAM_PROGRAMACAO_PARADAS>
   getNroAnosParadaLongoPrazo(): Promise<SAU_PARAM_PROGRAMACAO_PARADAS[]>
-  getItemLookUpByIdLookup(idLookup: string): Promise<SAU_ITEM_LOOKUP[]>
+  getItemLookUpByIdLookup(idLookup: number): Promise<SAU_ITEM_LOOKUP[]>
   getPgi(numPgi: string): Promise<SAU_PGI>
   getNumPGI(numParada: number): Promise<SAU_PGI>
   savePgi(pgi: SAU_PGI): Promise<SAU_PGI>
@@ -60,7 +60,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
   public getNroAnosParadaLongoPrazo(): Promise<SAU_PARAM_PROGRAMACAO_PARADAS[]> {
     return this.sauParamProgramacaoParadaRepository.getNroAnosParadaLongoPrazo()
   }
-  public getItemLookUpByIdLookup(idLookup: string): Promise<SAU_ITEM_LOOKUP[]> {
+  public getItemLookUpByIdLookup(idLookup: number): Promise<SAU_ITEM_LOOKUP[]> {
     return this.sauItemLookUpRepository.getItemLookUpByIdLookup(idLookup)
   }
 

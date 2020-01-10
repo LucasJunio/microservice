@@ -19,8 +19,8 @@ export class SauParamProgramacaoParadaRepository implements ISauParamProgramacao
     return this.sauParamProgramacaoParadaRepository
       .createQueryBuilder()
       .select(['dt_final_paradas_anuais', 'dt_final_paradas_programada', 'nr_prazo_parada_urgente'])
-      .where("TO_CHAR(a.dt_ano,'YYYY') = :year", { year })
-      .getOne()
+      .where("TO_CHAR(dt_ano,'YYYY') = :year", { year })
+      .getRawOne()
   }
 
   public getNroAnosParadaLongoPrazo(): Promise<SAU_PARAM_PROGRAMACAO_PARADAS[]> {

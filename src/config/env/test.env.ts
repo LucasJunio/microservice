@@ -7,5 +7,5 @@ module.exports = {
   username: 'SAU',
   password: 'omsaudes',
   sid: 'OMDES',
-  serverPort: 3000
+  serverPort: 4020
 }

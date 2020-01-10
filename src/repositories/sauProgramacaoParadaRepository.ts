@@ -50,7 +50,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     return this.sauProgramacaoParadaRepository.find({
       select: ['CD_SEQ_PARADA'],
       where: {
-        CD_PARADA: cdParada
+        CD_PROGRAMACAO_PARADA: cdParada
       },
       order: {
         CD_SEQ_PARADA: 'DESC'

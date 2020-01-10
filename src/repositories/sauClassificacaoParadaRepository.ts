@@ -18,9 +18,9 @@ export class SauClassificacaoParadaRepository implements ISauClassificacaoParada
   public async getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]> {
     return this.sauClassificacaoParadaRepository
       .createQueryBuilder()
-      .select(['CD_CLASSIFICACAO_PARADA', 'DS_CLASSIFICACAO_PARADA'])
+      .select(['CD_CLASSIFICACAO_PARADA', 'DS_CLASSIFICACAO_PARADA, CD_APLICACAO_PARADA'])
       .where('FL_ATIVO = 1')
-      .andWhere("CD_CLASSIFICACAO_PARADA = 'A'")
+      .andWhere("CD_APLICACAO_PARADA = 'A'")
       .orWhere(qb => {
         const subQuery = qb
           .subQuery()
@@ -31,6 +31,6 @@ export class SauClassificacaoParadaRepository implements ISauClassificacaoParada
         return 'CD_APLICACAO_PARADA IN ' + subQuery
       })
       .orderBy('CD_CLASSIFICACAO_PARADA')
-      .getMany()
+      .getRawMany()
   }
 }
