@@ -11,7 +11,11 @@
     "outDir": "dist",
     "rootDir": "src",
     "resolveJsonModule": true,
-    "sourceRoot": ""
+    "sourceRoot": "",
+    "baseUrl": "src",
+    "paths": {
+      "@repositories/*": ["repositories/*"]
+    }
   },
   "exclude": ["test/**/*.ts"],
   "compileOnSave": false,
