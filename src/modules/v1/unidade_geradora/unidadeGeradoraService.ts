@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify'
 import { TYPE } from '../../../constants/types'
-import { SauUnidadeGeradoraRepository } from '@repositories/sauUnidadeGeradoraRepository'
+import { SauUnidadeGeradoraRepository } from '../../../repositories/sauUnidadeGeradoraRepository'
 import { SAU_UNIDADE_GERADORA } from '../../../entities/SAU_UNIDADE_GERADORA'
 
 export interface IUnidadeGeradoraService {
