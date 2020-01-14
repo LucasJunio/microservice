@@ -3,6 +3,6 @@ const { combine, colorize, simple } = format
 
 export const logger: Logger = createLogger({
   exitOnError: false,
-  transports: [new transports.Console(), new transports.File({ filename: 'access.log', level: 'error' })],
+  transports: [new transports.Console(), new transports.File({ filename: 'logs/access.log', level: 'error' })],
   format: combine(colorize(), simple())
 })

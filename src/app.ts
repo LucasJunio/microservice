@@ -37,7 +37,7 @@ export const Server = (async () => {
       app.use(cors())
       app.use(
         morgan('common', {
-          stream: fs.createWriteStream('./access.log', { flags: 'a' })
+          stream: fs.createWriteStream('./logs/access.log', { flags: 'a' })
         })
       )
       app.use(morgan('dev'))
