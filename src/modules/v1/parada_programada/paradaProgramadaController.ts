@@ -162,4 +162,15 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
       return Handlers.onError(res, error.message, error)
     }
   }
+
+  @httpPost('/documentos')
+  public async getDocumentos(@response() res: Response, @requestBody() filtros: any): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.getDocumentos(filtros)
+      const count = await this.paradaProgramadaService.getCountDocumentos(filtros)
+      return Handlers.onSuccess(res, { data, count })
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
 }

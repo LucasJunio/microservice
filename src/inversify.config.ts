@@ -31,6 +31,7 @@ import {
   SauUnidadeGeradoraRepository
 } from './repositories/sauUnidadeGeradoraRepository'
 import { IUnidadeGeradoraService, UnidadeGeradoraService } from './modules/v1/unidade_geradora/unidadeGeradoraService'
+import { ISauConsultaPpRepository, SauConsultaPpRepository } from './repositories/sauConsultaPpRepository'
 
 export const bindings = new AsyncContainerModule(async bind => {
   try {
@@ -60,6 +61,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     )
     bind<ISauPgiRepository>(TYPE.SauPgiRepository).to(SauPgiRepository)
     bind<ISauProgramacaoParadaRepository>(TYPE.SauProgramacaoParadaRepository).to(SauProgramacaoParadaRepository)
+    bind<ISauConsultaPpRepository>(TYPE.SauConsultaPpRepository).to(SauConsultaPpRepository)
 
     logger.info('Binding: Todos Módulos carregados corretamente')
   } catch (error) {
