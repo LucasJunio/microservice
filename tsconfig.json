@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2015",
+    "types": ["reflect-metadata", "mocha"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["es6", "dom"],
+    "allowUnreachableCode": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "resolveJsonModule": true,
+    "sourceRoot": "",
+    "baseUrl": "src",
+    "paths": {
+      "@repositories/*": ["repositories/*"]
+    }
+  },
+  "exclude": ["test/**/*.ts"],
+  "compileOnSave": false,
+  "buildOnSave": false
+}

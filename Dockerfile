@@ -10,6 +10,9 @@ RUN npm install && \
 # Copy builded source from the upper builder stage
 COPY  . .
 
+RUN mkdir logs
+RUN chmod 777 -R logs/
+
 EXPOSE 8080
 
 # Start the app
