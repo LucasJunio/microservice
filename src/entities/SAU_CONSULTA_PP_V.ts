@@ -60,6 +60,13 @@ export class SAU_CONSULTA_PP_V {
   })
   public TIPO_PARADA: string | null
 
+  @Column('varchar2', {
+    nullable: false,
+    length: 400,
+    name: 'DS_TIPO_PARADA'
+  })
+  public DS_TIPO_PARADA: string | null
+
   @Column('number', {
     nullable: true,
     name: 'ID_STATUS'
@@ -72,6 +79,13 @@ export class SAU_CONSULTA_PP_V {
     name: 'STATUS_PARADA'
   })
   public STATUS_PARADA: string | null
+
+  @Column('varchar2', {
+    nullable: false,
+    length: 400,
+    name: 'DS_STATUS_PARADA'
+  })
+  public DS_STATUS_PARADA: string | null
 
   @Column('timestamp with local time zone', {
     nullable: true,
