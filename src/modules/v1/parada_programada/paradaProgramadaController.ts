@@ -102,6 +102,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
 
   @httpPost('/')
   public async saveProgramacaoParada(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+    console.log(parada)
     try {
       const data = await this.paradaProgramadaService.saveProgramacaoParada(parada)
       return Handlers.onSuccess(res, data)

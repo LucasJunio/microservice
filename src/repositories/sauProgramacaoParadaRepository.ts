@@ -31,7 +31,13 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
   }
 
   public async saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    return this.sauProgramacaoParadaRepository.save(programcaoParada)
+    const programacaoParadaToSave = programcaoParada
+
+    if(!programcaoParada.CD_PROGRAMACAO_PARADA) {
+      const idParada = await this.getParadaSeq()
+      programacaoParadaToSave.CD_PROGRAMACAO_PARADA = idParada[0].ID;
+    }
+    return this.sauProgramacaoParadaRepository.save(programacaoParadaToSave)
   }
 
   public getById(id: number): Promise<SAU_PROGRAMACAO_PARADA> {
@@ -68,5 +74,11 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
       },
       take: 1
     })
+  }
+
+  public async getParadaSeq(): Promise<any> {
+    return this.sauProgramacaoParadaRepository.query(
+      "select SAU_PROGRAMACAO_PARADA_S.nextval as id FROM DUAL"
+    )
   }
 }

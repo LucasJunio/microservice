@@ -36,7 +36,7 @@ export class SAU_PROGRAMACAO_PARADA {
   @JoinColumn({ name: 'CD_USINA' })
   public cdUsina: SAU_USINA | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CRIACAO_PARADA'
   })
@@ -58,13 +58,13 @@ export class SAU_PROGRAMACAO_PARADA {
   @JoinColumn({ name: 'ID_STATUS' })
   public idStatus: SAU_ITEM_LOOKUP | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DT_HORA_INICIO_PROGRAMACAO'
   })
   public DT_HORA_INICIO_PROGRAMACAO: Date
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DT_HORA_TERMINO_PROGRAMACAO'
   })
@@ -115,13 +115,13 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public DS_OBSERVACAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA_INICIO_SERVICO'
   })
   public DT_HORA_INICIO_SERVICO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA_TERMINO_SERVICO'
   })
@@ -150,7 +150,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public FL_COMUNICAR_ANEEL: number | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CANCELAMENTO'
   })
@@ -178,13 +178,13 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public NM_AREA_ORIGEM_CANCELAMENTO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA_INICIO_REPROGRAMACAO'
   })
   public DT_HORA_INICIO_REPROGRAMACAO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA_TERMINO_REPROGRAMACAO'
   })
@@ -316,7 +316,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -329,7 +329,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public USER_UPDATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
