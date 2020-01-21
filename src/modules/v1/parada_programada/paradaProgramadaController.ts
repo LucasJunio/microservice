@@ -20,6 +20,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
+  @httpGet('/status')
+  public async getStatus(@response() res: Response): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(13)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
   @httpGet('/status_parada')
   public async getStatusParada(@response() res: Response): Promise<Response> {
     try {
