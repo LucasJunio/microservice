@@ -31,7 +31,7 @@ export class SauSubClassificacaoParadaRepository implements ISauSubClassificacao
         }
       ],
       order: {
-        CD_SUBCLASSIFICACAO_PARADA: 'ASC'
+        DS_SUBCLASSIFICACAO_PARADA: 'ASC'
       }
     })
   }

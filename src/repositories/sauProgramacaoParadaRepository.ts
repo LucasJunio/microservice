@@ -36,7 +36,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     if(!programcaoParada.CD_PROGRAMACAO_PARADA) {
       const idParada = await this.getParadaSeq()
       programacaoParadaToSave.CD_PROGRAMACAO_PARADA = idParada[0].ID;
-    }
+    } 
     return this.sauProgramacaoParadaRepository.save(programacaoParadaToSave)
   }
 
