@@ -1,5 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { SAU_CLASSIFICACAO_PARADA } from './SAU_CLASSIFICACAO_PARADA'
+import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
+import { SAU_PROGRAMACAO_PARADA } from './SAU_PROGRAMACAO_PARADA'
 
 @Entity('SAU_SUBCLASSIFICACAO_PARADA')
 export class SAU_SUBCLASSIFICACAO_PARADA {
@@ -27,12 +29,13 @@ export class SAU_SUBCLASSIFICACAO_PARADA {
   @JoinColumn({ name: 'CD_CLASSIFICACAO_PARADA' })
   public cdClassificacaoParada: SAU_CLASSIFICACAO_PARADA | null
 
-  @Column('varchar2', {
-    nullable: true,
-    length: 5,
-    name: 'CD_APLICACAO_USINA'
-  })
-  public CD_APLICACAO_USINA: string | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauSubclassificacaoParadas,
+    {}
+  )
+  @JoinColumn({ name: 'ID_APLICACAO_USINA' })
+  public idAplicacaoUsina: SAU_ITEM_LOOKUP | null
 
   @Column('number', {
     nullable: true,
@@ -74,4 +77,16 @@ export class SAU_SUBCLASSIFICACAO_PARADA {
     name: 'VERSION'
   })
   public VERSION: number | null
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.cdSubclassifProgrParada
+  )
+  public sauProgramacaoParadas: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.cdSubclasReprogrParada
+  )
+  public sauProgramacaoParadas2: SAU_PROGRAMACAO_PARADA[]
 }

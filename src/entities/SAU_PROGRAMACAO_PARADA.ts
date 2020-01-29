@@ -2,6 +2,8 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm
 import { SAU_USINA } from './SAU_USINA'
 import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_CLASSIFICACAO_PARADA } from './SAU_CLASSIFICACAO_PARADA'
+import { SAU_SUBCLASSIFICACAO_PARADA } from './SAU_SUBCLASSIFICACAO_PARADA'
+import { SAU_UNIDADE_GERADORA } from './SAU_UNIDADE_GERADORA'
 import { SAU_PGI } from './SAU_PGI'
 
 @Entity('SAU_PROGRAMACAO_PARADA')
@@ -93,13 +95,13 @@ export class SAU_PROGRAMACAO_PARADA {
   @JoinColumn({ name: 'CD_CLASSIFICACAO_PROGR_PARADA' })
   public cdClassificacaoProgrParada: SAU_CLASSIFICACAO_PARADA | null
 
-  @Column('number', {
-    nullable: true,
-    precision: 10,
-    scale: 0,
-    name: 'CD_SUBCLASSIF_PROGR_PARADA'
-  })
-  public CD_SUBCLASSIF_PROGR_PARADA: number | null
+  @ManyToOne(
+    () => SAU_SUBCLASSIFICACAO_PARADA,
+    (SAU_SUBCLASSIFICACAO_PARADA: SAU_SUBCLASSIFICACAO_PARADA) => SAU_SUBCLASSIFICACAO_PARADA.sauProgramacaoParadas,
+    {}
+  )
+  @JoinColumn({ name: 'CD_SUBCLASSIF_PROGR_PARADA' })
+  public cdSubclassifProgrParada: SAU_SUBCLASSIFICACAO_PARADA | null
 
   @Column('varchar2', {
     nullable: true,
@@ -221,21 +223,21 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public DS_MOTIVO_REPROGRAMACAO: string | null
 
-  @Column('number', {
-    nullable: true,
-    precision: 2,
-    scale: 0,
-    name: 'CD_CLASSIF_REPROGR_PARADA'
-  })
-  public CD_CLASSIF_REPROGR_PARADA: number | null
+  @ManyToOne(
+    () => SAU_CLASSIFICACAO_PARADA,
+    (SAU_CLASSIFICACAO_PARADA: SAU_CLASSIFICACAO_PARADA) => SAU_CLASSIFICACAO_PARADA.sauProgramacaoParadas2,
+    {}
+  )
+  @JoinColumn({ name: 'CD_CLASSIF_REPROGR_PARADA' })
+  public cdClassifReprogrParada: SAU_CLASSIFICACAO_PARADA | null
 
-  @Column('number', {
-    nullable: true,
-    precision: 10,
-    scale: 0,
-    name: 'CD_SUBCLAS_REPROGR_PARADA'
-  })
-  public CD_SUBCLAS_REPROGR_PARADA: number | null
+  @ManyToOne(
+    () => SAU_SUBCLASSIFICACAO_PARADA,
+    (SAU_SUBCLASSIFICACAO_PARADA: SAU_SUBCLASSIFICACAO_PARADA) => SAU_SUBCLASSIFICACAO_PARADA.sauProgramacaoParadas2,
+    {}
+  )
+  @JoinColumn({ name: 'CD_SUBCLAS_REPROGR_PARADA' })
+  public cdSubclasReprogrParada: SAU_SUBCLASSIFICACAO_PARADA | null
 
   @Column('varchar2', {
     nullable: true,
@@ -265,12 +267,11 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public CD_USUARIO_CONCLUSAO: string | null
 
-  @Column('varchar2', {
+  @Column('date', {
     nullable: true,
-    length: 20,
     name: 'DT_CONCLUSAO'
   })
-  public DT_CONCLUSAO: string | null
+  public DT_CONCLUSAO: Date | null
 
   @Column('varchar2', {
     nullable: true,
@@ -343,11 +344,13 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public NR_REPROGRAMACOES_APROVADAS: number | null
 
-  @Column('number', {
-    nullable: false,
-    name: 'CD_UNIDADE_GERADORA'
-  })
-  public CD_UNIDADE_GERADORA: number
+  @ManyToOne(
+    () => SAU_UNIDADE_GERADORA,
+    (SAU_UNIDADE_GERADORA: SAU_UNIDADE_GERADORA) => SAU_UNIDADE_GERADORA.sauProgramacaoParadas,
+    { nullable: false }
+  )
+  @JoinColumn({ name: 'CD_UNIDADE_GERADORA' })
+  public cdUnidadeGeradora: SAU_UNIDADE_GERADORA | null
 
   @Column('varchar2', {
     nullable: true,
