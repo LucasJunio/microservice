@@ -7,7 +7,7 @@ import { SAU_UNIDADE_GERADORA } from './SAU_UNIDADE_GERADORA'
 @Entity('SAU_USINA')
 @Index('SAU_USINA_IX1', ['CD_EMPRESA_VINCULADA'])
 export class SAU_USINA {
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CERTIFICACAO'
   })
@@ -138,7 +138,7 @@ export class SAU_USINA {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -151,7 +151,7 @@ export class SAU_USINA {
   })
   public USER_UPDATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
@@ -270,7 +270,7 @@ export class SAU_USINA {
   })
   public FL_NOTIFICACAO_RO: number | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_INICIO_NOTIFICACAO'
   })
@@ -380,19 +380,19 @@ export class SAU_USINA {
   })
   public ID_STATUS_USINA: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_DESATIVACAO'
   })
   public DT_DESATIVACAO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_AQUISICAO'
   })
   public DT_AQUISICAO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_OPERACAO_COMERCIAL'
   })

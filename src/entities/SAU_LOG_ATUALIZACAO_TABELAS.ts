@@ -16,7 +16,7 @@ export class SAU_LOG_ATUALIZACAO_TABELAS {
   })
   public DS_ROTINA: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_EXECUCAO'
   })
