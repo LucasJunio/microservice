@@ -18,7 +18,7 @@ export class SAU_NEGOCIACAO_ONS_PGI {
   })
   public CD_NEGOCIACAO: number
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA'
   })
@@ -31,7 +31,7 @@ export class SAU_NEGOCIACAO_ONS_PGI {
   })
   public DS_NEGOCIACAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -44,7 +44,7 @@ export class SAU_NEGOCIACAO_ONS_PGI {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })

@@ -11,14 +11,14 @@ export class SAU_EXCETO_DIA_PGI {
   @JoinColumn({ name: 'CD_PGI' })
   public cdPgi: SAU_PGI | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     primary: true,
     name: 'DT_EXCETO_PGI'
   })
   public DT_EXCETO_PGI: Date
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -31,7 +31,7 @@ export class SAU_EXCETO_DIA_PGI {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })

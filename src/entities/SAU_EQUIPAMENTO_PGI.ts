@@ -126,7 +126,7 @@ export class SAU_EQUIPAMENTO_PGI {
   @JoinColumn({ name: 'ID_UNIDADE_MEDIDA' })
   public idUnidadeMedida: SAU_ITEM_LOOKUP | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -139,7 +139,7 @@ export class SAU_EQUIPAMENTO_PGI {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
