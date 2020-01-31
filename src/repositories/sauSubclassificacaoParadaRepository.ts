@@ -19,7 +19,7 @@ export class SauSubClassificacaoParadaRepository implements ISauSubClassificacao
     idTipoUsina: string
   ): Promise<SAU_SUBCLASSIFICACAO_PARADA[]> {
     return this.sauSubClassificacaoParadaRepository.find({
-      select: ['CD_SUBCLASSIFICACAO_PARADA', 'DS_SUBCLASSIFICACAO_PARADA', 'CD_APLICACAO_USINA'],
+      // select: ['CD_SUBCLASSIFICACAO_PARADA', 'DS_SUBCLASSIFICACAO_PARADA', 'CD_APLICACAO_USINA'],
       where: [
         {
           FL_ATIVO: 1,
