@@ -5,13 +5,16 @@ import { SAU_PROGRAMACAO_PARADA } from '../entities/SAU_PROGRAMACAO_PARADA'
 const tableRelations = [
   'cdUsina',
   'cdClassificacaoProgrParada',
+  'cdSubclassifProgrParada',
   'idTipoParada',
   'idStatus',
   'idTipoProgramacao',
   'idStatusCancelamento',
   'idStatusReprogramacao',
   'idOrigemReprogramacao',
-  'idMotivoReprogramacao'
+  'idMotivoReprogramacao',
+  'cdUnidadeGeradora',
+  
 ]
 
 export interface ISauProgramacaoParadaRepository {

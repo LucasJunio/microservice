@@ -51,4 +51,10 @@ export class SauPgiRepository implements ISauPgiRepository {
   public savePgi(pgi: SAU_PGI): Promise<SAU_PGI> {
     return this.sauPgiRepository.save(pgi)
   }
+
+  public getAllNumPgi(): Promise<SAU_PGI[]> {
+    return this.sauPgiRepository.find({
+      select: ['NUM_PGI'],
+    })
+  }
 }

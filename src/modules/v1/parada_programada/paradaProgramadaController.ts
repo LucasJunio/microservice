@@ -184,4 +184,15 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
       return Handlers.onError(res, error.message, error)
     }
   }
+
+  @httpGet('/all_num_pgi')
+  public async getNumPgo(@response() res: Response): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.getAllNumPgi()
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
 }

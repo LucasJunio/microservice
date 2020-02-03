@@ -118,4 +118,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
   public async getCountDocumentos(filtros: PpConsultaDto): Promise<number> {
     return this.sauConsultaPpRepository.getCountDocumentos(filtros)
   }
+  
+  public async getAllNumPgi(): Promise<SAU_PGI[]> {
+    return this.sauPgiRepository.getAllNumPgi()
+  }
 }
