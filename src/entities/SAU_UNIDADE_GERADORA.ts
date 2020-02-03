@@ -113,31 +113,31 @@ export class SAU_UNIDADE_GERADORA {
   })
   public VL_POTENCIA_MAXIMA_E: number | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_INICIO_DADOS_SAU'
   })
   public DT_INICIO_DADOS_SAU: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_INICIO_OPERACAO'
   })
   public DT_INICIO_OPERACAO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_INICIO_HDOM'
   })
   public DT_INICIO_HDOM: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DT_PRIMEIRO_SINCRONISMO'
   })
   public DT_PRIMEIRO_SINCRONISMO: Date
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_PRIMEIRO_GIRO'
   })
@@ -203,7 +203,7 @@ export class SAU_UNIDADE_GERADORA {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -216,7 +216,7 @@ export class SAU_UNIDADE_GERADORA {
   })
   public USER_UPDATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })

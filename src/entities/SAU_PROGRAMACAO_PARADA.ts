@@ -267,7 +267,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public CD_USUARIO_CONCLUSAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CONCLUSAO'
   })

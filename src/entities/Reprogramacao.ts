@@ -66,7 +66,7 @@ export class Reprogramacao {
   })
   public dateCreate: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })

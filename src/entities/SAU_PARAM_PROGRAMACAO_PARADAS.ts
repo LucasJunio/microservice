@@ -9,7 +9,7 @@ export class SAU_PARAM_PROGRAMACAO_PARADAS {
   })
   public CD_PARAM_PROGRAMACAO_PARADAS: number
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     unique: true,
     name: 'DT_ANO'
@@ -22,13 +22,13 @@ export class SAU_PARAM_PROGRAMACAO_PARADAS {
   })
   public NR_ANOS_PARADA_LONGO_PRAZO: number | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_FINAL_PARADAS_ANUAIS'
   })
   public DT_FINAL_PARADAS_ANUAIS: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_FINAL_PARADAS_PROGRAMADA'
   })
@@ -71,7 +71,7 @@ export class SAU_PARAM_PROGRAMACAO_PARADAS {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -84,7 +84,7 @@ export class SAU_PARAM_PROGRAMACAO_PARADAS {
   })
   public USER_UPDATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
