@@ -15,6 +15,7 @@ import { SAU_SUBCLASSIFICACAO_PARADA } from '../../../entities/SAU_SUBCLASSIFICA
 import { SAU_PROGRAMACAO_PARADA } from '../../../entities/SAU_PROGRAMACAO_PARADA'
 import { PpConsultaDto } from '../../../entities/PpConsultaDto'
 import { SAU_CONSULTA_PP_V } from '../../../entities/SAU_CONSULTA_PP_V'
+import Constants from '../../../constants/constants'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]>
@@ -82,6 +83,24 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   public savePgi(pgi: SAU_PGI): Promise<SAU_PGI> {
     return this.sauPgiRepository.savePgi(pgi)
+  }
+
+  public async nextLevel(id: number, parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+      // const paradaSaved = await this.saveProgramacaoParada(parada)
+      const statusParadaProgramada = await this.sauItemLookUpRepository.getItemLookUpByIdLookup(13);
+
+      switch(parada.idStatus.CD_ITEM_LOOKUP) {
+        case 105:
+          parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.CD_ITEM_LOOKUP === 100)
+        break;
+      }
+
+      // if(parada.idStatus === paradaSaved.idStatus)
+      //   return;
+      
+      return this.saveProgramacaoParada(parada)
+
+
   }
 
   public getSubClassificacaoParada(

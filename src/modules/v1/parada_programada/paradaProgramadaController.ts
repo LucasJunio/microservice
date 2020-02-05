@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { inject } from 'inversify'
-import { controller, interfaces, httpGet, response, requestParam, httpPost, requestBody } from 'inversify-express-utils'
+import { controller, interfaces, httpGet, httpPut, response, requestParam, httpPost, requestBody } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
 import Handlers from '../../../core/Handlers'
@@ -112,7 +112,6 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
 
   @httpPost('/')
   public async saveProgramacaoParada(@response() res: Response, @requestBody() parada: any): Promise<Response> {
-    console.log(parada)
     try {
       const data = await this.paradaProgramadaService.saveProgramacaoParada(parada)
       return Handlers.onSuccess(res, data)
@@ -125,6 +124,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   public async getById(@response() res: Response, @requestParam('id') id: number): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.getById(id)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpPut('/next_level/:id')
+  public async nextLevel(@response() res: Response, @requestBody() parada: any, @requestParam('id') id: number): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.nextLevel(id, parada)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
