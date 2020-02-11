@@ -13,5 +13,6 @@ export const TYPE = {
   SauItemLookUpRepository: Symbol.for('SauItemLookUpRepository'),
   SauSubClassificacaoParadaRepository: Symbol.for('SauSubClassificacaoParadaRepository'),
   SauProgramacaoParadaRepository: Symbol.for('SauProgramacaoParadaRepository'),
-  SauConsultaPpRepository: Symbol.for('SauConsultaPpRepository')
+  SauConsultaPpRepository: Symbol.for('SauConsultaPpRepository'),
+  SauHistProgramacaoParadaRepository: Symbol.for('SauHistProgramacaoParadaRepository')
 }

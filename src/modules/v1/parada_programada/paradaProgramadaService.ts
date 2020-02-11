@@ -7,6 +7,7 @@ import { SauParamProgramacaoParadaRepository } from '../../../repositories/sauPa
 import { SauConsultaPpRepository } from '../../../repositories/sauConsultaPpRepository'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
 import { SauPgiRepository } from '../../../repositories/sauPgiRepository'
+import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
 import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
 import { SauSubClassificacaoParadaRepository } from '../../../repositories/sauSubclassificacaoParadaRepository'
 import { SAU_ITEM_LOOKUP } from '../../../entities/SAU_ITEM_LOOKUP'
@@ -16,6 +17,7 @@ import { SAU_PROGRAMACAO_PARADA } from '../../../entities/SAU_PROGRAMACAO_PARADA
 import { PpConsultaDto } from '../../../entities/PpConsultaDto'
 import { SAU_CONSULTA_PP_V } from '../../../entities/SAU_CONSULTA_PP_V'
 import Constants from '../../../constants/constants'
+import { SAU_HIST_PROGRAMACAO_PARADA } from '../../../entities/SAU_HIST_PROGRAMACAO_PARADA'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]>
@@ -58,6 +60,9 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
   @inject(TYPE.SauConsultaPpRepository)
   private readonly sauConsultaPpRepository: SauConsultaPpRepository
 
+  @inject(TYPE.SauHistProgramacaoParadaRepository)
+  private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
+
   public getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]> {
     return this.sauClassificacaoParadaRepository.getClassificacoesParada(sgUsina)
   }
@@ -85,24 +90,69 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauPgiRepository.savePgi(pgi)
   }
 
-  public async nextLevel(id: number, parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  public getHistoricoById(id: number): Promise<SAU_HIST_PROGRAMACAO_PARADA[]> {
+    return this.sauHistProgramacaoParadaRepository.findHistoricoById(id)
+  }
+
+  private createDefaultHistorico(parada: SAU_PROGRAMACAO_PARADA, acao: string ): SAU_HIST_PROGRAMACAO_PARADA {
+    const historico = new SAU_HIST_PROGRAMACAO_PARADA;
+    historico.cdProgramacaoParada = parada;
+    historico.DATE_CREATE = new Date();
+    historico.DT_HISTORICO = new Date();
+    historico.CD_USUARIO = 'Edison'
+    historico.USER_CREATE = historico.CD_USUARIO;
+    historico.DS_ACAO = acao
+    historico.DS_OBSERVACAO = `${historico.CD_USUARIO} Mudou o status do documento para ${historico.DS_ACAO} `
+
+    return historico;
+  }
+
+  public async nextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
       // const paradaSaved = await this.saveProgramacaoParada(parada)
       const statusParadaProgramada = await this.sauItemLookUpRepository.getItemLookUpByIdLookup(13);
+      let historico = null
 
-      switch(parada.idStatus.CD_ITEM_LOOKUP) {
-        case 105:
-          parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.CD_ITEM_LOOKUP === 100)
+      switch(parada.idStatus.ID_ITEM_LOOKUP) {
+        case 'RASCUNHO':
+          parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.ID_ITEM_LOOKUP === 'AAPRV_PGP')
+          historico = this.createDefaultHistorico(parada, 'AAPRV_PGP');
+        break;
+        case 'AAPRV_PGP':
+          parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.ID_ITEM_LOOKUP === 'AAPRV_OPE')
+          historico = this.createDefaultHistorico(parada, 'AAPRV_OPE');
+        break;
+        case 'AAPRV_OPE':
+          parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.ID_ITEM_LOOKUP === 'CONCL')
+          historico = this.createDefaultHistorico(parada, 'CONCL');
         break;
       }
+      console.log(historico)
 
-      // if(parada.idStatus === paradaSaved.idStatus)
-      //   return;
-      
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico);
+
       return this.saveProgramacaoParada(parada)
 
 
   }
 
+  public async prevLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+    // const paradaSaved = await this.saveProgramacaoParada(parada)
+    const statusParadaProgramada = await this.sauItemLookUpRepository.getItemLookUpByIdLookup(13);
+
+    switch(parada.idStatus.ID_ITEM_LOOKUP) {
+      case 'AAPRV_OPE':
+      case 'AAPRV_PGP':
+        parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.ID_ITEM_LOOKUP === 'RASCUNHO')
+      break;
+    }
+
+    // if(parada.idStatus === paradaSaved.idStatus)
+    //   return;
+    
+    return this.saveProgramacaoParada(parada)
+
+
+}
   public getSubClassificacaoParada(
     cdClassificacao: number,
     idTipoUsina: string

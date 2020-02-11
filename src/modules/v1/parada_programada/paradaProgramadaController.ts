@@ -130,10 +130,20 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpPut('/next_level/:id')
-  public async nextLevel(@response() res: Response, @requestBody() parada: any, @requestParam('id') id: number): Promise<Response> {
+  @httpPut('/next_level')
+  public async nextLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.nextLevel(id, parada)
+      const data = await this.paradaProgramadaService.nextLevel(parada)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpPut('/prev_level')
+  public async prevLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.prevLevel(parada)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -199,6 +209,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     try {
       const data = await this.paradaProgramadaService.getAllNumPgi()
       return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpGet('/historico/:id')
+  public async getHistorico(@response() res: Response, @requestParam('id') numParada: number ): Promise<Response> {
+    try {
+      const hist = await this.paradaProgramadaService.getHistoricoById(numParada);
+      return Handlers.onSuccess(res, hist)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
     }
