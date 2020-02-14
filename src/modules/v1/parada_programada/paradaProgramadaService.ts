@@ -103,7 +103,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     historico.USER_CREATE = historico.CD_USUARIO;
     historico.DS_ACAO = acao
     historico.DS_OBSERVACAO = `${historico.CD_USUARIO} Mudou o status do documento para ${historico.DS_ACAO} `
-
+    historico.FLOW = 'FLOW'; // REPR // CANC
     return historico;
   }
 
@@ -114,7 +114,12 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
       switch(parada.idStatus.ID_ITEM_LOOKUP) {
         case 'RASCUNHO':
+          parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.ID_ITEM_LOOKUP === 'AAPRV_USINA')
+          historico = this.createDefaultHistorico(parada, 'AAPRV_USINA');
+        break;
+        case 'AAPRV_USINA':
           parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.ID_ITEM_LOOKUP === 'AAPRV_PGP')
+
           historico = this.createDefaultHistorico(parada, 'AAPRV_PGP');
         break;
         case 'AAPRV_PGP':
@@ -126,29 +131,26 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
           historico = this.createDefaultHistorico(parada, 'CONCL');
         break;
       }
-      console.log(historico)
 
       await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico);
-
       return this.saveProgramacaoParada(parada)
 
 
   }
 
   public async prevLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    // const paradaSaved = await this.saveProgramacaoParada(parada)
     const statusParadaProgramada = await this.sauItemLookUpRepository.getItemLookUpByIdLookup(13);
+    let historico = null
 
     switch(parada.idStatus.ID_ITEM_LOOKUP) {
       case 'AAPRV_OPE':
       case 'AAPRV_PGP':
         parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.ID_ITEM_LOOKUP === 'RASCUNHO')
+        historico = this.createDefaultHistorico(parada, 'RASCUNHO');
       break;
     }
 
-    // if(parada.idStatus === paradaSaved.idStatus)
-    //   return;
-    
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico);
     return this.saveProgramacaoParada(parada)
 
 
@@ -160,8 +162,21 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauSubClassificacaoParadaRepository.getSubClassificacaoParada(cdClassificacao, idTipoUsina)
   }
 
-  public saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    return this.sauProgramacaoParadaRepository.saveProgramacaoParada(programcaoParada)
+  public async saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+    let saveHistorico = false;
+    if (!programcaoParada.CD_PROGRAMACAO_PARADA) saveHistorico = true
+
+    const idParada = await this.sauProgramacaoParadaRepository.getLastIdParada();
+    programcaoParada.CD_PARADA = idParada[0].CD_PARADA + 1 ; // sempre o proximo
+    const parada = await this.sauProgramacaoParadaRepository.saveProgramacaoParada(programcaoParada);
+    
+    if (!saveHistorico)
+      return parada
+    
+    const historico = this.createDefaultHistorico(parada, 'RASCUNHO');
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico);
+
+    return parada
   }
 
   public getById(id: number): Promise<SAU_PROGRAMACAO_PARADA> {

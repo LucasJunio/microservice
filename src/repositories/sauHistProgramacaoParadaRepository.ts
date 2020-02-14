@@ -17,20 +17,22 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     }
 
     public async findHistoricoById (id: number) : Promise<SAU_HIST_PROGRAMACAO_PARADA[]> {
-        return this.sauHistProgramacaoParadaRepository.find({
-            where: { CD_PROGRAMACAO_PARADA: id }
-        });
+        return this.sauHistProgramacaoParadaRepository.createQueryBuilder('SAU_HIST_PROGRAMACAO_PARADA')
+        .where("CD_PROGRAMACAO_PARADA = :CD_PROGRAMACAO_PARADA", { CD_PROGRAMACAO_PARADA: id })
+        .orderBy('DATE_CREATE', 'DESC')
+        .getMany()
     }
 
     public async saveHistoricoPp(historico: SAU_HIST_PROGRAMACAO_PARADA): Promise<SAU_HIST_PROGRAMACAO_PARADA> {
         const idHistorico = await this.getHistoricoSeq();
+        console.log(idHistorico)
         historico.CD_HISTORICO = idHistorico[0].ID
         return this.sauHistProgramacaoParadaRepository.save(historico)
     }
 
     public async getHistoricoSeq(): Promise<any> {
         return this.sauHistProgramacaoParadaRepository.query(
-            "select SAU_HIST_PROGRAMACA_PARADA_S.nextval as id FROM DUAL"
+            "select SAU_HIST_PROGRAMACAO_PARADA_S.nextval as id FROM DUAL"
         )
     }
 }

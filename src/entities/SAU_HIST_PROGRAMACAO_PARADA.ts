@@ -57,6 +57,13 @@ export class SAU_HIST_PROGRAMACAO_PARADA {
         name:"USER_CREATE"
         })
     USER_CREATE:string | null;
+
+    @Column("varchar2",{ 
+        nullable:true,
+        length:30,
+        name:"FLOW"
+        })
+    FLOW:string | null;
         
 
    
