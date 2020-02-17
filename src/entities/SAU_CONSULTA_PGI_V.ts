@@ -30,6 +30,18 @@ export class SAU_CONSULTA_PGI_V {
   })
   public NUM_PGI: string
 
+  @Column('number', {
+    nullable: true,
+    name: 'NR_NUM_PGI'
+  })
+  public NR_NUM_PGI: string
+
+  @Column('number', {
+    nullable: true,
+    name: 'ANO_NUM_PGI'
+  })
+  public ANO_NUM_PGI: string
+
   @Column('varchar2', {
     nullable: true,
     length: 20,

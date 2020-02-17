@@ -18,21 +18,33 @@ export class SauSubClassificacaoParadaRepository implements ISauSubClassificacao
     cdClassificacao: number,
     idTipoUsina: string
   ): Promise<SAU_SUBCLASSIFICACAO_PARADA[]> {
-    return this.sauSubClassificacaoParadaRepository.find({
-      select: ['CD_SUBCLASSIFICACAO_PARADA', 'DS_SUBCLASSIFICACAO_PARADA', 'CD_APLICACAO_USINA'],
+
+    this.sauSubClassificacaoParadaRepository.find({
+      select: ['CD_SUBCLASSIFICACAO_PARADA', 'DS_SUBCLASSIFICACAO_PARADA', 'idAplicacaoUsina'],
+      relations: [
+        'idAplicacaoUsina'
+      ],
       where: [
         {
           FL_ATIVO: 1,
           cdClassificacaoParada: cdClassificacao,
-          CD_APLICACAO_USINA: idTipoUsina
+          // idAplicacaoUsina: {
+          //   ID_ITEM_LOOKUP: idTipoUsina
+          // }
         },
         {
-          CD_APLICACAO_USINA: 'A'
+          idAplicacaoUsina: {
+            ID_ITEM_LOOKUP: 'A'
+          }
         }
       ],
       order: {
-        CD_SUBCLASSIFICACAO_PARADA: 'ASC'
+        DS_SUBCLASSIFICACAO_PARADA: 'ASC'
       }
+    }).then(resp => console.log(resp))
+
+    return this.sauSubClassificacaoParadaRepository.find({
+      // select: ['CD_SUBCLASSIFICACAO_PARADA', 'DS_SUBCLASSIFICACAO_PARADA', 'ID_APLICACAO_USINA'],
     })
   }
 }

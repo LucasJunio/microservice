@@ -25,7 +25,7 @@ export class SAU_ANEXO_PGI {
   })
   public DS_ANEXO_FILENAME: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -38,7 +38,7 @@ export class SAU_ANEXO_PGI {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })

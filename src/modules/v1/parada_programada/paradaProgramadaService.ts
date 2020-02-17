@@ -4,6 +4,7 @@ import { SAU_CLASSIFICACAO_PARADA } from '../../../entities/SAU_CLASSIFICACAO_PA
 import { TYPE } from '../../../constants/types'
 import { SAU_PARAM_PROGRAMACAO_PARADAS } from '../../../entities/SAU_PARAM_PROGRAMACAO_PARADAS'
 import { SauParamProgramacaoParadaRepository } from '../../../repositories/sauParamProgramacaoParadaRepository'
+import { SauConsultaPpRepository } from '../../../repositories/sauConsultaPpRepository'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
 import { SauPgiRepository } from '../../../repositories/sauPgiRepository'
 import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
@@ -12,6 +13,9 @@ import { SAU_ITEM_LOOKUP } from '../../../entities/SAU_ITEM_LOOKUP'
 import { SAU_PGI } from '../../../entities/SAU_PGI'
 import { SAU_SUBCLASSIFICACAO_PARADA } from '../../../entities/SAU_SUBCLASSIFICACAO_PARADA'
 import { SAU_PROGRAMACAO_PARADA } from '../../../entities/SAU_PROGRAMACAO_PARADA'
+import { PpConsultaDto } from '../../../entities/PpConsultaDto'
+import { SAU_CONSULTA_PP_V } from '../../../entities/SAU_CONSULTA_PP_V'
+import Constants from '../../../constants/constants'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]>
@@ -27,6 +31,8 @@ export interface IParadaProgramadaService {
   getAll(): Promise<SAU_PROGRAMACAO_PARADA[]>
   getLastIdSeqParada(cdParada: number): Promise<SAU_PROGRAMACAO_PARADA[]>
   getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]>
+  getDocumentos(filtros: PpConsultaDto): Promise<SAU_CONSULTA_PP_V[]>
+  getCountDocumentos(filtros: PpConsultaDto): Promise<number>
 }
 
 @injectable()
@@ -48,6 +54,9 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   @inject(TYPE.SauParamProgramacaoParadaRepository)
   private readonly sauParamProgramacaoParadaRepository: SauParamProgramacaoParadaRepository
+
+  @inject(TYPE.SauConsultaPpRepository)
+  private readonly sauConsultaPpRepository: SauConsultaPpRepository
 
   public getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]> {
     return this.sauClassificacaoParadaRepository.getClassificacoesParada(sgUsina)
@@ -76,6 +85,24 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauPgiRepository.savePgi(pgi)
   }
 
+  public async nextLevel(id: number, parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+      // const paradaSaved = await this.saveProgramacaoParada(parada)
+      const statusParadaProgramada = await this.sauItemLookUpRepository.getItemLookUpByIdLookup(13);
+
+      switch(parada.idStatus.CD_ITEM_LOOKUP) {
+        case 105:
+          parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.CD_ITEM_LOOKUP === 100)
+        break;
+      }
+
+      // if(parada.idStatus === paradaSaved.idStatus)
+      //   return;
+      
+      return this.saveProgramacaoParada(parada)
+
+
+  }
+
   public getSubClassificacaoParada(
     cdClassificacao: number,
     idTipoUsina: string
@@ -101,5 +128,17 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   public getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]> {
     return this.sauProgramacaoParadaRepository.getLastIdParada()
+  }
+
+  public async getDocumentos(filtros: PpConsultaDto): Promise<SAU_CONSULTA_PP_V[]> {
+    return this.sauConsultaPpRepository.getDocumentos(filtros)
+  }
+
+  public async getCountDocumentos(filtros: PpConsultaDto): Promise<number> {
+    return this.sauConsultaPpRepository.getCountDocumentos(filtros)
+  }
+  
+  public async getAllNumPgi(): Promise<SAU_PGI[]> {
+    return this.sauPgiRepository.getAllNumPgi()
   }
 }

@@ -16,11 +16,13 @@ export class SauClassificacaoParadaRepository implements ISauClassificacaoParada
   }
 
   public async getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]> {
+  
     return this.sauClassificacaoParadaRepository
       .createQueryBuilder()
-      .select(['CD_CLASSIFICACAO_PARADA', 'DS_CLASSIFICACAO_PARADA, CD_APLICACAO_PARADA'])
-      .where('FL_ATIVO = 1')
-      .andWhere("CD_APLICACAO_PARADA = 'A'")
+      .select(['CD_CLASSIFICACAO_PARADA', 'DS_CLASSIFICACAO_PARADA', 'ID_APLICACAO_PARADA', 'ID_ITEM_LOOKUP'])
+      .where('SAU_CLASSIFICACAO_PARADA.FL_ATIVO = 1')
+      .innerJoin("SAU_CLASSIFICACAO_PARADA.idAplicacaoParada", "id_aplicacao_parada")
+      .andWhere("ID_ITEM_LOOKUP = 'A'")
       .orWhere(qb => {
         const subQuery = qb
           .subQuery()
@@ -28,9 +30,9 @@ export class SauClassificacaoParadaRepository implements ISauClassificacaoParada
           .from(SAU_USINA, 'SAU_USINA')
           .where('SG_USINA = :sgUsina', { sgUsina })
           .getQuery()
-        return 'CD_APLICACAO_PARADA IN ' + subQuery
+        return 'ID_ITEM_LOOKUP IN ' + subQuery
       })
-      .orderBy('CD_CLASSIFICACAO_PARADA')
+      .orderBy('SAU_CLASSIFICACAO_PARADA.CD_CLASSIFICACAO_PARADA')
       .getRawMany()
   }
 }

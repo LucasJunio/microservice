@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { inject } from 'inversify'
-import { controller, interfaces, httpGet, response, requestParam, httpPost, requestBody } from 'inversify-express-utils'
+import { controller, interfaces, httpGet, httpPut, response, requestParam, httpPost, requestBody } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
 import Handlers from '../../../core/Handlers'
@@ -14,6 +14,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   public async getTipoParada(@response() res: Response): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(11)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpGet('/status')
+  public async getStatus(@response() res: Response): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(13)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -120,6 +130,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
+  @httpPut('/next_level/:id')
+  public async nextLevel(@response() res: Response, @requestBody() parada: any, @requestParam('id') id: number): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.nextLevel(id, parada)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
   @httpGet('/situacao')
   public async getSituacao(@response() res: Response): Promise<Response> {
     try {
@@ -162,4 +182,26 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
       return Handlers.onError(res, error.message, error)
     }
   }
+
+  @httpPost('/documentos')
+  public async getDocumentos(@response() res: Response, @requestBody() filtros: any): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.getDocumentos(filtros)
+      const count = await this.paradaProgramadaService.getCountDocumentos(filtros)
+      return Handlers.onSuccess(res, { data, count })
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpGet('/all_num_pgi')
+  public async getNumPgo(@response() res: Response): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.getAllNumPgi()
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
 }

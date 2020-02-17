@@ -34,7 +34,7 @@ export class SAU_EMAIL_AGENTE_ONS {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -47,7 +47,7 @@ export class SAU_EMAIL_AGENTE_ONS {
   })
   public USER_UPDATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
