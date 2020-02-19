@@ -25,7 +25,6 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
 
     public async saveHistoricoPp(historico: SAU_HIST_PROGRAMACAO_PARADA): Promise<SAU_HIST_PROGRAMACAO_PARADA> {
         const idHistorico = await this.getHistoricoSeq();
-        console.log(idHistorico)
         historico.CD_HISTORICO = idHistorico[0].ID
         return this.sauHistProgramacaoParadaRepository.save(historico)
     }

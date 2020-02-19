@@ -1,15 +1,15 @@
 import {BaseEntity,Column,Entity,Index,JoinColumn,JoinTable,ManyToMany,ManyToOne,OneToMany,OneToOne,PrimaryColumn,PrimaryGeneratedColumn,RelationId} from "typeorm";
-import {SAU_USINA} from "./SAU_USINA";
 import {SAU_ITEM_LOOKUP} from "./SAU_ITEM_LOOKUP";
 import {SAU_CLASSIFICACAO_PARADA} from "./SAU_CLASSIFICACAO_PARADA";
 import {SAU_SUBCLASSIFICACAO_PARADA} from "./SAU_SUBCLASSIFICACAO_PARADA";
-import {SAU_UNIDADE_GERADORA} from "./SAU_UNIDADE_GERADORA";
 import {SAU_HIST_PROGRAMACAO_PARADA} from "./SAU_HIST_PROGRAMACAO_PARADA";
 import {SAU_PGI} from "./SAU_PGI";
+import {SAU_PROGRAMACAO_PARADA_UG} from "./SAU_PROGRAMACAO_PARADA_UG";
+import { SAU_USINA } from "./SAU_USINA";
 
 
 @Entity("SAU_PROGRAMACAO_PARADA")
-@Index("SAU_PROGRAMACAO_PARADA_IX1",["cdUsina","DT_HORA_INICIO_REPROGRAMACAO",])
+@Index("SAU_PROGRAMACAO_PARADA_IX1",["CD_CONJUNTO_USINA","DT_HORA_INICIO_REPROGRAMACAO",])
 export class SAU_PROGRAMACAO_PARADA {
 
     @Column("number",{ 
@@ -27,22 +27,18 @@ export class SAU_PROGRAMACAO_PARADA {
         })
     CD_PARADA:number;
         
+    //campo virtual, serve apenas para alimentar o front
+    usina: any;
 
     @Column("number",{ 
         nullable:false,
         unique: true,
-        name:"CD_SEQ_PARADA"
+        name:"CD_CONJUNTO_USINA"
         })
-    CD_SEQ_PARADA:number;
+    CD_CONJUNTO_USINA:number;
         
 
-   
-    @ManyToOne(()=>SAU_USINA, (SAU_USINA: SAU_USINA)=>SAU_USINA.sauProgramacaoParadas,{  nullable:false, })
-    @JoinColumn({ name:'CD_USINA'})
-    cdUsina:SAU_USINA | null;
-
-
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DT_CRIACAO_PARADA"
         })
@@ -61,14 +57,14 @@ export class SAU_PROGRAMACAO_PARADA {
     idStatus:SAU_ITEM_LOOKUP | null;
 
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:false,
         name:"DT_HORA_INICIO_PROGRAMACAO"
         })
     DT_HORA_INICIO_PROGRAMACAO:Date;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:false,
         name:"DT_HORA_TERMINO_PROGRAMACAO"
         })
@@ -117,14 +113,14 @@ export class SAU_PROGRAMACAO_PARADA {
     DS_OBSERVACAO:string | null;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DT_HORA_INICIO_SERVICO"
         })
     DT_HORA_INICIO_SERVICO:Date | null;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DT_HORA_TERMINO_SERVICO"
         })
@@ -157,7 +153,7 @@ export class SAU_PROGRAMACAO_PARADA {
     FL_COMUNICAR_ANEEL:number | null;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DT_CANCELAMENTO"
         })
@@ -186,14 +182,14 @@ export class SAU_PROGRAMACAO_PARADA {
     NM_AREA_ORIGEM_CANCELAMENTO:string | null;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DT_HORA_INICIO_REPROGRAMACAO"
         })
     DT_HORA_INICIO_REPROGRAMACAO:Date | null;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DT_HORA_TERMINO_REPROGRAMACAO"
         })
@@ -270,7 +266,7 @@ export class SAU_PROGRAMACAO_PARADA {
     CD_USUARIO_CONCLUSAO:string | null;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DT_CONCLUSAO"
         })
@@ -291,14 +287,6 @@ export class SAU_PROGRAMACAO_PARADA {
         name:"ID_STATUS_PROGRAMACAO"
         })
     ID_STATUS_PROGRAMACAO:string | null;
-        
-
-    @Column("varchar2",{ 
-        nullable:true,
-        length:1,
-        name:"ID_ATUAL"
-        })
-    ID_ATUAL:string | null;
         
 
     @Column("number",{ 
@@ -327,7 +315,7 @@ export class SAU_PROGRAMACAO_PARADA {
     USER_CREATE:string | null;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DATE_CREATE"
         })
@@ -342,7 +330,7 @@ export class SAU_PROGRAMACAO_PARADA {
     USER_UPDATE:string | null;
         
 
-    @Column("timestamp with local time zone",{ 
+    @Column('timestamp with local time zone',{ 
         nullable:true,
         name:"DATE_UPDATE"
         })
@@ -357,12 +345,6 @@ export class SAU_PROGRAMACAO_PARADA {
         })
     NR_REPROGRAMACOES_APROVADAS:number | null;
         
-
-   
-    @ManyToOne(()=>SAU_UNIDADE_GERADORA, (SAU_UNIDADE_GERADORA: SAU_UNIDADE_GERADORA)=>SAU_UNIDADE_GERADORA.sauProgramacaoParadas,{  nullable:false, })
-    @JoinColumn({ name:'CD_UNIDADE_GERADORA'})
-    cdUnidadeGeradora:SAU_UNIDADE_GERADORA | null;
-
 
     @Column("varchar2",{ 
         nullable:true,
@@ -388,5 +370,10 @@ export class SAU_PROGRAMACAO_PARADA {
    
     @OneToMany(()=>SAU_PGI, (SAU_PGI: SAU_PGI)=>SAU_PGI.cdProgramacaoParada)
     sauPgis:SAU_PGI[];
+    
+
+   
+    @OneToMany(()=>SAU_PROGRAMACAO_PARADA_UG, (SAU_PROGRAMACAO_PARADA_UG: SAU_PROGRAMACAO_PARADA_UG)=>SAU_PROGRAMACAO_PARADA_UG.cdProgramacaoParada)
+    sauProgramacaoParadaUgs:SAU_PROGRAMACAO_PARADA_UG[];
     
 }

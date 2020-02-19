@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { inject } from 'inversify'
-import { controller, interfaces, httpGet, httpPut, response, requestParam, httpPost, requestBody } from 'inversify-express-utils'
+import { controller, interfaces, httpGet, httpPut, response, requestParam, httpPost, requestBody, queryParam } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
 import Handlers from '../../../core/Handlers'
@@ -14,6 +14,17 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   public async getTipoParada(@response() res: Response): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(11)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpGet('/tipo_parada_by_date')
+  public async getTipoParadaByDate(@response() res: Response, @queryParam("dateFrom") dateFrom: number, @queryParam("dateTo") dateTo: number): Promise<Response> {
+
+    try {
+      const data = await this.paradaProgramadaService.getTipoParadaByDate(dateFrom, dateTo)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -170,18 +181,18 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpGet('/id_parada_seq/:numParada')
-  public async getLastIdSeqParada(
-    @response() res: Response,
-    @requestParam('numParada') numParada: number
-  ): Promise<Response> {
-    try {
-      const data = await this.paradaProgramadaService.getLastIdSeqParada(numParada)
-      return Handlers.onSuccess(res, data[0])
-    } catch (error) {
-      return Handlers.onError(res, error.message, error)
-    }
-  }
+  // @httpGet('/id_parada_seq/:numParada')
+  // public async getLastIdSeqParada(
+  //   @response() res: Response,
+  //   @requestParam('numParada') numParada: number
+  // ): Promise<Response> {
+  //   try {
+  //     const data = await this.paradaProgramadaService.getLastIdSeqParada(numParada)
+  //     return Handlers.onSuccess(res, data[0])
+  //   } catch (error) {
+  //     return Handlers.onError(res, error.message, error)
+  //   }
+  // }
 
   @httpGet('/id_parada')
   public async getLastIdParada(@response() res: Response): Promise<Response> {

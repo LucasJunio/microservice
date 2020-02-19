@@ -33,6 +33,7 @@ import {
 import { IUnidadeGeradoraService, UnidadeGeradoraService } from './modules/v1/unidade_geradora/unidadeGeradoraService'
 import { ISauConsultaPpRepository, SauConsultaPpRepository } from './repositories/sauConsultaPpRepository'
 import { ISauHistProgramacaoParadaRepository, SauHistProgramacaoParadaRepository } from './repositories/sauHistProgramacaoParadaRepository'
+import { ISauProgramacaoParadaUgRepository, SauProgramacaoParadaUgRepository } from './repositories/sauProgramacaoParadaUgRepository'
 
 export const bindings = new AsyncContainerModule(async bind => {
   try {
@@ -50,6 +51,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<IUnidadeGeradoraService>(TYPE.UnidadeGeradoraService).to(UnidadeGeradoraService)
 
     // Binding the repositories
+    bind<ISauProgramacaoParadaUgRepository>(TYPE.SauProgramacaoParadaUgRepository).to(SauProgramacaoParadaUgRepository)
     bind<ISauUsinaRepository>(TYPE.SauUsinaRepository).to(SauUsinaRepository)
     bind<ISauHistProgramacaoParadaRepository>(TYPE.SauHistProgramacaoParadaRepository).to(SauHistProgramacaoParadaRepository)
     bind<ISauUnidadeGeradoraRepository>(TYPE.SauUnidadeGeradoraRepository).to(SauUnidadeGeradoraRepository)
