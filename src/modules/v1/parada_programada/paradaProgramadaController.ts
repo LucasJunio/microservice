@@ -20,6 +20,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
+  @httpPost('/cancel')
+  public async getUsinas(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.cancel(parada)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
   @httpGet('/tipo_parada_by_date')
   public async getTipoParadaByDate(@response() res: Response, @queryParam("dateFrom") dateFrom: number, @queryParam("dateTo") dateTo: number): Promise<Response> {
 
@@ -141,26 +151,6 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpPut('/next_level')
-  public async nextLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
-    try {
-      const data = await this.paradaProgramadaService.nextLevel(parada)
-      return Handlers.onSuccess(res, data)
-    } catch (error) {
-      return Handlers.onError(res, error.message, error)
-    }
-  }
-
-  @httpPut('/prev_level')
-  public async prevLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
-    try {
-      const data = await this.paradaProgramadaService.prevLevel(parada)
-      return Handlers.onSuccess(res, data)
-    } catch (error) {
-      return Handlers.onError(res, error.message, error)
-    }
-  }
-
   @httpGet('/situacao')
   public async getSituacao(@response() res: Response): Promise<Response> {
     try {
@@ -180,19 +170,6 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
       return Handlers.onError(res, error.message, error)
     }
   }
-
-  // @httpGet('/id_parada_seq/:numParada')
-  // public async getLastIdSeqParada(
-  //   @response() res: Response,
-  //   @requestParam('numParada') numParada: number
-  // ): Promise<Response> {
-  //   try {
-  //     const data = await this.paradaProgramadaService.getLastIdSeqParada(numParada)
-  //     return Handlers.onSuccess(res, data[0])
-  //   } catch (error) {
-  //     return Handlers.onError(res, error.message, error)
-  //   }
-  // }
 
   @httpGet('/id_parada')
   public async getLastIdParada(@response() res: Response): Promise<Response> {

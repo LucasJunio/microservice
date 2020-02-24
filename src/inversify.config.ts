@@ -22,10 +22,19 @@ import {
   SauSubClassificacaoParadaRepository
 } from './repositories/sauSubclassificacaoParadaRepository'
 import { ISauPgiRepository, SauPgiRepository } from './repositories/sauPgiRepository'
+import { ISauReprogramacaoParadaRepository, SauReprogramacaoParadaRepository } from './repositories/sauReprogramacaoParadaRepository'
 import {
   ParadaProgramadaService,
   IParadaProgramadaService
 } from './modules/v1/parada_programada/paradaProgramadaService'
+import {
+  FluxoService,
+  IFluxoService
+} from './modules/v1/fluxo/fluxoService'
+import {
+  IReprogramacaoParadaService,
+  ReprogramacaoParadaService
+} from './modules/v1/reprogramacao/reprogramacaoParadaService'
 import {
   ISauUnidadeGeradoraRepository,
   SauUnidadeGeradoraRepository
@@ -44,11 +53,15 @@ export const bindings = new AsyncContainerModule(async bind => {
     await require('./modules/v1/parada_programada/paradaProgramadaController')
     await require('./modules/v1/usina/usinaController')
     await require('./modules/v1/unidade_geradora/unidadeGeradoraController')
+    await require('./modules/v1/fluxo/fluxoController')
+    await require('./modules/v1/reprogramacao/reprogramacaoParadaController')
 
     // Binding the services
     bind<IParadaProgramadaService>(TYPE.ParadaProgramadaService).to(ParadaProgramadaService)
     bind<IUsinaService>(TYPE.UsinaService).to(UsinaService)
     bind<IUnidadeGeradoraService>(TYPE.UnidadeGeradoraService).to(UnidadeGeradoraService)
+    bind<IFluxoService>(TYPE.FluxoService).to(FluxoService)
+    bind<IReprogramacaoParadaService>(TYPE.ReprogramacaoParadaService).to(ReprogramacaoParadaService)
 
     // Binding the repositories
     bind<ISauProgramacaoParadaUgRepository>(TYPE.SauProgramacaoParadaUgRepository).to(SauProgramacaoParadaUgRepository)
@@ -66,6 +79,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<ISauPgiRepository>(TYPE.SauPgiRepository).to(SauPgiRepository)
     bind<ISauProgramacaoParadaRepository>(TYPE.SauProgramacaoParadaRepository).to(SauProgramacaoParadaRepository)
     bind<ISauConsultaPpRepository>(TYPE.SauConsultaPpRepository).to(SauConsultaPpRepository)
+    bind<ISauReprogramacaoParadaRepository>(TYPE.SauReprogramacaoParadaRepository).to(SauReprogramacaoParadaRepository)
 
     logger.info('Binding: Todos Módulos carregados corretamente')
   } catch (error) {

@@ -2,6 +2,7 @@ import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
 import { SAU_HIST_PROGRAMACAO_PARADA } from '../entities/SAU_HIST_PROGRAMACAO_PARADA'
 import { SAU_USINA } from '../entities/SAU_USINA'
+import { SAU_PROGRAMACAO_PARADA } from '../entities/SAU_PROGRAMACAO_PARADA'
 
 export interface ISauHistProgramacaoParadaRepository {
     findHistoricoById(id: number): Promise<SAU_HIST_PROGRAMACAO_PARADA[]>
@@ -34,4 +35,18 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
             "select SAU_HIST_PROGRAMACAO_PARADA_S.nextval as id FROM DUAL"
         )
     }
+    
+    public createDefaultHistorico(parada: SAU_PROGRAMACAO_PARADA, acao: string , flow: string): SAU_HIST_PROGRAMACAO_PARADA {
+        const historico = new SAU_HIST_PROGRAMACAO_PARADA;
+        historico.cdProgramacaoParada = parada;
+        historico.DATE_CREATE = new Date();
+        historico.DT_HISTORICO = new Date();
+        historico.CD_USUARIO = 'Edison'
+        historico.USER_CREATE = historico.CD_USUARIO;
+        historico.DS_ACAO = acao
+        historico.DS_OBSERVACAO = `${historico.CD_USUARIO} Mudou o status do documento para ${historico.DS_ACAO} `
+        historico.FLOW = flow //'FLOW'; // REPR // CANC
+        return historico;
+    }
+      
 }

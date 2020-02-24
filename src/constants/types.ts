@@ -3,6 +3,8 @@ export const TYPE = {
   ParadaProgramadaService: Symbol.for('ParadaProgramadaService'),
   UsinaService: Symbol.for('UsinaService'),
   UnidadeGeradoraService: Symbol.for('UnidadeGeradoraService'),
+  FluxoService: Symbol.for('FluxoService'),
+  ReprogramacaoParadaService: Symbol.for('ReprogramacaoParadaService'),
 
   // Repositories
   SauUsinaRepository: Symbol.for('SauUsinaRepository'),
@@ -15,7 +17,8 @@ export const TYPE = {
   SauProgramacaoParadaRepository: Symbol.for('SauProgramacaoParadaRepository'),
   SauConsultaPpRepository: Symbol.for('SauConsultaPpRepository'),
   SauHistProgramacaoParadaRepository: Symbol.for('SauHistProgramacaoParadaRepository'),
-  SauProgramacaoParadaUgRepository: Symbol.for('SauProgramacaoParadaUgRepository')
+  SauProgramacaoParadaUgRepository: Symbol.for('SauProgramacaoParadaUgRepository'),
+  SauReprogramacaoParadaRepository: Symbol.for('SauReprogramacaoParadaRepository')
 
   
 }

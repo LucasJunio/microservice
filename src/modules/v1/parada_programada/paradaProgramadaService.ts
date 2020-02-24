@@ -24,7 +24,6 @@ import { SAU_PROGRAMACAO_PARADA_UG } from '../../../entities/SAU_PROGRAMACAO_PAR
 import { parseISO, setYear, fromUnixTime, differenceInHours, isAfter, isSameYear, isBefore, addYears, subYears, differenceInYears } from 'date-fns'
 import { map, get } from 'lodash'
 
-
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]>
   getParamProgramacaoParada(year: string): Promise<SAU_PARAM_PROGRAMACAO_PARADAS>
@@ -45,6 +44,7 @@ export interface IParadaProgramadaService {
 
 @injectable()
 export class ParadaProgramadaService implements IParadaProgramadaService {
+
   @inject(TYPE.SauClassificacaoParadaRepository)
   private readonly sauClassificacaoParadaRepository: SauClassificacaoParadaRepository
 
@@ -101,23 +101,23 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     const difference = differenceInHours(datet, datef)
 
     if (difference < 24) // Diferença < 24 horas intempestiva
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PI')
+      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PI', 11)
 
     if (difference < 48) // Diferença < 48 horas intempestiva
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PU')
+      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PU', 11)
     
     // caso datef ser antes de 31/08, datef e datet mesmo ano || caso datef ser depois de 31/08 datet tem que ser ano de datef +1
     if ((isBefore(datef, achorDate) && isSameYear(datef, datet)) || (isAfter(datef, achorDate) && isSameYear(datet, addYears(datef, 1)))) 
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PP')
+      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PP', 11)
 
     // caso datef ser antes de 30/08 e datet for o ano de datef + 1
     if ((isBefore(datef, achorDate) && isSameYear(datet, addYears(datef, 1)))) 
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PA')
+      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PA', 11)
 
     if (differenceInYears(datet, datef) <= 2) 
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PB')
+      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PB', 11)
 
-    return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PL')
+    return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PL', 11)
   }
 
   public getPgi(numPgi: string): Promise<SAU_PGI> {
@@ -136,64 +136,20 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauHistProgramacaoParadaRepository.findHistoricoById(id)
   }
 
-  private createDefaultHistorico(parada: SAU_PROGRAMACAO_PARADA, acao: string ): SAU_HIST_PROGRAMACAO_PARADA {
-    const historico = new SAU_HIST_PROGRAMACAO_PARADA;
-    historico.cdProgramacaoParada = parada;
-    historico.DATE_CREATE = new Date();
-    historico.DT_HISTORICO = new Date();
-    historico.CD_USUARIO = 'Edison'
-    historico.USER_CREATE = historico.CD_USUARIO;
-    historico.DS_ACAO = acao
-    historico.DS_OBSERVACAO = `${historico.CD_USUARIO} Mudou o status do documento para ${historico.DS_ACAO} `
-    historico.FLOW = 'FLOW'; // REPR // CANC
-    return historico;
-  }
+  public async cancel(parada: SAU_PROGRAMACAO_PARADA ): Promise<SAU_PROGRAMACAO_PARADA> {
+    parada.ID_STATUS_PROGRAMACAO = 'C'
+    const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(parada, 'AAPRV_USINA', parada.ID_STATUS_PROGRAMACAO);
+    parada.DT_CANCELAMENTO = new Date();
+    parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_USINA', 13)
+    parada.NM_AREA_ORIGEM_CANCELAMENTO = 'VERIFICAR'
+    parada.CD_USUARIO_CANCELAMENTO = "EDISON"
 
-  public async nextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-      let historico = null
-
-      switch(parada.idStatus.ID_ITEM_LOOKUP) {
-        case 'RASCUNHO':
-          parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_USINA')
-          historico = this.createDefaultHistorico(parada, 'AAPRV_USINA');
-        break;
-        case 'AAPRV_USINA':
-          parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_PGP')
-          historico = this.createDefaultHistorico(parada, 'AAPRV_PGP');
-        break;
-        case 'AAPRV_PGP':
-          parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_OPE')
-          historico = this.createDefaultHistorico(parada, 'AAPRV_OPE');
-        break;
-        case 'AAPRV_OPE':
-          parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL')
-          historico = this.createDefaultHistorico(parada, 'CONCL');
-        break;
-      }
-
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico);
-      return this.saveProgramacaoParada(parada)
-
+    await this.saveProgramacaoParada(parada);
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    return await this.getById(parada.CD_PROGRAMACAO_PARADA)
 
   }
 
-  public async prevLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    const statusParadaProgramada = await this.sauItemLookUpRepository.getItemLookUpByIdLookup(13);
-    let historico = null
-
-    switch(parada.idStatus.ID_ITEM_LOOKUP) {
-      case 'AAPRV_OPE':
-      case 'AAPRV_PGP':
-        parada.idStatus = statusParadaProgramada.find((status: SAU_ITEM_LOOKUP) => status.ID_ITEM_LOOKUP === 'RASCUNHO')
-        historico = this.createDefaultHistorico(parada, 'RASCUNHO');
-      break;
-    }
-
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico);
-    return this.saveProgramacaoParada(parada)
-
-
-}
   public getSubClassificacaoParada(
     cdClassificacao: number,
     idTipoUsina: string
@@ -206,7 +162,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     if (!programcaoParada.CD_PROGRAMACAO_PARADA) saveHistorico = true
     
     const parada = await this.createAndSavePp(programcaoParada);
-      
+    
     const paradaWithCdParada = new SAU_PROGRAMACAO_PARADA();
     paradaWithCdParada.CD_PROGRAMACAO_PARADA = get(parada, ['CD_PROGRAMACAO_PARADA']);
 
@@ -218,7 +174,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     if (!saveHistorico)
       return paradaRet
     
-    const historico = this.createDefaultHistorico(parada, 'RASCUNHO');
+    const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(parada, 'RASCUNHO', parada.ID_STATUS_PROGRAMACAO);
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico);
 
     return paradaRet
@@ -252,9 +208,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   public async getById(id: number): Promise<SAU_PROGRAMACAO_PARADA> {
     const pp = await this.sauProgramacaoParadaRepository.getById(id)
-    const usina = await this.sauUsinaRepository.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA);
-    pp.usina = usina[0]
-
     return pp
   }
 

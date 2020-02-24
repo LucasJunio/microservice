@@ -5,12 +5,13 @@ import {SAU_SUBCLASSIFICACAO_PARADA} from "./SAU_SUBCLASSIFICACAO_PARADA";
 import {SAU_HIST_PROGRAMACAO_PARADA} from "./SAU_HIST_PROGRAMACAO_PARADA";
 import {SAU_PGI} from "./SAU_PGI";
 import {SAU_PROGRAMACAO_PARADA_UG} from "./SAU_PROGRAMACAO_PARADA_UG";
-import { SAU_USINA } from "./SAU_USINA";
+import {SAU_REPROGRAMACAO_PARADA} from "./SAU_REPROGRAMACAO_PARADA";
 
 
 @Entity("SAU_PROGRAMACAO_PARADA")
-@Index("SAU_PROGRAMACAO_PARADA_IX1",["CD_CONJUNTO_USINA","DT_HORA_INICIO_REPROGRAMACAO",])
 export class SAU_PROGRAMACAO_PARADA {
+    // VIRTUAL FIELD
+    usina: any;
 
     @Column("number",{ 
         nullable:false,
@@ -22,23 +23,19 @@ export class SAU_PROGRAMACAO_PARADA {
 
     @Column("number",{ 
         nullable:false,
-        unique: true,
         name:"CD_PARADA"
         })
     CD_PARADA:number;
         
-    //campo virtual, serve apenas para alimentar o front
-    usina: any;
 
     @Column("number",{ 
         nullable:false,
-        unique: true,
         name:"CD_CONJUNTO_USINA"
         })
     CD_CONJUNTO_USINA:number;
         
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:true,
         name:"DT_CRIACAO_PARADA"
         })
@@ -46,25 +43,25 @@ export class SAU_PROGRAMACAO_PARADA {
         
 
    
-    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas6,{  })
+    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas3,{  })
     @JoinColumn({ name:'ID_TIPO_PARADA'})
     idTipoParada:SAU_ITEM_LOOKUP | null;
 
 
    
-    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas4,{  })
+    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas2,{  })
     @JoinColumn({ name:'ID_STATUS'})
     idStatus:SAU_ITEM_LOOKUP | null;
 
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:false,
         name:"DT_HORA_INICIO_PROGRAMACAO"
         })
     DT_HORA_INICIO_PROGRAMACAO:Date;
         
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:false,
         name:"DT_HORA_TERMINO_PROGRAMACAO"
         })
@@ -72,7 +69,7 @@ export class SAU_PROGRAMACAO_PARADA {
         
 
    
-    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas7,{  })
+    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas4,{  })
     @JoinColumn({ name:'ID_TIPO_PROGRAMACAO'})
     idTipoProgramacao:SAU_ITEM_LOOKUP | null;
 
@@ -113,14 +110,14 @@ export class SAU_PROGRAMACAO_PARADA {
     DS_OBSERVACAO:string | null;
         
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:true,
         name:"DT_HORA_INICIO_SERVICO"
         })
     DT_HORA_INICIO_SERVICO:Date | null;
         
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:true,
         name:"DT_HORA_TERMINO_SERVICO"
         })
@@ -153,7 +150,7 @@ export class SAU_PROGRAMACAO_PARADA {
     FL_COMUNICAR_ANEEL:number | null;
         
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:true,
         name:"DT_CANCELAMENTO"
         })
@@ -169,7 +166,7 @@ export class SAU_PROGRAMACAO_PARADA {
         
 
    
-    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas3,{  })
+    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas,{  })
     @JoinColumn({ name:'ID_STATUS_CANCELAMENTO'})
     idStatusCancelamento:SAU_ITEM_LOOKUP | null;
 
@@ -182,82 +179,6 @@ export class SAU_PROGRAMACAO_PARADA {
     NM_AREA_ORIGEM_CANCELAMENTO:string | null;
         
 
-    @Column('timestamp with local time zone',{ 
-        nullable:true,
-        name:"DT_HORA_INICIO_REPROGRAMACAO"
-        })
-    DT_HORA_INICIO_REPROGRAMACAO:Date | null;
-        
-
-    @Column('timestamp with local time zone',{ 
-        nullable:true,
-        name:"DT_HORA_TERMINO_REPROGRAMACAO"
-        })
-    DT_HORA_TERMINO_REPROGRAMACAO:Date | null;
-        
-
-   
-    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas5,{  })
-    @JoinColumn({ name:'ID_STATUS_REPROGRAMACAO'})
-    idStatusReprogramacao:SAU_ITEM_LOOKUP | null;
-
-
-   
-    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas2,{  })
-    @JoinColumn({ name:'ID_ORIGEM_REPROGRAMACAO'})
-    idOrigemReprogramacao:SAU_ITEM_LOOKUP | null;
-
-
-   
-    @ManyToOne(()=>SAU_ITEM_LOOKUP, (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP)=>SAU_ITEM_LOOKUP.sauProgramacaoParadas,{  })
-    @JoinColumn({ name:'ID_MOTIVO_REPROGRAMACAO'})
-    idMotivoReprogramacao:SAU_ITEM_LOOKUP | null;
-
-
-    @Column("varchar2",{ 
-        nullable:true,
-        length:240,
-        name:"DS_MOTIVO_REPROGRAMACAO"
-        })
-    DS_MOTIVO_REPROGRAMACAO:string | null;
-        
-
-   
-    @ManyToOne(()=>SAU_CLASSIFICACAO_PARADA, (SAU_CLASSIFICACAO_PARADA: SAU_CLASSIFICACAO_PARADA)=>SAU_CLASSIFICACAO_PARADA.sauProgramacaoParadas2,{  })
-    @JoinColumn({ name:'CD_CLASSIF_REPROGR_PARADA'})
-    cdClassifReprogrParada:SAU_CLASSIFICACAO_PARADA | null;
-
-
-   
-    @ManyToOne(()=>SAU_SUBCLASSIFICACAO_PARADA, (SAU_SUBCLASSIFICACAO_PARADA: SAU_SUBCLASSIFICACAO_PARADA)=>SAU_SUBCLASSIFICACAO_PARADA.sauProgramacaoParadas2,{  })
-    @JoinColumn({ name:'CD_SUBCLAS_REPROGR_PARADA'})
-    cdSubclasReprogrParada:SAU_SUBCLASSIFICACAO_PARADA | null;
-
-
-    @Column("varchar2",{ 
-        nullable:true,
-        length:240,
-        name:"DS_NOVA_DESCRICAO_PROGR_PARADA"
-        })
-    DS_NOVA_DESCRICAO_PROGR_PARADA:string | null;
-        
-
-    @Column("varchar2",{ 
-        nullable:true,
-        length:2500,
-        name:"DS_OBSERVACAO_REPROGR_PARADA"
-        })
-    DS_OBSERVACAO_REPROGR_PARADA:string | null;
-        
-
-    @Column("varchar2",{ 
-        nullable:true,
-        length:15,
-        name:"NM_AREA_ORIGEM_REPROGRAMACAO"
-        })
-    NM_AREA_ORIGEM_REPROGRAMACAO:string | null;
-        
-
     @Column("varchar2",{ 
         nullable:true,
         length:30,
@@ -266,7 +187,7 @@ export class SAU_PROGRAMACAO_PARADA {
     CD_USUARIO_CONCLUSAO:string | null;
         
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:true,
         name:"DT_CONCLUSAO"
         })
@@ -315,7 +236,7 @@ export class SAU_PROGRAMACAO_PARADA {
     USER_CREATE:string | null;
         
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:true,
         name:"DATE_CREATE"
         })
@@ -330,7 +251,7 @@ export class SAU_PROGRAMACAO_PARADA {
     USER_UPDATE:string | null;
         
 
-    @Column('timestamp with local time zone',{ 
+    @Column("timestamp with local time zone",{ 
         nullable:true,
         name:"DATE_UPDATE"
         })
@@ -375,5 +296,10 @@ export class SAU_PROGRAMACAO_PARADA {
    
     @OneToMany(()=>SAU_PROGRAMACAO_PARADA_UG, (SAU_PROGRAMACAO_PARADA_UG: SAU_PROGRAMACAO_PARADA_UG)=>SAU_PROGRAMACAO_PARADA_UG.cdProgramacaoParada)
     sauProgramacaoParadaUgs:SAU_PROGRAMACAO_PARADA_UG[];
+    
+
+   
+    @OneToMany(()=>SAU_REPROGRAMACAO_PARADA, (SAU_REPROGRAMACAO_PARADA: SAU_REPROGRAMACAO_PARADA)=>SAU_REPROGRAMACAO_PARADA.cdProgramacaoParada)
+    sauReprogramacaoParadas:SAU_REPROGRAMACAO_PARADA[];
     
 }
