@@ -7,45 +7,45 @@ import { FluxoService } from './fluxoService'
 
 @controller('/api/v1/fluxo')
 export class FluxoController implements interfaces.Controller {
-    @inject(TYPE.FluxoService)
-    private readonly fluxoService: FluxoService
-    
-    @httpPost('/')
-    public async getUsinas(@response() res: Response): Promise<Response> {
-        try {
-        return Handlers.onSuccess(res, {ok:true})
-        } catch (error) {
-        return Handlers.onError(res, error.message, error)
-        }
-    }
+  @inject(TYPE.FluxoService)
+  private readonly fluxoService: FluxoService
 
-    @httpPut('/prog/next_level')
-    public async nextLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
-        try {
-        const data = await this.fluxoService.nextLevel(parada)
-        return Handlers.onSuccess(res, data)
-        } catch (error) {
-        return Handlers.onError(res, error.message, error)
-        }
+  @httpPost('/')
+  public async getUsinas(@response() res: Response): Promise<Response> {
+    try {
+      return Handlers.onSuccess(res, { ok: true })
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
     }
+  }
 
-    @httpPut('/repr/next_level')
-    public async reprNextLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
-        try {
-        const data = await this.fluxoService.reprNextLevel(parada)
-        return Handlers.onSuccess(res, data)
-        } catch (error) {
-        return Handlers.onError(res, error.message, error)
-        }
+  @httpPut('/prog/next_level')
+  public async nextLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+    try {
+      const data = await this.fluxoService.nextLevel(parada)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
     }
+  }
 
-    @httpPut('/prog/prev_level')
-    public async prevLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
-      try {
-        const data = await this.fluxoService.prevLevel(parada)
-        return Handlers.onSuccess(res, data)
-      } catch (error) {
-        return Handlers.onError(res, error.message, error)
-      }
+  @httpPut('/repr/next_level')
+  public async reprNextLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+    try {
+      const data = await this.fluxoService.reprNextLevel(parada)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
     }
+  }
+
+  @httpPut('/prog/prev_level')
+  public async prevLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+    try {
+      const data = await this.fluxoService.prevLevel(parada)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
 }

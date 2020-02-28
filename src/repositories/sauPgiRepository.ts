@@ -54,7 +54,7 @@ export class SauPgiRepository implements ISauPgiRepository {
 
   public getAllNumPgi(): Promise<SAU_PGI[]> {
     return this.sauPgiRepository.find({
-      select: ['NUM_PGI'],
+      select: ['NUM_PGI']
     })
   }
 }

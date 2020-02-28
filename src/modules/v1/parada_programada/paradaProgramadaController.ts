@@ -1,6 +1,15 @@
 import { Response } from 'express'
 import { inject } from 'inversify'
-import { controller, interfaces, httpGet, httpPut, response, requestParam, httpPost, requestBody, queryParam } from 'inversify-express-utils'
+import {
+  controller,
+  interfaces,
+  httpGet,
+  response,
+  requestParam,
+  httpPost,
+  requestBody,
+  queryParam
+} from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
 import Handlers from '../../../core/Handlers'
@@ -31,8 +40,11 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpGet('/tipo_parada_by_date')
-  public async getTipoParadaByDate(@response() res: Response, @queryParam("dateFrom") dateFrom: number, @queryParam("dateTo") dateTo: number): Promise<Response> {
-
+  public async getTipoParadaByDate(
+    @response() res: Response,
+    @queryParam('dateFrom') dateFrom: number,
+    @queryParam('dateTo') dateTo: number
+  ): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.getTipoParadaByDate(dateFrom, dateTo)
       return Handlers.onSuccess(res, data)
@@ -203,13 +215,12 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpGet('/historico/:id')
-  public async getHistorico(@response() res: Response, @requestParam('id') numParada: number ): Promise<Response> {
+  public async getHistorico(@response() res: Response, @requestParam('id') numParada: number): Promise<Response> {
     try {
-      const hist = await this.paradaProgramadaService.getHistoricoById(numParada);
+      const hist = await this.paradaProgramadaService.getHistoricoById(numParada)
       return Handlers.onSuccess(res, hist)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
     }
   }
-
 }

@@ -22,15 +22,15 @@ import {
   SauSubClassificacaoParadaRepository
 } from './repositories/sauSubclassificacaoParadaRepository'
 import { ISauPgiRepository, SauPgiRepository } from './repositories/sauPgiRepository'
-import { ISauReprogramacaoParadaRepository, SauReprogramacaoParadaRepository } from './repositories/sauReprogramacaoParadaRepository'
+import {
+  ISauReprogramacaoParadaRepository,
+  SauReprogramacaoParadaRepository
+} from './repositories/sauReprogramacaoParadaRepository'
 import {
   ParadaProgramadaService,
   IParadaProgramadaService
 } from './modules/v1/parada_programada/paradaProgramadaService'
-import {
-  FluxoService,
-  IFluxoService
-} from './modules/v1/fluxo/fluxoService'
+import { FluxoService, IFluxoService } from './modules/v1/fluxo/fluxoService'
 import {
   IReprogramacaoParadaService,
   ReprogramacaoParadaService
@@ -41,8 +41,14 @@ import {
 } from './repositories/sauUnidadeGeradoraRepository'
 import { IUnidadeGeradoraService, UnidadeGeradoraService } from './modules/v1/unidade_geradora/unidadeGeradoraService'
 import { ISauConsultaPpRepository, SauConsultaPpRepository } from './repositories/sauConsultaPpRepository'
-import { ISauHistProgramacaoParadaRepository, SauHistProgramacaoParadaRepository } from './repositories/sauHistProgramacaoParadaRepository'
-import { ISauProgramacaoParadaUgRepository, SauProgramacaoParadaUgRepository } from './repositories/sauProgramacaoParadaUgRepository'
+import {
+  ISauHistProgramacaoParadaRepository,
+  SauHistProgramacaoParadaRepository
+} from './repositories/sauHistProgramacaoParadaRepository'
+import {
+  ISauProgramacaoParadaUgRepository,
+  SauProgramacaoParadaUgRepository
+} from './repositories/sauProgramacaoParadaUgRepository'
 
 export const bindings = new AsyncContainerModule(async bind => {
   try {
@@ -66,7 +72,9 @@ export const bindings = new AsyncContainerModule(async bind => {
     // Binding the repositories
     bind<ISauProgramacaoParadaUgRepository>(TYPE.SauProgramacaoParadaUgRepository).to(SauProgramacaoParadaUgRepository)
     bind<ISauUsinaRepository>(TYPE.SauUsinaRepository).to(SauUsinaRepository)
-    bind<ISauHistProgramacaoParadaRepository>(TYPE.SauHistProgramacaoParadaRepository).to(SauHistProgramacaoParadaRepository)
+    bind<ISauHistProgramacaoParadaRepository>(TYPE.SauHistProgramacaoParadaRepository).to(
+      SauHistProgramacaoParadaRepository
+    )
     bind<ISauUnidadeGeradoraRepository>(TYPE.SauUnidadeGeradoraRepository).to(SauUnidadeGeradoraRepository)
     bind<ISauClassificacaoParadaRepository>(TYPE.SauClassificacaoParadaRepository).to(SauClassificacaoParadaRepository)
     bind<ISauItemLookUpRepository>(TYPE.SauItemLookUpRepository).to(SauItemLookUpRepository)

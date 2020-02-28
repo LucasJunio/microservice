@@ -35,10 +35,10 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
   }
 
   public async saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    if(!programcaoParada.CD_PROGRAMACAO_PARADA) {
+    if (!programcaoParada.CD_PROGRAMACAO_PARADA) {
       const idParada = await this.getParadaSeq()
-      programcaoParada.CD_PROGRAMACAO_PARADA = idParada[0].ID;
-    } 
+      programcaoParada.CD_PROGRAMACAO_PARADA = idParada[0].ID
+    }
     return this.sauProgramacaoParadaRepository.save(programcaoParada)
   }
 
@@ -60,22 +60,19 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
   }
 
   public async getParadaSeq(): Promise<any> {
-    return this.sauProgramacaoParadaRepository.query(
-      "select SAU_PROGRAMACAO_PARADA_S.nextval as id FROM DUAL"
-    )
+    return this.sauProgramacaoParadaRepository.query('select SAU_PROGRAMACAO_PARADA_S.nextval as id FROM DUAL')
   }
 
   public async getById(id: number): Promise<SAU_PROGRAMACAO_PARADA> {
     const pp = await this.sauProgramacaoParadaRepository.findOne(id, { relations: tableRelations })
-    const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA);
+    const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA)
     pp.usina = usina[0]
 
     return pp
   }
 
   public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<SAU_USINA> {
-
-    if(idConjuntoUsina === "U") {
+    if (idConjuntoUsina === 'U') {
       return this.sauUsinaRepository.query(
         `SELECT sg_usina sg_conjunto_usina,
           cd_usina cd_conjunto_usina,
@@ -97,5 +94,4 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
       ORDER BY 1`
     )
   }
-
 }

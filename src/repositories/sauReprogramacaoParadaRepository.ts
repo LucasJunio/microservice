@@ -5,6 +5,13 @@ import { SAU_PROGRAMACAO_PARADA } from '../entities/SAU_PROGRAMACAO_PARADA'
 import { SAU_ITEM_LOOKUP } from '../entities/SAU_ITEM_LOOKUP'
 
 export interface ISauReprogramacaoParadaRepository {
+  saveReprogramacaoParada(reprogramacao: SAU_REPROGRAMACAO_PARADA): Promise<SAU_REPROGRAMACAO_PARADA>
+  getDefaultReprogramacaoParada(
+    repr: any,
+    statusReprog: SAU_ITEM_LOOKUP,
+    parada: SAU_PROGRAMACAO_PARADA
+  ): Promise<SAU_REPROGRAMACAO_PARADA>
+  getReprSeq(): Promise<any>
 }
 
 @injectable()
@@ -15,18 +22,22 @@ export class SauReprogramacaoParadaRepository implements ISauReprogramacaoParada
     this.sauReprogramacaoParadaRepository = getRepository(SAU_REPROGRAMACAO_PARADA)
   }
 
-  
-  public async saveReprogramacaoParada(reprogramacao: SAU_REPROGRAMACAO_PARADA,): Promise<SAU_REPROGRAMACAO_PARADA> {
+  public async saveReprogramacaoParada(reprogramacao: SAU_REPROGRAMACAO_PARADA): Promise<SAU_REPROGRAMACAO_PARADA> {
     return this.sauReprogramacaoParadaRepository.save(reprogramacao)
   }
-    public async getDefaultReprogramacaoParada(repr: any, statusReprog: SAU_ITEM_LOOKUP, parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_REPROGRAMACAO_PARADA> {
-      const idRepr = await this.getReprSeq();
-    const reprogramacao = new SAU_REPROGRAMACAO_PARADA;
 
-    reprogramacao.CD_REPROGRAMACAO_PARADA = idRepr[0].ID;
-    reprogramacao.DT_HORA_INICIO_REPROGRAMACAO = repr.dataInicio;
-    reprogramacao.DT_HORA_TERMINO_REPROGRAMACAO = repr.dataTermino;
-    reprogramacao.idStatusReprogramacao = statusReprog;
+  public async getDefaultReprogramacaoParada(
+    repr: any,
+    statusReprog: SAU_ITEM_LOOKUP,
+    parada: SAU_PROGRAMACAO_PARADA
+  ): Promise<SAU_REPROGRAMACAO_PARADA> {
+    const idRepr = await this.getReprSeq()
+    const reprogramacao = new SAU_REPROGRAMACAO_PARADA()
+
+    reprogramacao.CD_REPROGRAMACAO_PARADA = idRepr[0].ID
+    reprogramacao.DT_HORA_INICIO_REPROGRAMACAO = repr.dataInicio
+    reprogramacao.DT_HORA_TERMINO_REPROGRAMACAO = repr.dataTermino
+    reprogramacao.idStatusReprogramacao = statusReprog
     reprogramacao.idOrigemReprogramacao = null
     reprogramacao.idMotivoReprogramacao = null
     reprogramacao.DS_MOTIVO_REPROGRAMACAO = null
@@ -42,12 +53,9 @@ export class SauReprogramacaoParadaRepository implements ISauReprogramacaoParada
     reprogramacao.cdProgramacaoParada = parada
 
     return reprogramacao
-
   }
 
   public async getReprSeq(): Promise<any> {
-    return this.sauReprogramacaoParadaRepository.query(
-      "select SAU_REPROGRAMACAO_PARADA_S.nextval as id FROM DUAL"
-    )
+    return this.sauReprogramacaoParadaRepository.query('select SAU_REPROGRAMACAO_PARADA_S.nextval as id FROM DUAL')
   }
 }

@@ -28,7 +28,6 @@ export class SauUsinaRepository implements ISauUsinaRepository {
                   WHERE scu.fl_ativo = 1 
                     AND acu.cd_conjunto = scu.cd_conjunto 
                   ORDER BY 1`
-
   }
 
   public getUsinas(): Promise<SAU_USINA[]> {
@@ -46,8 +45,7 @@ export class SauUsinaRepository implements ISauUsinaRepository {
   }
 
   public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<SAU_USINA> {
-
-    if(idConjuntoUsina === "U") {
+    if (idConjuntoUsina === 'U') {
       return this.sauUsinaRepository.query(
         `SELECT sg_usina sg_conjunto_usina,
           cd_usina cd_conjunto_usina,
@@ -69,5 +67,4 @@ export class SauUsinaRepository implements ISauUsinaRepository {
       ORDER BY 1`
     )
   }
-
 }
