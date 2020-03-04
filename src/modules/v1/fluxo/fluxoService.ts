@@ -44,24 +44,27 @@ export class FluxoService implements IFluxoService {
         await this.setStatusPp(parada, 'AAPRV_USINA')
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
-          'AAPRV_USINA',
-          parada.ID_STATUS_PROGRAMACAO
+          'EM ANÁLISE USINA',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
         )
         break
       case 'AAPRV_USINA':
         await this.setStatusPp(parada, 'AAPRV_OPE')
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
-          'AAPRV_OPE',
-          parada.ID_STATUS_PROGRAMACAO
+          'EM ANÁLISE OPE',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
         )
         break
       case 'AAPRV_OPE':
         await this.setStatusPp(parada, 'CONCL')
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
-          'CONCL',
-          parada.ID_STATUS_PROGRAMACAO
+          'CONCLUÍDA',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
         )
         break
     }
@@ -80,7 +83,8 @@ export class FluxoService implements IFluxoService {
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
           'RASCUNHO',
-          parada.ID_STATUS_PROGRAMACAO
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
         )
         break
     }
@@ -94,20 +98,23 @@ export class FluxoService implements IFluxoService {
     let historico = null
 
     switch (reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP) {
-      case 'AAPRV_USINA':
+      case 'EM ANÁLISE USINA':
         reprogr.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_OPE', 13)
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
-          'AAPRV_OPE',
-          parada.ID_STATUS_PROGRAMACAO
+          'EM ANÁLISE OPE',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
         )
         break
       case 'AAPRV_OPE':
         reprogr.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL', 13)
+        parada.NR_REPROGRAMACOES_APROVADAS += 1
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
-          'CONCL',
-          parada.ID_STATUS_PROGRAMACAO
+          'CONCLUÍDA',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
         )
         break
     }

@@ -37,13 +37,14 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
   public createDefaultHistorico(
     parada: SAU_PROGRAMACAO_PARADA,
     acao: string,
-    flow: string
+    flow: string,
+    user: string
   ): SAU_HIST_PROGRAMACAO_PARADA {
     const historico = new SAU_HIST_PROGRAMACAO_PARADA()
     historico.cdProgramacaoParada = parada
     historico.DATE_CREATE = new Date()
     historico.DT_HISTORICO = new Date()
-    historico.CD_USUARIO = 'Edison'
+    historico.CD_USUARIO = user
     historico.USER_CREATE = historico.CD_USUARIO
     historico.DS_ACAO = acao
     historico.DS_OBSERVACAO = `${historico.CD_USUARIO} Mudou o status do documento para ${historico.DS_ACAO} `

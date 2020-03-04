@@ -153,10 +153,12 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     parada.ID_STATUS_PROGRAMACAO = 'C'
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
-      'AAPRV_USINA',
-      parada.ID_STATUS_PROGRAMACAO
+      'EM ANÁLISE USINA',
+      parada.ID_STATUS_PROGRAMACAO,
+      parada.USER_UPDATE
     )
     parada.DT_CANCELAMENTO = new Date()
+    parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
     parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_USINA', 13)
     parada.NM_AREA_ORIGEM_CANCELAMENTO = 'VERIFICAR'
     parada.CD_USUARIO_CANCELAMENTO = 'EDISON'
@@ -196,7 +198,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
       'RASCUNHO',
-      parada.ID_STATUS_PROGRAMACAO
+      parada.ID_STATUS_PROGRAMACAO,
+      parada.USER_UPDATE
     )
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
 
@@ -237,6 +240,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     const idParada = await this.sauProgramacaoParadaRepository.getLastIdParada()
     programcaoParada.CD_PARADA = idParada[0].CD_PARADA + 1 // sempre o proximo
     programcaoParada.ID_STATUS_PROGRAMACAO = 'P'
+    programcaoParada.USER_CREATE = programcaoParada.USER_UPDATE
+    programcaoParada.DATE_CREATE = programcaoParada.DATE_UPDATE
 
     return this.sauProgramacaoParadaRepository.saveProgramacaoParada(programcaoParada)
   }
