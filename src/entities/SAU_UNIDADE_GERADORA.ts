@@ -1,7 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { SAU_USINA } from './SAU_USINA'
 import { SAU_PGI } from './SAU_PGI'
-import { SAU_PROGRAMACAO_PARADA } from './SAU_PROGRAMACAO_PARADA'
+import { SAU_PROGRAMACAO_PARADA_UG } from './SAU_PROGRAMACAO_PARADA_UG'
 
 @Entity('SAU_UNIDADE_GERADORA')
 @Index('SAU_UNIDADE_GERADORA_IX1', ['CD_CLASSE_UNIDADE'])
@@ -244,8 +244,8 @@ export class SAU_UNIDADE_GERADORA {
   public sauPgis: SAU_PGI[]
 
   @OneToMany(
-    () => SAU_PROGRAMACAO_PARADA,
-    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.cdUnidadeGeradora
+    () => SAU_PROGRAMACAO_PARADA_UG,
+    (SAU_PROGRAMACAO_PARADA_UG: SAU_PROGRAMACAO_PARADA_UG) => SAU_PROGRAMACAO_PARADA_UG.cdUnidadeGeradora
   )
-  public sauProgramacaoParadas: SAU_PROGRAMACAO_PARADA[]
+  public sauProgramacaoParadaUgs: SAU_PROGRAMACAO_PARADA_UG[]
 }

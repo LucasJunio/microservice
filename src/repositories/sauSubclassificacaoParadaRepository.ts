@@ -14,20 +14,17 @@ export class SauSubClassificacaoParadaRepository implements ISauSubClassificacao
     this.sauSubClassificacaoParadaRepository = getRepository(SAU_SUBCLASSIFICACAO_PARADA)
   }
 
-  public getSubClassificacaoParada(
+  public async getSubClassificacaoParada(
     cdClassificacao: number,
     idTipoUsina: string
   ): Promise<SAU_SUBCLASSIFICACAO_PARADA[]> {
-
-    this.sauSubClassificacaoParadaRepository.find({
+    await this.sauSubClassificacaoParadaRepository.find({
       select: ['CD_SUBCLASSIFICACAO_PARADA', 'DS_SUBCLASSIFICACAO_PARADA', 'idAplicacaoUsina'],
-      relations: [
-        'idAplicacaoUsina'
-      ],
+      relations: ['idAplicacaoUsina'],
       where: [
         {
           FL_ATIVO: 1,
-          cdClassificacaoParada: cdClassificacao,
+          cdClassificacaoParada: cdClassificacao
           // idAplicacaoUsina: {
           //   ID_ITEM_LOOKUP: idTipoUsina
           // }
@@ -41,7 +38,8 @@ export class SauSubClassificacaoParadaRepository implements ISauSubClassificacao
       order: {
         DS_SUBCLASSIFICACAO_PARADA: 'ASC'
       }
-    }).then(resp => console.log(resp))
+    })
+    // .then(resp => console.log(resp))
 
     return this.sauSubClassificacaoParadaRepository.find({
       // select: ['CD_SUBCLASSIFICACAO_PARADA', 'DS_SUBCLASSIFICACAO_PARADA', 'ID_APLICACAO_USINA'],

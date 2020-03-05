@@ -18,5 +18,4 @@ export async function getDbConnection(): Promise<Connection> {
     entities,
     migrations
   })
-
 }

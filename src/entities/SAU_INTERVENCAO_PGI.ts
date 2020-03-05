@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { SAU_PGI } from './SAU_PGI'
+import { SAU_PGI_AI } from './SAU_PGI_AI'
 
 @Entity('SAU_INTERVENCAO_PGI')
 export class SAU_INTERVENCAO_PGI {
@@ -104,4 +105,10 @@ export class SAU_INTERVENCAO_PGI {
     name: 'VERSION'
   })
   public VERSION: number | null
+
+  @OneToMany(
+    () => SAU_PGI_AI,
+    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.cdIntervencaoPgi
+  )
+  public sauPgiAis: SAU_PGI_AI[]
 }

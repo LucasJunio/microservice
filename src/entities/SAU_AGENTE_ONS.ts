@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany } from 'typeorm'
 import { SAU_EMAIL_AGENTE_ONS } from './SAU_EMAIL_AGENTE_ONS'
 import { SAU_EQUIPAMENTO_PGI } from './SAU_EQUIPAMENTO_PGI'
 import { SAU_PGI } from './SAU_PGI'
+import { SAU_PGI_AI } from './SAU_PGI_AI'
 
 @Entity('SAU_AGENTE_ONS')
 export class SAU_AGENTE_ONS {
@@ -112,4 +113,10 @@ export class SAU_AGENTE_ONS {
     (SAU_PGI: SAU_PGI) => SAU_PGI.cdAgenteSolic
   )
   public sauPgis2: SAU_PGI[]
+
+  @OneToMany(
+    () => SAU_PGI_AI,
+    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.cdAgenteOns
+  )
+  public sauPgiAis: SAU_PGI_AI[]
 }

@@ -16,24 +16,48 @@ spec:
     spec:
       containers:
         - name: __APP_NAME__
-          image: "__DOCKER_SERVER__/__APP_NAMESPACE__/__DOCKER_IMAGE__:__branchName__-__buildNumber__"
+          image: "__DOCKER_SERVER__/imagens/__DOCKER_IMAGE__:__branchName__-__buildNumber__"
           env:
-            - name: SAU_PP_HOST
+            - name: DATABASE_HOST
               valueFrom:
                 secretKeyRef:
-                  name: endpoint-sau
-                  key: sau-pp-endpoint
+                  name: sau-database
+                  key: DATABASE_HOST
               envFrom:
                 secretRef:
-                  name: endpoint-sau
-            - name: SAU_PGI_HOST
+                  name: sau-database
+            - name: DATABASE_PORT
               valueFrom:
                 secretKeyRef:
-                  name: endpoint-sau
-                  key: sau-pgi-endpoint
+                  name: sau-database
+                  key: DATABASE_PORT
               envFrom:
                 secretRef:
-                  name: endpoint-sau
+                  name: sau-database
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sau-database
+                  key: DATABASE_USERNAME
+              envFrom:
+                secretRef:
+                  name: sau-database
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sau-database
+                  key: DATABASE_PASSWORD
+              envFrom:
+                secretRef:
+                  name: sau-database
+            - name: DATABASE_SID
+              valueFrom:
+                secretKeyRef:
+                  name: sau-database
+                  key: DATABASE_SID
+              envFrom:
+                secretRef:
+                  name: sau-database
           ports:
             - containerPort: 8080
               protocol: TCP
