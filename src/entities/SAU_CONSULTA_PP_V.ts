@@ -11,16 +11,16 @@ export class SAU_CONSULTA_PP_V {
 
   @Column('number', {
     nullable: false,
-    name: 'CD_USINA'
+    name: 'CD_CONJUNTO_USINA'
   })
-  public CD_USINA: number | null
+  public CD_CONJUNTO_USINA: number | null
 
   @Column('varchar2', {
     nullable: true,
-    length: 14,
-    name: 'SG_USINA'
+    length: 50,
+    name: 'SG_CONJUNTO_USINA'
   })
-  public SG_USINA: string | null
+  public SG_CONJUNTO_USINA: string | null
 
   @Column('number', {
     nullable: false,
@@ -40,12 +40,6 @@ export class SAU_CONSULTA_PP_V {
     name: 'CD_PARADA'
   })
   public CD_PARADA: number | null
-
-  @Column('number', {
-    nullable: false,
-    name: 'CD_SEQ_PARADA'
-  })
-  public CD_SEQ_PARADA: number | null
 
   @Column('number', {
     nullable: true,

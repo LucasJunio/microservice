@@ -49,12 +49,11 @@ export class SauConsultaPpRepository implements ISauConsultaPpRepository {
 
     const columns = [
       'CD_PROGRAMACAO_PARADA',
-      'CD_USINA',
-      'SG_USINA',
+      'CD_CONJUNTO_USINA',
+      'SG_CONJUNTO_USINA',
       'CD_UNIDADE_GERADORA',
       'SG_UNIDADE_GERADORA',
       'CD_PARADA',
-      'CD_SEQ_PARADA',
       'ID_TIPO_PARADA',
       'TIPO_PARADA',
       'DS_TIPO_PARADA',
@@ -92,7 +91,7 @@ export class SauConsultaPpRepository implements ISauConsultaPpRepository {
 
     query.where('1 = 1')
 
-    SG_USINA ? query.andWhere('SG_USINA = :SG_USINA', { SG_USINA }) : true
+    SG_USINA ? query.andWhere('SG_CONJUNTO_USINA = :SG_USINA', { SG_USINA }) : true
     ID_UNIDADE_GERADORA ? query.andWhere('CD_UNIDADE_GERADORA = :ID_UNIDADE_GERADORA', { ID_UNIDADE_GERADORA }) : true
     NUM_PARADA ? query.andWhere('CD_PARADA = :NUM_PARADA', { NUM_PARADA }) : true
     ID_STATUS ? query.andWhere('ID_STATUS = :ID_STATUS', { ID_STATUS }) : true
