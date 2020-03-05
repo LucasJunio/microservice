@@ -5,7 +5,6 @@ import { SAU_USINA } from '../entities/SAU_USINA'
 
 const tableRelations = [
   'sauProgramacaoParadaUgs',
-  'sauProgramacaoParadaUgs.cdUnidadeGeradora',
   'cdClassificacaoProgrParada',
   'cdSubclassifProgrParada',
   'idTipoParada',
@@ -13,7 +12,11 @@ const tableRelations = [
   'idTipoProgramacao',
   'idStatusCancelamento',
   'sauReprogramacaoParadas',
-  'sauReprogramacaoParadas.idStatusReprogramacao'
+
+  'sauProgramacaoParadaUgs.cdUnidadeGeradora',
+  'sauReprogramacaoParadas.idStatusReprogramacao',
+  'sauReprogramacaoParadas.cdClassifReprogrParada',
+  'sauReprogramacaoParadas.cdSubclasReprogrParada'
 ]
 
 export interface ISauProgramacaoParadaRepository {

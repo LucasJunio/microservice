@@ -40,7 +40,7 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
 
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
-      'EM ANÁLISE OPE',
+      'EM ANÁLISE USINA',
       parada.ID_STATUS_PROGRAMACAO,
       parada.USER_UPDATE
     )

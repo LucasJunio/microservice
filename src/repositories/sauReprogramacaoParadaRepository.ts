@@ -41,13 +41,13 @@ export class SauReprogramacaoParadaRepository implements ISauReprogramacaoParada
     reprogramacao.idOrigemReprogramacao = null
     reprogramacao.idMotivoReprogramacao = null
     reprogramacao.DS_MOTIVO_REPROGRAMACAO = null
-    reprogramacao.cdClassifReprogrParada = null
-    reprogramacao.cdSubclasReprogrParada = null
+    reprogramacao.cdClassifReprogrParada = repr.classificacao
+    reprogramacao.cdSubclasReprogrParada = repr.subClassificacao
     reprogramacao.DS_NOVA_DESCRICAO_PROGR_PARADA = repr.motivo
     reprogramacao.NM_AREA_ORIGEM_REPROGRAMACAO = null
-    reprogramacao.USER_CREATE = null
+    reprogramacao.USER_CREATE = repr.user
     reprogramacao.DATE_CREATE = new Date()
-    reprogramacao.USER_UPDATE = null
+    reprogramacao.USER_UPDATE = repr.user
     reprogramacao.DATE_UPDATE = new Date()
 
     reprogramacao.cdProgramacaoParada = parada

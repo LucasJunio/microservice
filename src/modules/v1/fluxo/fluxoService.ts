@@ -94,11 +94,11 @@ export class FluxoService implements IFluxoService {
   }
 
   public async reprNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    const reprogr = _.last(parada.sauReprogramacaoParadas)
+    const reprogr = _.first(parada.sauReprogramacaoParadas)
     let historico = null
 
     switch (reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP) {
-      case 'EM ANÁLISE USINA':
+      case 'AAPRV_USINA':
         reprogr.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_OPE', 13)
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
