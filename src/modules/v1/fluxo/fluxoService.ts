@@ -94,7 +94,11 @@ export class FluxoService implements IFluxoService {
   }
 
   public async reprNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    const reprogr = _.first(parada.sauReprogramacaoParadas)
+    const reprogr = _.find(
+      parada.sauReprogramacaoParadas,
+      reprogr => reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP !== 'CONCL'
+    )
+
     let historico = null
 
     switch (reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP) {
@@ -109,7 +113,13 @@ export class FluxoService implements IFluxoService {
         break
       case 'AAPRV_OPE':
         reprogr.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL', 13)
+
+        parada.DT_HORA_INICIO_PROGRAMACAO = reprogr.DT_HORA_INICIO_REPROGRAMACAO
+        parada.DT_HORA_TERMINO_PROGRAMACAO = reprogr.DT_HORA_TERMINO_REPROGRAMACAO
+        parada.cdClassificacaoProgrParada = reprogr.cdClassifReprogrParada
+        parada.cdSubclassifProgrParada = reprogr.cdSubclasReprogrParada
         parada.NR_REPROGRAMACOES_APROVADAS += 1
+
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
           'CONCLUÍDA',
