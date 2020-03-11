@@ -37,15 +37,14 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
     await this.sauReprogramacaoParadaRepository.saveReprogramacaoParada(reproToSave)
 
     parada.ID_STATUS_PROGRAMACAO = 'R'
-    parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
-
     delete parada.sauReprogramacaoParadas
 
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
       'EM ANÁLISE USINA',
       parada.ID_STATUS_PROGRAMACAO,
-      parada.USER_UPDATE
+      parada.USER_UPDATE,
+      `A reprogramação foi criada no status EM ANÁLISE USINA`
     )
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
 

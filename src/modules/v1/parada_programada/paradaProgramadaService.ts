@@ -199,7 +199,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       parada,
       'RASCUNHO',
       parada.ID_STATUS_PROGRAMACAO,
-      parada.USER_UPDATE
+      parada.USER_UPDATE,
+      `O documento foi criado com status RASCUNHO`
     )
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
 
