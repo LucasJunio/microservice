@@ -105,7 +105,7 @@ export class FluxoService implements IFluxoService {
   public async reprNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
     const reprogr = _.find(
       parada.sauReprogramacaoParadas,
-      reprogr => reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP !== 'CONCL'
+      reprogr => reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP !== 'APRV'
     )
 
     let historico = null
