@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
 import { SAU_SUBCLASSIFICACAO_PARADA } from '../entities/SAU_SUBCLASSIFICACAO_PARADA'
-import { SAU_ITEM_LOOKUP } from '../entities/SAU_ITEM_LOOKUP'
+// import { SAU_ITEM_LOOKUP } from '../entities/SAU_ITEM_LOOKUP'
 
 export interface ISauSubClassificacaoParadaRepository {
   getSubClassificacaoParada(cdClassificacao: number, idTipoUsina: string): Promise<SAU_SUBCLASSIFICACAO_PARADA[]>
@@ -10,11 +10,11 @@ export interface ISauSubClassificacaoParadaRepository {
 @injectable()
 export class SauSubClassificacaoParadaRepository implements ISauSubClassificacaoParadaRepository {
   private readonly sauSubClassificacaoParadaRepository: Repository<SAU_SUBCLASSIFICACAO_PARADA>
-  private readonly sauItemLookUpRepository: Repository<SAU_ITEM_LOOKUP>
+  // private readonly sauItemLookUpRepository: Repository<SAU_ITEM_LOOKUP>
 
   constructor() {
     this.sauSubClassificacaoParadaRepository = getRepository(SAU_SUBCLASSIFICACAO_PARADA)
-    this.sauItemLookUpRepository = getRepository(SAU_ITEM_LOOKUP)
+    // this.sauItemLookUpRepository = getRepository(SAU_ITEM_LOOKUP)
   }
 
   public async getSubClassificacaoParada(

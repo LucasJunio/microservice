@@ -20,16 +20,7 @@ import { SAU_CONSULTA_PP_V } from '../../../entities/SAU_CONSULTA_PP_V'
 import { SAU_HIST_PROGRAMACAO_PARADA } from '../../../entities/SAU_HIST_PROGRAMACAO_PARADA'
 import { SAU_PROGRAMACAO_PARADA_UG } from '../../../entities/SAU_PROGRAMACAO_PARADA_UG'
 
-import {
-  setYear,
-  fromUnixTime,
-  differenceInHours,
-  isAfter,
-  isSameYear,
-  isBefore,
-  addYears,
-  differenceInYears
-} from 'date-fns'
+import { fromUnixTime } from 'date-fns'
 import { get } from 'lodash'
 
 export interface IParadaProgramadaService {
@@ -98,39 +89,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
   public async getTipoParadaByDate(dateFrom: number, dateTo: number): Promise<SAU_ITEM_LOOKUP> {
     const datef = fromUnixTime(dateFrom)
     const datet = fromUnixTime(dateTo)
-    const currentYear = new Date().getFullYear()
-    const achorDate = setYear(new Date(2015, 7, 31), currentYear) // 31-08-currentYear
-
-    const difference = differenceInHours(datet, datef)
-
-    if (difference < 24) {
-      // Diferença < 24 horas intempestiva
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PI', 11)
-    }
-
-    if (difference < 48) {
-      // Diferença < 48 horas intempestiva
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PU', 11)
-    }
-
-    // caso datef ser antes de 31/08, datef e datet mesmo ano || caso datef ser depois de 31/08 datet tem que ser ano de datef +1
-    if (
-      (isBefore(datef, achorDate) && isSameYear(datef, datet)) ||
-      (isAfter(datef, achorDate) && isSameYear(datet, addYears(datef, 1)))
-    ) {
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PP', 11)
-    }
-
-    // caso datef ser antes de 30/08 e datet for o ano de datef + 1
-    if (isBefore(datef, achorDate) && isSameYear(datet, addYears(datef, 1))) {
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PA', 11)
-    }
-
-    if (differenceInYears(datet, datef) <= 2) {
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PB', 11)
-    }
-
-    return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PL', 11)
+    return this.sauItemLookUpRepository.getTipoParadaByDate(datef, datet)
   }
 
   public getPgi(numPgi: string): Promise<SAU_PGI> {

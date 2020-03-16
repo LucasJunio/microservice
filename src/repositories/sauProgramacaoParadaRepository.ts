@@ -11,12 +11,11 @@ const tableRelations = [
   'idStatus',
   'idTipoProgramacao',
   'idStatusCancelamento',
-  'sauReprogramacaoParadas',
+  'idStatusReprogramacao',
+  'cdClassifReprogrParada',
+  'cdSubclasReprogrParada',
 
-  'sauProgramacaoParadaUgs.cdUnidadeGeradora',
-  'sauReprogramacaoParadas.idStatusReprogramacao',
-  'sauReprogramacaoParadas.cdClassifReprogrParada',
-  'sauReprogramacaoParadas.cdSubclasReprogrParada'
+  'sauProgramacaoParadaUgs.cdUnidadeGeradora'
 ]
 
 export interface ISauProgramacaoParadaRepository {

@@ -4,13 +4,11 @@ import * as _ from 'lodash'
 import { TYPE } from '../../../constants/types'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
 import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
-import { SauReprogramacaoParadaRepository } from '../../../repositories/sauReprogramacaoParadaRepository'
 
 import { SAU_PROGRAMACAO_PARADA } from '../../../entities/SAU_PROGRAMACAO_PARADA'
 
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
 import { SAU_ITEM_LOOKUP } from '../../../entities/SAU_ITEM_LOOKUP'
-import { format } from 'date-fns'
 import * as moment from 'moment'
 
 export interface IFluxoService {
@@ -29,9 +27,6 @@ export class FluxoService implements IFluxoService {
   // REPOSITORIES
   @inject(TYPE.SauItemLookUpRepository)
   private readonly sauItemLookUpRepository: SauItemLookUpRepository
-
-  @inject(TYPE.SauReprogramacaoParadaRepository)
-  private readonly sauReprogramacaoParadaRepository: SauReprogramacaoParadaRepository
 
   @inject(TYPE.SauHistProgramacaoParadaRepository)
   private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
@@ -67,11 +62,13 @@ export class FluxoService implements IFluxoService {
           'APROVADA',
           parada.ID_STATUS_PROGRAMACAO,
           parada.USER_UPDATE,
-          `O documento foi aprovado com início previsto ${moment(parada.DT_HORA_INICIO_PROGRAMACAO)
-            .subtract(3, 'hour')
-            .format('DD/MM/YYYY HH:mm')}
-
-            e término previsto ${moment(parada.DT_HORA_TERMINO_PROGRAMACAO)
+          `O documento foi aprovado` +
+            '\n' +
+            `Início: ${moment(parada.DT_HORA_INICIO_PROGRAMACAO)
+              .subtract(3, 'hour')
+              .format('DD/MM/YYYY HH:mm')}` +
+            '\n' +
+            `Término: ${moment(parada.DT_HORA_TERMINO_PROGRAMACAO)
               .subtract(3, 'hour')
               .format('DD/MM/YYYY HH:mm')}`
         )
@@ -103,16 +100,11 @@ export class FluxoService implements IFluxoService {
   }
 
   public async reprNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    const reprogr = _.find(
-      parada.sauReprogramacaoParadas,
-      reprogr => reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP !== 'APRV'
-    )
-
     let historico = null
 
-    switch (reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP) {
+    switch (parada.idStatusReprogramacao.ID_ITEM_LOOKUP) {
       case 'AAPRV_USINA':
-        reprogr.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_OPE', 13)
+        parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_OPE', 13)
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
           'EM ANÁLISE OPE',
@@ -121,25 +113,30 @@ export class FluxoService implements IFluxoService {
         )
         break
       case 'AAPRV_OPE':
-        reprogr.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
+        parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
 
-        parada.DT_HORA_INICIO_PROGRAMACAO = reprogr.DT_HORA_INICIO_REPROGRAMACAO
-        parada.DT_HORA_TERMINO_PROGRAMACAO = reprogr.DT_HORA_TERMINO_REPROGRAMACAO
-        parada.cdClassificacaoProgrParada = reprogr.cdClassifReprogrParada
-        parada.cdSubclassifProgrParada = reprogr.cdSubclasReprogrParada
+        parada.DT_HORA_INICIO_PROGRAMACAO = parada.DT_HORA_INICIO_REPROGRAMACAO
+        parada.DT_HORA_TERMINO_PROGRAMACAO = parada.DT_HORA_TERMINO_REPROGRAMACAO
+        parada.cdClassificacaoProgrParada = parada.cdClassifReprogrParada
+        parada.cdSubclassifProgrParada = parada.cdSubclasReprogrParada
         parada.NR_REPROGRAMACOES_APROVADAS += 1
         parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
+
+        parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
+          parada.DT_CRIACAO_PARADA,
+          parada.DT_HORA_INICIO_REPROGRAMACAO
+        )
 
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
           'APROVADA',
           parada.ID_STATUS_PROGRAMACAO,
           parada.USER_UPDATE,
-          `A Reprogramação foi aprovado com início previsto ${moment(reprogr.DT_HORA_INICIO_REPROGRAMACAO)
+          `A Reprogramação foi aprovado com início previsto ${moment(parada.DT_HORA_INICIO_REPROGRAMACAO)
             .subtract(3, 'hour')
             .format('DD/MM/YYYY HH:mm')}
             
-            e término previsto ${moment(reprogr.DT_HORA_TERMINO_REPROGRAMACAO)
+            e término previsto ${moment(parada.DT_HORA_TERMINO_REPROGRAMACAO)
               .subtract(3, 'hour')
               .format('DD/MM/YYYY HH:mm')}`
         )
@@ -147,7 +144,6 @@ export class FluxoService implements IFluxoService {
     }
 
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
-    await this.sauReprogramacaoParadaRepository.saveReprogramacaoParada(reprogr)
 
     return this.paradaProgramadaService.saveProgramacaoParada(parada)
   }
@@ -167,7 +163,7 @@ export class FluxoService implements IFluxoService {
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
         return
       case 'C':
-        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
         return
     }
   }

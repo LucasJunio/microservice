@@ -1,13 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Column, Entity, JoinColumn } from 'typeorm'
 import { SAU_PGI } from './SAU_PGI'
 
 @Entity('SAU_NEGOCIACAO_ONS_PGI')
 export class SAU_NEGOCIACAO_ONS_PGI {
-  @ManyToOne(
-    () => SAU_PGI,
-    (SAU_PGI: SAU_PGI) => SAU_PGI.sauNegociacaoOnsPgis,
-    { nullable: false }
-  )
+  // @ManyToOne(
+  //   () => SAU_PGI,
+  //   (SAU_PGI: SAU_PGI) => SAU_PGI.sauNegociacaoOnsPgis,
+  //   { nullable: false }
+  // )
   @JoinColumn({ name: 'CD_PGI' })
   public cdPgi: SAU_PGI | null
 

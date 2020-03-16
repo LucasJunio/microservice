@@ -1,18 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  RelationId
-} from 'typeorm'
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { SAU_UNIDADE_GERADORA } from './SAU_UNIDADE_GERADORA'
 import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_AGENTE_ONS } from './SAU_AGENTE_ONS'
@@ -103,13 +89,13 @@ export class SAU_PGI {
   @JoinColumn({ name: 'ID_TIPO_CADASTRO' })
   public idTipoCadastro: SAU_ITEM_LOOKUP | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_INICIO_PREVISTO'
   })
   public DT_INICIO_PREVISTO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_FIM_PREVISTO'
   })
@@ -326,7 +312,7 @@ export class SAU_PGI {
   })
   public ID_INTERV_COM_RELE: number | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_ULTIMA_ALTER'
   })
@@ -338,7 +324,7 @@ export class SAU_PGI {
   })
   public CD_USUARIO_ULTIMA_ALTER: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_ANALISE'
   })
@@ -350,7 +336,7 @@ export class SAU_PGI {
   })
   public CD_RESP_ANALISE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_APROVACAO'
   })
@@ -362,7 +348,7 @@ export class SAU_PGI {
   })
   public CD_RESP_APROVACAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CONCLUSAO'
   })
@@ -374,7 +360,7 @@ export class SAU_PGI {
   })
   public CD_RESP_CONCLUSAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_NEGACAO'
   })
@@ -393,7 +379,7 @@ export class SAU_PGI {
   })
   public DS_MOTIVO_NEGACAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CANCELAMENTO'
   })
@@ -405,13 +391,13 @@ export class SAU_PGI {
   })
   public CD_RESP_CANCELAMENTO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_INICIO'
   })
   public DT_INICIO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_FIM'
   })
@@ -475,7 +461,7 @@ export class SAU_PGI {
   })
   public FL_TERMINO_CONF_SGI: number | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_ANULACAO_CONCLUSAO'
   })
@@ -487,13 +473,13 @@ export class SAU_PGI {
   })
   public CD_RESP_ANULACAO_CONCLUSAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
   public DATE_UPDATE: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })

@@ -1,18 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  RelationId
-} from 'typeorm'
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm'
 import { SAU_INTERVENCAO_PGI } from './SAU_INTERVENCAO_PGI'
 import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_PGI_LOCAIS } from './SAU_PGI_LOCAIS'
@@ -54,7 +40,7 @@ export class SAU_PGI_AI {
   })
   public DS_NUMERO_AI: string
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DT_AI'
   })
@@ -91,13 +77,13 @@ export class SAU_PGI_AI {
   @JoinColumn({ name: 'CD_LOCAL' })
   public cdLocal: SAU_PGI_LOCAIS | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_INICIO'
   })
   public DT_INICIO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_FIM'
   })
@@ -198,7 +184,7 @@ export class SAU_PGI_AI {
   })
   public NM_RESP_ANALISE_AGENTE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_ANALISE_AGENTE'
   })
@@ -219,13 +205,13 @@ export class SAU_PGI_AI {
   })
   public DS_JUSTIFICATIVA: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_INICIO_EXECUCAO'
   })
   public DT_INICIO_EXECUCAO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_FIM_EXECUCAO'
   })
@@ -280,7 +266,7 @@ export class SAU_PGI_AI {
   })
   public CD_RESP_ANALISE_ENGIE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_ANALISE_ENGIE'
   })
@@ -293,7 +279,7 @@ export class SAU_PGI_AI {
   })
   public CD_RESP_CANCEL_ENGIE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CANCEL_ENGIE'
   })
@@ -306,7 +292,7 @@ export class SAU_PGI_AI {
   })
   public USER_CREATE: string
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DATE_CREATE'
   })
@@ -319,7 +305,7 @@ export class SAU_PGI_AI {
   })
   public USER_UPDATE: string
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DATE_UPDATE'
   })

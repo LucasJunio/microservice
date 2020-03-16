@@ -17,6 +17,5 @@ export const TYPE = {
   SauProgramacaoParadaRepository: Symbol.for('SauProgramacaoParadaRepository'),
   SauConsultaPpRepository: Symbol.for('SauConsultaPpRepository'),
   SauHistProgramacaoParadaRepository: Symbol.for('SauHistProgramacaoParadaRepository'),
-  SauProgramacaoParadaUgRepository: Symbol.for('SauProgramacaoParadaUgRepository'),
-  SauReprogramacaoParadaRepository: Symbol.for('SauReprogramacaoParadaRepository')
+  SauProgramacaoParadaUgRepository: Symbol.for('SauProgramacaoParadaUgRepository')
 }

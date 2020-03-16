@@ -1,18 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  RelationId
-} from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_CLASSIFICACAO_PARADA } from './SAU_CLASSIFICACAO_PARADA'
 import { SAU_SUBCLASSIFICACAO_PARADA } from './SAU_SUBCLASSIFICACAO_PARADA'
@@ -22,6 +8,8 @@ import { SAU_PROGRAMACAO_PARADA_UG } from './SAU_PROGRAMACAO_PARADA_UG'
 
 @Entity('SAU_PROGRAMACAO_PARADA')
 export class SAU_PROGRAMACAO_PARADA {
+  public usina: string
+
   @Column('number', {
     nullable: false,
     primary: true,
@@ -41,7 +29,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public CD_CONJUNTO_USINA: number
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CRIACAO_PARADA'
   })
@@ -63,13 +51,13 @@ export class SAU_PROGRAMACAO_PARADA {
   @JoinColumn({ name: 'ID_STATUS' })
   public idStatus: SAU_ITEM_LOOKUP | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DT_HORA_INICIO_PROGRAMACAO'
   })
   public DT_HORA_INICIO_PROGRAMACAO: Date
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DT_HORA_TERMINO_PROGRAMACAO'
   })
@@ -120,13 +108,13 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public DS_OBSERVACAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA_INICIO_SERVICO'
   })
   public DT_HORA_INICIO_SERVICO: Date | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA_TERMINO_SERVICO'
   })
@@ -155,7 +143,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public FL_COMUNICAR_ANEEL: number | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CANCELAMENTO'
   })
@@ -190,7 +178,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public CD_USUARIO_CONCLUSAO: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_CONCLUSAO'
   })
@@ -233,7 +221,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public USER_CREATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -246,7 +234,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public USER_UPDATE: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
@@ -303,7 +291,7 @@ export class SAU_PROGRAMACAO_PARADA {
   })
   public DS_NOVA_DESCRICAO_PROGR_PARADA: string | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA_TERMINO_REPROGRAMACAO'
   })
@@ -348,7 +336,7 @@ export class SAU_PROGRAMACAO_PARADA {
   @JoinColumn({ name: 'ID_STATUS_REPROGRAMACAO' })
   public idStatusReprogramacao: SAU_ITEM_LOOKUP | null
 
-  @Column('date', {
+  @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_HORA_INICIO_REPROGRAMACAO'
   })

@@ -23,10 +23,6 @@ import {
 } from './repositories/sauSubclassificacaoParadaRepository'
 import { ISauPgiRepository, SauPgiRepository } from './repositories/sauPgiRepository'
 import {
-  ISauReprogramacaoParadaRepository,
-  SauReprogramacaoParadaRepository
-} from './repositories/sauReprogramacaoParadaRepository'
-import {
   ParadaProgramadaService,
   IParadaProgramadaService
 } from './modules/v1/parada_programada/paradaProgramadaService'
@@ -87,7 +83,6 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<ISauPgiRepository>(TYPE.SauPgiRepository).to(SauPgiRepository)
     bind<ISauProgramacaoParadaRepository>(TYPE.SauProgramacaoParadaRepository).to(SauProgramacaoParadaRepository)
     bind<ISauConsultaPpRepository>(TYPE.SauConsultaPpRepository).to(SauConsultaPpRepository)
-    bind<ISauReprogramacaoParadaRepository>(TYPE.SauReprogramacaoParadaRepository).to(SauReprogramacaoParadaRepository)
 
     logger.info('Binding: Todos Módulos carregados corretamente')
   } catch (error) {
