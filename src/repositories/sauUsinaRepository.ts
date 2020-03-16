@@ -14,15 +14,17 @@ export class SauUsinaRepository implements ISauUsinaRepository {
 
   constructor() {
     this.sauUsinaRepository = getRepository(SAU_USINA)
-    this.query = `SELECT sg_usina sg_conjunto_usina,
-                         cd_usina cd_conjunto_usina,
-                         'U'      id_conjunto_usina
+    this.query = `SELECT sg_usina       sg_conjunto_usina,
+                         cd_usina       cd_conjunto_usina,
+                         'U'            id_conjunto_usina,
+                         id_tipo_usina  id_tipo_usina
                   FROM sau_usina
                   WHERE fl_ativo = 1
                   UNION
                   SELECT scu.sg_conjunto sg_conjunto_usina,
                          scu.cd_conjunto cd_conjunto_usina,
-                         'C'             id_conjunto_usina
+                         'C'             id_conjunto_usina,
+                         'E'             id_tipo_usina
                   FROM sau_agrup_conjunto_usina acu, 
                        sau_conjunto_usina scu
                   WHERE scu.fl_ativo = 1 

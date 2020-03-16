@@ -10,6 +10,8 @@ import { SAU_PROGRAMACAO_PARADA } from '../../../entities/SAU_PROGRAMACAO_PARADA
 
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
 import { SAU_ITEM_LOOKUP } from '../../../entities/SAU_ITEM_LOOKUP'
+import { format } from 'date-fns'
+import * as moment from 'moment'
 
 export interface IFluxoService {
   nextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA>
@@ -59,12 +61,19 @@ export class FluxoService implements IFluxoService {
         )
         break
       case 'AAPRV_OPE':
-        await this.setStatusPp(parada, 'CONCL')
+        await this.setStatusPp(parada, 'APRV')
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
-          'CONCLUÍDA',
+          'APROVADA',
           parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
+          parada.USER_UPDATE,
+          `O documento foi aprovado com início previsto ${moment(parada.DT_HORA_INICIO_PROGRAMACAO)
+            .subtract(3, 'hour')
+            .format('DD/MM/YYYY HH:mm')}
+
+            e término previsto ${moment(parada.DT_HORA_TERMINO_PROGRAMACAO)
+              .subtract(3, 'hour')
+              .format('DD/MM/YYYY HH:mm')}`
         )
         break
     }
@@ -94,7 +103,11 @@ export class FluxoService implements IFluxoService {
   }
 
   public async reprNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    const reprogr = _.first(parada.sauReprogramacaoParadas)
+    const reprogr = _.find(
+      parada.sauReprogramacaoParadas,
+      reprogr => reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP !== 'CONCL'
+    )
+
     let historico = null
 
     switch (reprogr.idStatusReprogramacao.ID_ITEM_LOOKUP) {
@@ -108,13 +121,27 @@ export class FluxoService implements IFluxoService {
         )
         break
       case 'AAPRV_OPE':
-        reprogr.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL', 13)
+        reprogr.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
+
+        parada.DT_HORA_INICIO_PROGRAMACAO = reprogr.DT_HORA_INICIO_REPROGRAMACAO
+        parada.DT_HORA_TERMINO_PROGRAMACAO = reprogr.DT_HORA_TERMINO_REPROGRAMACAO
+        parada.cdClassificacaoProgrParada = reprogr.cdClassifReprogrParada
+        parada.cdSubclassifProgrParada = reprogr.cdSubclasReprogrParada
         parada.NR_REPROGRAMACOES_APROVADAS += 1
+        parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
+
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
-          'CONCLUÍDA',
+          'APROVADA',
           parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
+          parada.USER_UPDATE,
+          `A Reprogramação foi aprovado com início previsto ${moment(reprogr.DT_HORA_INICIO_REPROGRAMACAO)
+            .subtract(3, 'hour')
+            .format('DD/MM/YYYY HH:mm')}
+            
+            e término previsto ${moment(reprogr.DT_HORA_TERMINO_REPROGRAMACAO)
+              .subtract(3, 'hour')
+              .format('DD/MM/YYYY HH:mm')}`
         )
         break
     }

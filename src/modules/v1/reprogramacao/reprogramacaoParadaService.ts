@@ -33,6 +33,7 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       statusReprog,
       parada
     )
+
     await this.sauReprogramacaoParadaRepository.saveReprogramacaoParada(reproToSave)
 
     parada.ID_STATUS_PROGRAMACAO = 'R'
@@ -42,7 +43,8 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       parada,
       'EM ANÁLISE USINA',
       parada.ID_STATUS_PROGRAMACAO,
-      parada.USER_UPDATE
+      parada.USER_UPDATE,
+      `A reprogramação foi criada no status EM ANÁLISE USINA`
     )
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
 

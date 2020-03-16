@@ -38,7 +38,8 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     parada: SAU_PROGRAMACAO_PARADA,
     acao: string,
     flow: string,
-    user: string
+    user: string,
+    msg?: string
   ): SAU_HIST_PROGRAMACAO_PARADA {
     const historico = new SAU_HIST_PROGRAMACAO_PARADA()
     historico.cdProgramacaoParada = parada
@@ -47,7 +48,7 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     historico.CD_USUARIO = user
     historico.USER_CREATE = historico.CD_USUARIO
     historico.DS_ACAO = acao
-    historico.DS_OBSERVACAO = `${historico.CD_USUARIO} Mudou o status do documento para ${historico.DS_ACAO} `
+    historico.DS_OBSERVACAO = msg || `O Status do documento foi alterado para ${historico.DS_ACAO} `
     historico.FLOW = flow // 'FLOW'; // REPR // CANC
     return historico
   }
