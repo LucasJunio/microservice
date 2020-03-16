@@ -1,8 +1,24 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  RelationId
+} from 'typeorm'
 import { SAU_INTERVENCAO_PGI } from './SAU_INTERVENCAO_PGI'
 import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_PGI_LOCAIS } from './SAU_PGI_LOCAIS'
 import { SAU_AGENTE_ONS } from './SAU_AGENTE_ONS'
+import { SAU_EMAIL_AGENTE_ONS } from './SAU_EMAIL_AGENTE_ONS'
+import { SAU_PGI } from './SAU_PGI'
 
 @Entity('SAU_PGI_AI')
 @Index('SAU_PGI_AI_IX1', ['cdAgenteOns'])
@@ -38,7 +54,7 @@ export class SAU_PGI_AI {
   })
   public DS_NUMERO_AI: string
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: false,
     name: 'DT_AI'
   })
@@ -75,13 +91,13 @@ export class SAU_PGI_AI {
   @JoinColumn({ name: 'CD_LOCAL' })
   public cdLocal: SAU_PGI_LOCAIS | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_INICIO'
   })
   public DT_INICIO: Date | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_FIM'
   })
@@ -89,7 +105,7 @@ export class SAU_PGI_AI {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauPgiAis2,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauPgiAis3,
     {}
   )
   @JoinColumn({ name: 'ID_PERIODICIDADE' })
@@ -126,9 +142,9 @@ export class SAU_PGI_AI {
   @Column('varchar2', {
     nullable: true,
     length: 2000,
-    name: 'NM_RESPONSAVEL_SERVICO'
+    name: 'NM_RESP_SERVICO'
   })
-  public NM_RESPONSAVEL_SERVICO: string | null
+  public NM_RESP_SERVICO: string | null
 
   @Column('varchar2', {
     nullable: true,
@@ -137,12 +153,13 @@ export class SAU_PGI_AI {
   })
   public DS_DOCS_VINCULADOS: string | null
 
-  @Column('varchar2', {
-    nullable: true,
-    length: 500,
-    name: 'DS_DISPOR_EQUIPAMENTO'
-  })
-  public DS_DISPOR_EQUIPAMENTO: string | null
+  @ManyToOne(
+    () => SAU_ITEM_LOOKUP,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauPgiAis2,
+    {}
+  )
+  @JoinColumn({ name: 'ID_DISPOR_EQUIPAMENTO' })
+  public idDisporEquipamento: SAU_ITEM_LOOKUP | null
 
   @ManyToOne(
     () => SAU_AGENTE_ONS,
@@ -152,12 +169,13 @@ export class SAU_PGI_AI {
   @JoinColumn({ name: 'CD_AGENTE_ONS' })
   public cdAgenteOns: SAU_AGENTE_ONS | null
 
-  @Column('varchar2', {
-    nullable: true,
-    length: 100,
-    name: 'DS_EMAIL_PARA'
-  })
-  public DS_EMAIL_PARA: string | null
+  @ManyToOne(
+    () => SAU_EMAIL_AGENTE_ONS,
+    (SAU_EMAIL_AGENTE_ONS: SAU_EMAIL_AGENTE_ONS) => SAU_EMAIL_AGENTE_ONS.sauPgiAis,
+    { nullable: false }
+  )
+  @JoinColumn({ name: 'CD_EMAIL_PARA' })
+  public cdEmailPara: SAU_EMAIL_AGENTE_ONS | null
 
   @Column('varchar2', {
     nullable: true,
@@ -169,18 +187,18 @@ export class SAU_PGI_AI {
   @Column('varchar2', {
     nullable: true,
     length: 200,
-    name: 'NM_RESPONSAVEL_AGENTE'
+    name: 'NM_RESP_AGENTE'
   })
-  public NM_RESPONSAVEL_AGENTE: string | null
+  public NM_RESP_AGENTE: string | null
 
   @Column('varchar2', {
     nullable: true,
     length: 200,
-    name: 'NM_RESPONSAVEL_ANALISE_AGENTE'
+    name: 'NM_RESP_ANALISE_AGENTE'
   })
-  public NM_RESPONSAVEL_ANALISE_AGENTE: string | null
+  public NM_RESP_ANALISE_AGENTE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_ANALISE_AGENTE'
   })
@@ -188,7 +206,7 @@ export class SAU_PGI_AI {
 
   @ManyToOne(
     () => SAU_ITEM_LOOKUP,
-    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauPgiAis3,
+    (SAU_ITEM_LOOKUP: SAU_ITEM_LOOKUP) => SAU_ITEM_LOOKUP.sauPgiAis4,
     {}
   )
   @JoinColumn({ name: 'ID_STATUS' })
@@ -201,13 +219,13 @@ export class SAU_PGI_AI {
   })
   public DS_JUSTIFICATIVA: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_INICIO_EXECUCAO'
   })
   public DT_INICIO_EXECUCAO: Date | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_FIM_EXECUCAO'
   })
@@ -216,53 +234,53 @@ export class SAU_PGI_AI {
   @Column('varchar2', {
     nullable: true,
     length: 100,
-    name: 'NM_DESPACHANTE_ONS_AGENTE_INI'
+    name: 'NM_DESP_ONS_AGENTE_INI'
   })
-  public NM_DESPACHANTE_ONS_AGENTE_INI: string | null
+  public NM_DESP_ONS_AGENTE_INI: string | null
 
   @Column('varchar2', {
     nullable: true,
     length: 100,
-    name: 'NM_OPERADOR_COS_INI'
+    name: 'NM_OPER_COS_INI'
   })
-  public NM_OPERADOR_COS_INI: string | null
+  public NM_OPER_COS_INI: string | null
 
   @Column('varchar2', {
     nullable: true,
     length: 100,
-    name: 'NM_OPERADOR_USINA_INI'
+    name: 'NM_OPER_USINA_INI'
   })
-  public NM_OPERADOR_USINA_INI: string | null
+  public NM_OPER_USINA_INI: string | null
 
   @Column('varchar2', {
     nullable: true,
     length: 100,
-    name: 'NM_DESPACHANTE_ONS_AGENTE_FIM'
+    name: 'NM_DESP_ONS_AGENTE_FIM'
   })
-  public NM_DESPACHANTE_ONS_AGENTE_FIM: string | null
+  public NM_DESP_ONS_AGENTE_FIM: string | null
 
   @Column('varchar2', {
     nullable: true,
     length: 100,
-    name: 'NM_OPERADOR_COS_FIM'
+    name: 'NM_OPER_COS_FIM'
   })
-  public NM_OPERADOR_COS_FIM: string | null
+  public NM_OPER_COS_FIM: string | null
 
   @Column('varchar2', {
     nullable: true,
     length: 100,
-    name: 'NM_OPERADOR_USINA_FIM'
+    name: 'NM_OPER_USINA_FIM'
   })
-  public NM_OPERADOR_USINA_FIM: string | null
+  public NM_OPER_USINA_FIM: string | null
 
   @Column('varchar2', {
     nullable: true,
     length: 30,
-    name: 'CD_RESPONSAVEL_ANALISE_ENGIE'
+    name: 'CD_RESP_ANALISE_ENGIE'
   })
-  public CD_RESPONSAVEL_ANALISE_ENGIE: string | null
+  public CD_RESP_ANALISE_ENGIE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_ANALISE_ENGIE'
   })
@@ -271,11 +289,11 @@ export class SAU_PGI_AI {
   @Column('varchar2', {
     nullable: true,
     length: 30,
-    name: 'CD_RESPONSAVEL_CANCEL_ENGIE'
+    name: 'CD_RESP_CANCEL_ENGIE'
   })
-  public CD_RESPONSAVEL_CANCEL_ENGIE: string | null
+  public CD_RESP_CANCEL_ENGIE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_CANCEL_ENGIE'
   })
@@ -288,7 +306,7 @@ export class SAU_PGI_AI {
   })
   public USER_CREATE: string
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: false,
     name: 'DATE_CREATE'
   })
@@ -301,7 +319,7 @@ export class SAU_PGI_AI {
   })
   public USER_UPDATE: string
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: false,
     name: 'DATE_UPDATE'
   })
@@ -313,4 +331,26 @@ export class SAU_PGI_AI {
     name: 'VERSION'
   })
   public VERSION: number | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 10,
+    name: 'DS_HORAS'
+  })
+  public DS_HORAS: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 10,
+    name: 'DS_MINUTOS'
+  })
+  public DS_MINUTOS: string | null
+
+  @ManyToOne(
+    () => SAU_PGI,
+    (SAU_PGI: SAU_PGI) => SAU_PGI.sauPgiAis,
+    {}
+  )
+  @JoinColumn({ name: 'CD_PGI' })
+  public cdPgi: SAU_PGI | null
 }

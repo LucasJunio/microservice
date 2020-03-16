@@ -167,7 +167,7 @@ export class FluxoService implements IFluxoService {
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
         return
       case 'C':
-        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
+        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
         return
     }
   }

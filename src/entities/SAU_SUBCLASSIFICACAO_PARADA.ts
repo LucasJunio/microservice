@@ -1,8 +1,21 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  RelationId
+} from 'typeorm'
 import { SAU_CLASSIFICACAO_PARADA } from './SAU_CLASSIFICACAO_PARADA'
 import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_PROGRAMACAO_PARADA } from './SAU_PROGRAMACAO_PARADA'
-import { SAU_REPROGRAMACAO_PARADA } from './SAU_REPROGRAMACAO_PARADA'
 
 @Entity('SAU_SUBCLASSIFICACAO_PARADA')
 export class SAU_SUBCLASSIFICACAO_PARADA {
@@ -53,7 +66,7 @@ export class SAU_SUBCLASSIFICACAO_PARADA {
   })
   public USER_CREATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -66,7 +79,7 @@ export class SAU_SUBCLASSIFICACAO_PARADA {
   })
   public USER_UPDATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
@@ -86,8 +99,8 @@ export class SAU_SUBCLASSIFICACAO_PARADA {
   public sauProgramacaoParadas: SAU_PROGRAMACAO_PARADA[]
 
   @OneToMany(
-    () => SAU_REPROGRAMACAO_PARADA,
-    (SAU_REPROGRAMACAO_PARADA: SAU_REPROGRAMACAO_PARADA) => SAU_REPROGRAMACAO_PARADA.cdSubclasReprogrParada
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.cdSubclasReprogrParada
   )
-  public sauReprogramacaoParadas: SAU_REPROGRAMACAO_PARADA[]
+  public sauProgramacaoParadas2: SAU_PROGRAMACAO_PARADA[]
 }

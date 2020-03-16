@@ -1,5 +1,20 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  RelationId
+} from 'typeorm'
 import { SAU_AGENTE_ONS } from './SAU_AGENTE_ONS'
+import { SAU_PGI_AI } from './SAU_PGI_AI'
 
 @Entity('SAU_EMAIL_AGENTE_ONS')
 export class SAU_EMAIL_AGENTE_ONS {
@@ -34,7 +49,7 @@ export class SAU_EMAIL_AGENTE_ONS {
   })
   public USER_CREATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -47,7 +62,7 @@ export class SAU_EMAIL_AGENTE_ONS {
   })
   public USER_UPDATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
@@ -66,4 +81,10 @@ export class SAU_EMAIL_AGENTE_ONS {
     name: 'VERSION'
   })
   public VERSION: number | null
+
+  @OneToMany(
+    () => SAU_PGI_AI,
+    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.cdEmailPara
+  )
+  public sauPgiAis: SAU_PGI_AI[]
 }

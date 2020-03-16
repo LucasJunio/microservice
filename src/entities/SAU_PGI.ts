@@ -1,8 +1,23 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  RelationId
+} from 'typeorm'
 import { SAU_UNIDADE_GERADORA } from './SAU_UNIDADE_GERADORA'
 import { SAU_ITEM_LOOKUP } from './SAU_ITEM_LOOKUP'
 import { SAU_AGENTE_ONS } from './SAU_AGENTE_ONS'
 import { SAU_PROGRAMACAO_PARADA } from './SAU_PROGRAMACAO_PARADA'
+import { SAU_PRORROGACAO_PGI } from './SAU_PRORROGACAO_PGI'
 import { SAU_ANEXO_PGI } from './SAU_ANEXO_PGI'
 import { SAU_DETALHAMENTO_EXECUCAO_PGI } from './SAU_DETALHAMENTO_EXECUCAO_PGI'
 import { SAU_EQUIPAMENTO_PGI } from './SAU_EQUIPAMENTO_PGI'
@@ -10,8 +25,7 @@ import { SAU_EXCETO_DIA_PGI } from './SAU_EXCETO_DIA_PGI'
 import { SAU_EXECUCAO_DIARIA_PGI } from './SAU_EXECUCAO_DIARIA_PGI'
 import { SAU_HISTORICO_PGI } from './SAU_HISTORICO_PGI'
 import { SAU_INTERVENCAO_PGI } from './SAU_INTERVENCAO_PGI'
-import { SAU_NEGOCIACAO_ONS_PGI } from './SAU_NEGOCIACAO_ONS_PGI'
-import { SAU_PRORROGACAO_PGI } from './SAU_PRORROGACAO_PGI'
+import { SAU_PGI_AI } from './SAU_PGI_AI'
 import { SAU_REPROGRAMACAO_PGI } from './SAU_REPROGRAMACAO_PGI'
 
 @Entity('SAU_PGI')
@@ -89,13 +103,13 @@ export class SAU_PGI {
   @JoinColumn({ name: 'ID_TIPO_CADASTRO' })
   public idTipoCadastro: SAU_ITEM_LOOKUP | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_INICIO_PREVISTO'
   })
   public DT_INICIO_PREVISTO: Date | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_FIM_PREVISTO'
   })
@@ -312,7 +326,7 @@ export class SAU_PGI {
   })
   public ID_INTERV_COM_RELE: number | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_ULTIMA_ALTER'
   })
@@ -324,7 +338,7 @@ export class SAU_PGI {
   })
   public CD_USUARIO_ULTIMA_ALTER: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_ANALISE'
   })
@@ -336,7 +350,7 @@ export class SAU_PGI {
   })
   public CD_RESP_ANALISE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_APROVACAO'
   })
@@ -348,7 +362,7 @@ export class SAU_PGI {
   })
   public CD_RESP_APROVACAO: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_CONCLUSAO'
   })
@@ -360,7 +374,7 @@ export class SAU_PGI {
   })
   public CD_RESP_CONCLUSAO: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_NEGACAO'
   })
@@ -375,18 +389,11 @@ export class SAU_PGI {
   @Column('varchar2', {
     nullable: true,
     length: 4000,
-    name: 'DS_MOTIVO_CANCELAMENTO'
-  })
-  public DS_MOTIVO_CANCELAMENTO: string | null
-
-  @Column('varchar2', {
-    nullable: true,
-    length: 4000,
     name: 'DS_MOTIVO_NEGACAO'
   })
   public DS_MOTIVO_NEGACAO: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_CANCELAMENTO'
   })
@@ -398,13 +405,13 @@ export class SAU_PGI {
   })
   public CD_RESP_CANCELAMENTO: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_INICIO'
   })
   public DT_INICIO: Date | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_FIM'
   })
@@ -468,7 +475,7 @@ export class SAU_PGI {
   })
   public FL_TERMINO_CONF_SGI: number | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DT_ANULACAO_CONCLUSAO'
   })
@@ -480,13 +487,13 @@ export class SAU_PGI {
   })
   public CD_RESP_ANULACAO_CONCLUSAO: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
   public DATE_UPDATE: Date | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -571,6 +578,28 @@ export class SAU_PGI {
   })
   public VERSION: number | null
 
+  @Column('varchar2', {
+    nullable: true,
+    length: 4000,
+    name: 'DS_MOTIVO_CANCELAMENTO'
+  })
+  public DS_MOTIVO_CANCELAMENTO: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 100,
+    name: 'NM_RESPONSAVEL'
+  })
+  public NM_RESPONSAVEL: string | null
+
+  @ManyToOne(
+    () => SAU_PRORROGACAO_PGI,
+    (SAU_PRORROGACAO_PGI: SAU_PRORROGACAO_PGI) => SAU_PRORROGACAO_PGI.sauPgis,
+    {}
+  )
+  @JoinColumn({ name: 'CD_ULTIMA_PRORROGACAO' })
+  public cdUltimaProrrogacao: SAU_PRORROGACAO_PGI | null
+
   @OneToMany(
     () => SAU_ANEXO_PGI,
     (SAU_ANEXO_PGI: SAU_ANEXO_PGI) => SAU_ANEXO_PGI.cdPgi
@@ -614,10 +643,10 @@ export class SAU_PGI {
   public sauIntervencaoPgis: SAU_INTERVENCAO_PGI[]
 
   @OneToMany(
-    () => SAU_NEGOCIACAO_ONS_PGI,
-    (SAU_NEGOCIACAO_ONS_PGI: SAU_NEGOCIACAO_ONS_PGI) => SAU_NEGOCIACAO_ONS_PGI.cdPgi
+    () => SAU_PGI_AI,
+    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.cdPgi
   )
-  public sauNegociacaoOnsPgis: SAU_NEGOCIACAO_ONS_PGI[]
+  public sauPgiAis: SAU_PGI_AI[]
 
   @OneToMany(
     () => SAU_PRORROGACAO_PGI,

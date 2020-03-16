@@ -1,4 +1,18 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  RelationId
+} from 'typeorm'
 import { SAU_PGI } from './SAU_PGI'
 
 @Entity('SAU_PRORROGACAO_PGI')
@@ -37,7 +51,7 @@ export class SAU_PRORROGACAO_PGI {
   })
   public NM_OPERADOR_USINA: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     unique: true,
     name: 'DT_PRORROGADA'
@@ -51,7 +65,7 @@ export class SAU_PRORROGACAO_PGI {
   })
   public DS_MOTIVO_PRORROGACAO: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -64,7 +78,7 @@ export class SAU_PRORROGACAO_PGI {
   })
   public USER_CREATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
@@ -83,4 +97,10 @@ export class SAU_PRORROGACAO_PGI {
     name: 'VERSION'
   })
   public VERSION: number | null
+
+  @OneToMany(
+    () => SAU_PGI,
+    (SAU_PGI: SAU_PGI) => SAU_PGI.cdUltimaProrrogacao
+  )
+  public sauPgis: SAU_PGI[]
 }

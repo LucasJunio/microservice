@@ -1,4 +1,18 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  RelationId
+} from 'typeorm'
 import { SAU_LOOKUP } from './SAU_LOOKUP'
 import { SAU_CLASSIFICACAO_PARADA } from './SAU_CLASSIFICACAO_PARADA'
 import { SAU_DETALHAMENTO_EXECUCAO_DOCS } from './SAU_DETALHAMENTO_EXECUCAO_DOCS'
@@ -8,7 +22,6 @@ import { SAU_PGI } from './SAU_PGI'
 import { SAU_PGI_AI } from './SAU_PGI_AI'
 import { SAU_PROGRAMACAO_PARADA } from './SAU_PROGRAMACAO_PARADA'
 import { SAU_PRORROGACAO_DOCS } from './SAU_PRORROGACAO_DOCS'
-import { SAU_REPROGRAMACAO_PARADA } from './SAU_REPROGRAMACAO_PARADA'
 import { SAU_SUBCLASSIFICACAO_PARADA } from './SAU_SUBCLASSIFICACAO_PARADA'
 
 @Entity('SAU_ITEM_LOOKUP')
@@ -59,7 +72,7 @@ export class SAU_ITEM_LOOKUP {
   })
   public USER_CREATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_CREATE'
   })
@@ -72,7 +85,7 @@ export class SAU_ITEM_LOOKUP {
   })
   public USER_UPDATE: string | null
 
-  @Column('timestamp with local time zone', {
+  @Column('date', {
     nullable: true,
     name: 'DATE_UPDATE'
   })
@@ -171,63 +184,69 @@ export class SAU_ITEM_LOOKUP {
 
   @OneToMany(
     () => SAU_PGI_AI,
-    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.idPeriodicidade
+    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.idDisporEquipamento
   )
   public sauPgiAis2: SAU_PGI_AI[]
 
   @OneToMany(
     () => SAU_PGI_AI,
-    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.idStatus
+    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.idPeriodicidade
   )
   public sauPgiAis3: SAU_PGI_AI[]
 
   @OneToMany(
+    () => SAU_PGI_AI,
+    (SAU_PGI_AI: SAU_PGI_AI) => SAU_PGI_AI.idStatus
+  )
+  public sauPgiAis4: SAU_PGI_AI[]
+
+  @OneToMany(
     () => SAU_PROGRAMACAO_PARADA,
-    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idStatusCancelamento
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idMotivoReprogramacao
   )
   public sauProgramacaoParadas: SAU_PROGRAMACAO_PARADA[]
 
   @OneToMany(
     () => SAU_PROGRAMACAO_PARADA,
-    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idStatus
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idOrigemReprogramacao
   )
   public sauProgramacaoParadas2: SAU_PROGRAMACAO_PARADA[]
 
   @OneToMany(
     () => SAU_PROGRAMACAO_PARADA,
-    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idTipoParada
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idStatusCancelamento
   )
   public sauProgramacaoParadas3: SAU_PROGRAMACAO_PARADA[]
 
   @OneToMany(
     () => SAU_PROGRAMACAO_PARADA,
-    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idTipoProgramacao
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idStatus
   )
   public sauProgramacaoParadas4: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idStatusReprogramacao
+  )
+  public sauProgramacaoParadas5: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idTipoParada
+  )
+  public sauProgramacaoParadas6: SAU_PROGRAMACAO_PARADA[]
+
+  @OneToMany(
+    () => SAU_PROGRAMACAO_PARADA,
+    (SAU_PROGRAMACAO_PARADA: SAU_PROGRAMACAO_PARADA) => SAU_PROGRAMACAO_PARADA.idTipoProgramacao
+  )
+  public sauProgramacaoParadas7: SAU_PROGRAMACAO_PARADA[]
 
   @OneToMany(
     () => SAU_PRORROGACAO_DOCS,
     (SAU_PRORROGACAO_DOCS: SAU_PRORROGACAO_DOCS) => SAU_PRORROGACAO_DOCS.idTipoDocumento
   )
   public sauProrrogacaoDocss: SAU_PRORROGACAO_DOCS[]
-
-  @OneToMany(
-    () => SAU_REPROGRAMACAO_PARADA,
-    (SAU_REPROGRAMACAO_PARADA: SAU_REPROGRAMACAO_PARADA) => SAU_REPROGRAMACAO_PARADA.idMotivoReprogramacao
-  )
-  public sauReprogramacaoParadas: SAU_REPROGRAMACAO_PARADA[]
-
-  @OneToMany(
-    () => SAU_REPROGRAMACAO_PARADA,
-    (SAU_REPROGRAMACAO_PARADA: SAU_REPROGRAMACAO_PARADA) => SAU_REPROGRAMACAO_PARADA.idOrigemReprogramacao
-  )
-  public sauReprogramacaoParadas2: SAU_REPROGRAMACAO_PARADA[]
-
-  @OneToMany(
-    () => SAU_REPROGRAMACAO_PARADA,
-    (SAU_REPROGRAMACAO_PARADA: SAU_REPROGRAMACAO_PARADA) => SAU_REPROGRAMACAO_PARADA.idStatusReprogramacao
-  )
-  public sauReprogramacaoParadas3: SAU_REPROGRAMACAO_PARADA[]
 
   @OneToMany(
     () => SAU_SUBCLASSIFICACAO_PARADA,
