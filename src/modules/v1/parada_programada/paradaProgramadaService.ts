@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify'
+import { getConnection } from 'typeorm'
 import { SauClassificacaoParadaRepository } from '../../../repositories/sauClassificacaoParadaRepository'
 import { SAU_CLASSIFICACAO_PARADA } from '../../../entities/SAU_CLASSIFICACAO_PARADA'
 import { TYPE } from '../../../constants/types'
@@ -21,7 +22,7 @@ import { SAU_HIST_PROGRAMACAO_PARADA } from '../../../entities/SAU_HIST_PROGRAMA
 import { SAU_PROGRAMACAO_PARADA_UG } from '../../../entities/SAU_PROGRAMACAO_PARADA_UG'
 
 import { fromUnixTime } from 'date-fns'
-import { get } from 'lodash'
+import { get, some, filter, map } from 'lodash'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]>
@@ -106,6 +107,64 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   public getHistoricoById(id: number): Promise<SAU_HIST_PROGRAMACAO_PARADA[]> {
     return this.sauHistProgramacaoParadaRepository.findHistoricoById(id)
+  }
+
+  public async deleteParadaById(cdPp: number): Promise<any> {
+    await getConnection().transaction(async manager => {
+      const histRepository = manager.getCustomRepository(SauHistProgramacaoParadaRepository)
+      const progParadaRepository = manager.getCustomRepository(SauProgramacaoParadaRepository)
+      const progParadaUg = manager.getCustomRepository(SauProgramacaoParadaUgRepository)
+
+      const parada = await progParadaRepository.getById(cdPp)
+
+      await histRepository.sauHistProgramacaoParadaRepository.delete({ cdProgramacaoParada: parada })
+
+      await progParadaUg.sauProgramacaoParadaUg.delete({ cdProgramacaoParada: parada })
+
+      await progParadaRepository.sauProgramacaoParadaRepository.delete({ CD_PROGRAMACAO_PARADA: cdPp })
+    })
+
+    return true
+  }
+
+  public async back_program(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+    await getConnection().transaction(async manager => {
+      const histRepository = manager.getCustomRepository(SauHistProgramacaoParadaRepository)
+      const progParadaRepository = manager.getCustomRepository(SauProgramacaoParadaRepository)
+
+      const statusAprov = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
+
+      if (parada.ID_STATUS_PROGRAMACAO === 'C') {
+        if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
+          parada.ID_STATUS_PROGRAMACAO = 'R'
+          parada.idStatusReprogramacao = statusAprov
+        } else {
+          parada.ID_STATUS_PROGRAMACAO = 'P'
+          parada.idStatus = statusAprov
+          parada.idStatusReprogramacao = null
+        }
+      }
+
+      if (parada.ID_STATUS_PROGRAMACAO === 'R') {
+        if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
+          parada.ID_STATUS_PROGRAMACAO = 'R'
+          parada.idStatusReprogramacao = statusAprov
+        } else {
+          parada.ID_STATUS_PROGRAMACAO = 'P'
+          parada.idStatus = statusAprov
+          parada.idStatusReprogramacao = null
+        }
+      }
+
+      await histRepository.sauHistProgramacaoParadaRepository.delete({
+        cdProgramacaoParada: parada,
+        FLOW: 'C'
+      })
+      delete parada.sauProgramacaoParadaUgs
+      await progParadaRepository.saveProgramacaoParada(parada)
+    })
+
+    return this.getById(parada.CD_PROGRAMACAO_PARADA)
   }
 
   public async cancel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {

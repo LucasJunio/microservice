@@ -56,21 +56,40 @@ export class FluxoService implements IFluxoService {
         )
         break
       case 'AAPRV_OPE':
-        await this.setStatusPp(parada, 'APRV')
+        let status = null
+        let msg = ''
+
+        switch (parada.ID_STATUS_PROGRAMACAO) {
+          case 'P':
+            parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
+            status = 'APROVADA'
+            msg =
+              `O documento foi aprovado` +
+              '\n' +
+              `Início: ${moment(parada.DT_HORA_INICIO_PROGRAMACAO)
+                .subtract(3, 'hour')
+                .format('DD/MM/YYYY HH:mm')}` +
+              '\n' +
+              `Término: ${moment(parada.DT_HORA_TERMINO_PROGRAMACAO)
+                .subtract(3, 'hour')
+                .format('DD/MM/YYYY HH:mm')}`
+            break
+
+          case 'C':
+            parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+            status = 'CANCELADO'
+            msg = `O documento foi cancelado`
+            parada.DT_CANCELAMENTO = new Date()
+            parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
+            break
+        }
+
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
-          'APROVADA',
+          status,
           parada.ID_STATUS_PROGRAMACAO,
           parada.USER_UPDATE,
-          `O documento foi aprovado` +
-            '\n' +
-            `Início: ${moment(parada.DT_HORA_INICIO_PROGRAMACAO)
-              .subtract(3, 'hour')
-              .format('DD/MM/YYYY HH:mm')}` +
-            '\n' +
-            `Término: ${moment(parada.DT_HORA_TERMINO_PROGRAMACAO)
-              .subtract(3, 'hour')
-              .format('DD/MM/YYYY HH:mm')}`
+          msg
         )
         break
     }
@@ -132,11 +151,13 @@ export class FluxoService implements IFluxoService {
           'APROVADA',
           parada.ID_STATUS_PROGRAMACAO,
           parada.USER_UPDATE,
-          `A Reprogramação foi aprovado com início previsto ${moment(parada.DT_HORA_INICIO_REPROGRAMACAO)
-            .subtract(3, 'hour')
-            .format('DD/MM/YYYY HH:mm')}
-            
-            e término previsto ${moment(parada.DT_HORA_TERMINO_REPROGRAMACAO)
+          `A Reprogramação foi aprovado` +
+            '\n' +
+            `Início previsto ${moment(parada.DT_HORA_INICIO_REPROGRAMACAO)
+              .subtract(3, 'hour')
+              .format('DD/MM/YYYY HH:mm')}` +
+            `\n` +
+            `Término previsto ${moment(parada.DT_HORA_TERMINO_REPROGRAMACAO)
               .subtract(3, 'hour')
               .format('DD/MM/YYYY HH:mm')}`
         )

@@ -35,8 +35,8 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
     return this.sauItemLookUpRepository.findOne({
       select: ['ID_ITEM_LOOKUP', 'DS_ITEM_LOOKUP', 'CD_ITEM_LOOKUP'],
       where: {
-        ID_ITEM_LOOKUP: idItemLookup,
-        CD_LOOKUP: cdLookup
+        cdLookup,
+        ID_ITEM_LOOKUP: idItemLookup
       }
     })
   }
