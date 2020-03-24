@@ -18,6 +18,15 @@ export class FluxoController implements interfaces.Controller {
       return Handlers.onError(res, error.message, error)
     }
   }
+  @httpPut('/exec/next_level')
+  public async execNextLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+    try {
+      const data = await this.fluxoService.execNextLevel(parada)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
 
   @httpPut('/prog/next_level')
   public async nextLevel(@response() res: Response, @requestBody() parada: any): Promise<Response> {

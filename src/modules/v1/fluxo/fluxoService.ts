@@ -31,6 +31,19 @@ export class FluxoService implements IFluxoService {
   @inject(TYPE.SauHistProgramacaoParadaRepository)
   private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
 
+  public async execNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+    switch (parada.ID_STATUS_PROGRAMACAO) {
+      case 'EXECUCAO':
+        if (parada.sauPgis.length === 0) {
+          parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
+          return this.paradaProgramadaService.saveProgramacaoParada(parada)
+        }
+        break
+    }
+
+    return
+  }
+
   public async nextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
     let historico = null
 
@@ -92,9 +105,16 @@ export class FluxoService implements IFluxoService {
           msg
         )
         break
+      case 'APRV':
+        parada.ID_STATUS_PROGRAMACAO = 'E'
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('EXECUCAO', 13)
+
+        break
     }
 
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    if (historico) {
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    }
     return this.paradaProgramadaService.saveProgramacaoParada(parada)
   }
 
@@ -162,9 +182,16 @@ export class FluxoService implements IFluxoService {
               .format('DD/MM/YYYY HH:mm')}`
         )
         break
+      case 'APRV':
+        parada.ID_STATUS_PROGRAMACAO = 'E'
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('EXECUCAO', 13)
+
+        break
     }
 
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    if (historico) {
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    }
 
     return this.paradaProgramadaService.saveProgramacaoParada(parada)
   }
