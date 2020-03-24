@@ -13,7 +13,7 @@ const config = require('./config/config')()
 
 export const Server = (async () => {
   try {
-    logger.info('Starting SAU-Backend')
+    logger.info('Starting SAU-PP-API')
 
     const container = new Container()
     await container.loadAsync(bindings)
