@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { Repository, getRepository } from 'typeorm'
+import { Repository, getRepository, EntityRepository } from 'typeorm'
 import { SAU_PROGRAMACAO_PARADA } from '../entities/SAU_PROGRAMACAO_PARADA'
 import { SAU_USINA } from '../entities/SAU_USINA'
 
@@ -14,7 +14,9 @@ const tableRelations = [
   'idStatusReprogramacao',
   'cdClassifReprogrParada',
   'cdSubclasReprogrParada',
+  'sauPgis',
 
+  'sauPgis.idStatus',
   'sauProgramacaoParadaUgs.cdUnidadeGeradora'
 ]
 
@@ -27,8 +29,9 @@ export interface ISauProgramacaoParadaRepository {
 }
 
 @injectable()
+@EntityRepository(SAU_PROGRAMACAO_PARADA)
 export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepository {
-  private readonly sauProgramacaoParadaRepository: Repository<SAU_PROGRAMACAO_PARADA>
+  public readonly sauProgramacaoParadaRepository: Repository<SAU_PROGRAMACAO_PARADA>
   private readonly sauUsinaRepository: Repository<SAU_USINA>
 
   constructor() {
@@ -48,6 +51,10 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     return this.sauProgramacaoParadaRepository.find({
       relations: tableRelations
     })
+  }
+
+  public deletePp(id): Promise<any> {
+    return this.sauProgramacaoParadaRepository.delete(id)
   }
 
   public getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]> {

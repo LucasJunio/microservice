@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { Repository, getRepository } from 'typeorm'
+import { Repository, getRepository, EntityRepository } from 'typeorm'
 import { SAU_HIST_PROGRAMACAO_PARADA } from '../entities/SAU_HIST_PROGRAMACAO_PARADA'
 import { SAU_PROGRAMACAO_PARADA } from '../entities/SAU_PROGRAMACAO_PARADA'
 
@@ -9,8 +9,9 @@ export interface ISauHistProgramacaoParadaRepository {
 }
 
 @injectable()
+@EntityRepository(SAU_HIST_PROGRAMACAO_PARADA)
 export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoParadaRepository {
-  private readonly sauHistProgramacaoParadaRepository: Repository<SAU_HIST_PROGRAMACAO_PARADA>
+  public readonly sauHistProgramacaoParadaRepository: Repository<SAU_HIST_PROGRAMACAO_PARADA>
 
   constructor() {
     this.sauHistProgramacaoParadaRepository = getRepository(SAU_HIST_PROGRAMACAO_PARADA)
