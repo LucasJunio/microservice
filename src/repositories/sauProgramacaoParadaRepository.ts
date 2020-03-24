@@ -16,6 +16,7 @@ const tableRelations = [
   'cdSubclasReprogrParada',
   'sauPgis',
 
+  'sauPgis.idStatus',
   'sauProgramacaoParadaUgs.cdUnidadeGeradora'
 ]
 

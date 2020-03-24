@@ -1,15 +1,17 @@
 import { inject, injectable } from 'inversify'
 import * as _ from 'lodash'
+import * as moment from 'moment'
 
 import { TYPE } from '../../../constants/types'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
 import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
+import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
 
 import { SAU_PROGRAMACAO_PARADA } from '../../../entities/SAU_PROGRAMACAO_PARADA'
 
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
 import { SAU_ITEM_LOOKUP } from '../../../entities/SAU_ITEM_LOOKUP'
-import * as moment from 'moment'
+import { SAU_PGI } from '../../../entities/SAU_PGI'
 
 export interface IFluxoService {
   nextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA>
@@ -28,20 +30,49 @@ export class FluxoService implements IFluxoService {
   @inject(TYPE.SauItemLookUpRepository)
   private readonly sauItemLookUpRepository: SauItemLookUpRepository
 
+  @inject(TYPE.SauProgramacaoParadaRepository)
+  private readonly sauProgramacaoParadaRepository: SauProgramacaoParadaRepository
+
   @inject(TYPE.SauHistProgramacaoParadaRepository)
   private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
 
   public async execNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
-    switch (parada.ID_STATUS_PROGRAMACAO) {
+    switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'EXECUCAO':
-        if (parada.sauPgis.length === 0) {
+        if (parada.sauPgis.length !== 0) {
+          parada.DT_HORA_INICIO_SERVICO = this.getBackwardDate(parada.sauPgis)
+          parada.DT_HORA_TERMINO_SERVICO = this.getForwardDate(parada.sauPgis)
           parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
-          return this.paradaProgramadaService.saveProgramacaoParada(parada)
         }
+        break
+      case 'AAPRV':
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL', 13)
         break
     }
 
-    return
+    await this.paradaProgramadaService.saveProgramacaoParada(parada)
+    return this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
+  }
+
+  public getForwardDate(pgis: SAU_PGI[]): Date {
+    let forward = pgis[0].DT_FIM
+
+    for (const di of pgis) {
+      if (moment(di.DT_FIM).isAfter(forward)) {
+        forward = di.DT_FIM
+      }
+    }
+    return forward
+  }
+  public getBackwardDate(pgis: SAU_PGI[]): Date {
+    let backward = pgis[0].DT_INICIO
+
+    for (const di of pgis) {
+      if (moment(di.DT_INICIO).isAfter(backward)) {
+        backward = di.DT_INICIO
+      }
+    }
+    return backward
   }
 
   public async nextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
