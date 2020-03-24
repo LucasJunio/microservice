@@ -48,10 +48,10 @@ export const Server = (async () => {
     const serverPort = normalizePort(port)
 
     server.listen(serverPort, () => {
-      logger.info(`SAU-Backend listening on port ${config.serverPort}!`)
+      logger.info(`SAU-PP-API listening on port ${config.serverPort}!`)
     })
   } catch (error) {
-    logger.error(`SAU-Backend Initialize error: ${error}`)
+    logger.error(`SAU-PP-API Initialize error: ${error}`)
   }
 })()
 
