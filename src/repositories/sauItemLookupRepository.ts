@@ -53,7 +53,7 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
     }
 
     if (difference < 48) {
-      // Diferença < 48 horas intempestiva
+      // Diferença < 48 horas Urgente
       return this.getItemLookUpByCdAndId('PU', 11)
     }
 
