@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository, EntityRepository } from 'typeorm'
-import { SAU_PROGRAMACAO_PARADA } from '../entities/SAU_PROGRAMACAO_PARADA'
-import { SAU_USINA } from '../entities/SAU_USINA'
+import { ProgramacaoParada } from '../entities/programacaoParada'
+import { Usina } from '../entities/usina'
 
 const tableRelations = [
   'sauProgramacaoParadaUgs',
@@ -21,25 +21,25 @@ const tableRelations = [
 ]
 
 export interface ISauProgramacaoParadaRepository {
-  saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA>
-  getById(id: number): Promise<SAU_PROGRAMACAO_PARADA>
-  getAll(): Promise<SAU_PROGRAMACAO_PARADA[]>
-  // getLastIdSeqParada(cdParada: number): Promise<SAU_PROGRAMACAO_PARADA[]>
-  getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]>
+  saveProgramacaoParada(programcaoParada: ProgramacaoParada): Promise<ProgramacaoParada>
+  getById(id: number): Promise<ProgramacaoParada>
+  getAll(): Promise<ProgramacaoParada[]>
+  // getLastIdSeqParada(cdParada: number): Promise<ProgramacaoParada[]>
+  getLastIdParada(): Promise<ProgramacaoParada[]>
 }
 
 @injectable()
-@EntityRepository(SAU_PROGRAMACAO_PARADA)
+@EntityRepository(ProgramacaoParada)
 export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepository {
-  public readonly sauProgramacaoParadaRepository: Repository<SAU_PROGRAMACAO_PARADA>
-  private readonly sauUsinaRepository: Repository<SAU_USINA>
+  public readonly sauProgramacaoParadaRepository: Repository<ProgramacaoParada>
+  private readonly sauUsinaRepository: Repository<Usina>
 
   constructor() {
-    this.sauProgramacaoParadaRepository = getRepository(SAU_PROGRAMACAO_PARADA)
-    this.sauUsinaRepository = getRepository(SAU_USINA)
+    this.sauProgramacaoParadaRepository = getRepository(ProgramacaoParada)
+    this.sauUsinaRepository = getRepository(Usina)
   }
 
-  public async saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async saveProgramacaoParada(programcaoParada: ProgramacaoParada): Promise<ProgramacaoParada> {
     if (!programcaoParada.CD_PROGRAMACAO_PARADA) {
       const idParada = await this.getParadaSeq()
       programcaoParada.CD_PROGRAMACAO_PARADA = idParada[0].ID
@@ -47,7 +47,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     return this.sauProgramacaoParadaRepository.save(programcaoParada)
   }
 
-  public getAll(): Promise<SAU_PROGRAMACAO_PARADA[]> {
+  public getAll(): Promise<ProgramacaoParada[]> {
     return this.sauProgramacaoParadaRepository.find({
       relations: tableRelations
     })
@@ -65,7 +65,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     return this.sauProgramacaoParadaRepository.query('select SAU_PROGRAMACAO_PARADA_S.nextval as id FROM DUAL')
   }
 
-  public async getById(id: number): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async getById(id: number): Promise<ProgramacaoParada> {
     const pp = await this.sauProgramacaoParadaRepository.findOne(id, { relations: tableRelations })
     const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA)
     pp.usina = usina[0]
@@ -73,7 +73,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     return pp
   }
 
-  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<SAU_USINA> {
+  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina> {
     if (idConjuntoUsina === 'U') {
       return this.sauUsinaRepository.query(
         `SELECT sg_usina sg_conjunto_usina,

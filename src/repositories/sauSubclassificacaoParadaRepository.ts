@@ -1,26 +1,26 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
-import { SAU_SUBCLASSIFICACAO_PARADA } from '../entities/SAU_SUBCLASSIFICACAO_PARADA'
-// import { SAU_ITEM_LOOKUP } from '../entities/SAU_ITEM_LOOKUP'
+import { SubclassificacaoParada } from '../entities/subclassificacaoParada'
+// import { TemLookup } from '../entities/TemLookup'
 
 export interface ISauSubClassificacaoParadaRepository {
-  getSubClassificacaoParada(cdClassificacao: number, idTipoUsina: string): Promise<SAU_SUBCLASSIFICACAO_PARADA[]>
+  getSubClassificacaoParada(cdClassificacao: number, idTipoUsina: string): Promise<SubclassificacaoParada[]>
 }
 
 @injectable()
 export class SauSubClassificacaoParadaRepository implements ISauSubClassificacaoParadaRepository {
-  private readonly sauSubClassificacaoParadaRepository: Repository<SAU_SUBCLASSIFICACAO_PARADA>
-  // private readonly sauItemLookUpRepository: Repository<SAU_ITEM_LOOKUP>
+  private readonly sauSubClassificacaoParadaRepository: Repository<SubclassificacaoParada>
+  // private readonly sauItemLookUpRepository: Repository<TemLookup>
 
   constructor() {
-    this.sauSubClassificacaoParadaRepository = getRepository(SAU_SUBCLASSIFICACAO_PARADA)
-    // this.sauItemLookUpRepository = getRepository(SAU_ITEM_LOOKUP)
+    this.sauSubClassificacaoParadaRepository = getRepository(SubclassificacaoParada)
+    // this.sauItemLookUpRepository = getRepository(TemLookup)
   }
 
   public async getSubClassificacaoParada(
     cdClassificacao: number,
     idTipoUsina: string
-  ): Promise<SAU_SUBCLASSIFICACAO_PARADA[]> {
+  ): Promise<SubclassificacaoParada[]> {
     // const itemLookupUsina = await this.sauItemLookUpRepository.findOne({
     //   select: ['ID_ITEM_LOOKUP', 'DS_ITEM_LOOKUP', 'CD_ITEM_LOOKUP'],
     //   where: {

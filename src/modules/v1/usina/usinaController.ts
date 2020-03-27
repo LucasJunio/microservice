@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { inject } from 'inversify'
 import { controller, httpGet, response, interfaces } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
-import Handlers from '../../../core/Handlers'
+import Handlers from '../../../core/handlers'
 import { UsinaService } from './usinaService'
 
 @controller('/api/v1/usina')

@@ -2,24 +2,24 @@ import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
 import { setYear, differenceInHours, isAfter, isSameYear, isBefore, addYears, differenceInYears } from 'date-fns'
 
-import { SAU_ITEM_LOOKUP } from '../entities/SAU_ITEM_LOOKUP'
+import { TemLookup } from '../entities/temLookup'
 
 export interface ISauItemLookUpRepository {
-  getItemLookUpByIdLookup(idLookup: number): Promise<SAU_ITEM_LOOKUP[]>
-  getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<SAU_ITEM_LOOKUP>
-  getTipoParadaByDate(dateFrom: Date, dateTo: Date): Promise<SAU_ITEM_LOOKUP>
+  getItemLookUpByIdLookup(idLookup: number): Promise<TemLookup[]>
+  getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<TemLookup>
+  getTipoParadaByDate(dateFrom: Date, dateTo: Date): Promise<TemLookup>
 }
 
 @injectable()
 export class SauItemLookUpRepository implements ISauItemLookUpRepository {
-  private readonly sauItemLookUpRepository: Repository<SAU_ITEM_LOOKUP>
+  private readonly sauItemLookUpRepository: Repository<TemLookup>
 
   constructor() {
-    this.sauItemLookUpRepository = getRepository(SAU_ITEM_LOOKUP)
+    this.sauItemLookUpRepository = getRepository(TemLookup)
   }
 
   // MOTIVO_REPROG_PARADA STATUS_PROG_PARADA SITUACAO_PROG_PARADA
-  public getItemLookUpByIdLookup(idLookup: number): Promise<SAU_ITEM_LOOKUP[]> {
+  public getItemLookUpByIdLookup(idLookup: number): Promise<TemLookup[]> {
     return this.sauItemLookUpRepository.find({
       select: ['ID_ITEM_LOOKUP', 'DS_ITEM_LOOKUP', 'CD_ITEM_LOOKUP'],
       where: {
@@ -31,7 +31,7 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
     })
   }
 
-  public getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<SAU_ITEM_LOOKUP> {
+  public getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<TemLookup> {
     return this.sauItemLookUpRepository.findOne({
       select: ['ID_ITEM_LOOKUP', 'DS_ITEM_LOOKUP', 'CD_ITEM_LOOKUP'],
       where: {
@@ -41,7 +41,7 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
     })
   }
 
-  public async getTipoParadaByDate(datef: Date, datet: Date): Promise<SAU_ITEM_LOOKUP> {
+  public async getTipoParadaByDate(datef: Date, datet: Date): Promise<TemLookup> {
     const currentYear = new Date().getFullYear()
     const achorDate = setYear(new Date(2015, 7, 31), currentYear) // 31-08-currentYear
 
@@ -57,7 +57,8 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
       return this.getItemLookUpByCdAndId('PU', 11)
     }
 
-    // caso datef ser antes de 31/08, datef e datet mesmo ano || caso datef ser depois de 31/08 datet tem que ser ano de datef +1
+    // caso datef ser antes de 31/08, datef e datet mesmo ano
+    // || caso datef ser depois de 31/08 datet tem que ser ano de datef +1
     if (
       (isBefore(datef, achorDate) && isSameYear(datef, datet)) ||
       (isAfter(datef, achorDate) && isSameYear(datet, addYears(datef, 1)))
