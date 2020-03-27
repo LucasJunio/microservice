@@ -40,8 +40,8 @@ export class FluxoService implements IFluxoService {
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'EXECUCAO':
         if (parada.sauPgis.length !== 0) {
-          parada.DT_HORA_INICIO_SERVICO = this.getBackwardDate(parada.sauPgis)
           parada.DT_HORA_TERMINO_SERVICO = this.getForwardDate(parada.sauPgis)
+          parada.DT_HORA_INICIO_SERVICO = this.getBackwardDate(parada.sauPgis)
           parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
         }
         break
@@ -62,16 +62,19 @@ export class FluxoService implements IFluxoService {
         forward = di.DT_FIM
       }
     }
+
     return forward
   }
+
   public getBackwardDate(pgis: SAU_PGI[]): Date {
     let backward = pgis[0].DT_INICIO
 
     for (const di of pgis) {
-      if (moment(di.DT_INICIO).isAfter(backward)) {
+      if (moment(di.DT_INICIO).isBefore(backward)) {
         backward = di.DT_INICIO
       }
     }
+
     return backward
   }
 

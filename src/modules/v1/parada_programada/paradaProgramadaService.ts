@@ -257,7 +257,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     }
 
     const idParada = await this.sauProgramacaoParadaRepository.getLastIdParada()
-    programcaoParada.CD_PARADA = idParada[0].CD_PARADA + 1 // sempre o proximo
+    programcaoParada.CD_PARADA = idParada[0].ID // sempre o proximo
     programcaoParada.ID_STATUS_PROGRAMACAO = 'P'
     programcaoParada.USER_CREATE = programcaoParada.USER_UPDATE
     programcaoParada.DATE_CREATE = programcaoParada.DATE_UPDATE

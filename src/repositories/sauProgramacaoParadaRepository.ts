@@ -57,15 +57,8 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     return this.sauProgramacaoParadaRepository.delete(id)
   }
 
-  public getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]> {
-    return this.sauProgramacaoParadaRepository.find({
-      select: ['CD_PARADA'],
-      order: {
-        CD_PARADA: 'DESC',
-        CD_PROGRAMACAO_PARADA: 'DESC'
-      },
-      take: 1
-    })
+  public getLastIdParada(): Promise<any[]> {
+    return this.sauProgramacaoParadaRepository.query('select SAU_PARADA_S.nextval as id FROM DUAL')
   }
 
   public async getParadaSeq(): Promise<any> {
