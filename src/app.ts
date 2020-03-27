@@ -8,7 +8,7 @@ import { Container } from 'inversify'
 import { InversifyExpressServer } from 'inversify-express-utils'
 import * as morgan from 'morgan'
 import { bindings } from './inversify.config'
-import { logger } from './util/Logger'
+import { logger } from './util/logger'
 const config = require('./config/config')()
 
 export const Server = (async () => {

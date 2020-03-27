@@ -1,24 +1,24 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository, EntityRepository } from 'typeorm'
-import { SAU_PROGRAMACAO_PARADA_UG } from '../entities/SAU_PROGRAMACAO_PARADA_UG'
+import { ProgramacaoParadaUG } from '../entities/programacaoParadaUG'
 
 export interface ISauProgramacaoParadaUgRepository {
-  saveProgramacaoParadaUgLote(programacaoParadaUgs: SAU_PROGRAMACAO_PARADA_UG[]): Promise<SAU_PROGRAMACAO_PARADA_UG[]>
+  saveProgramacaoParadaUgLote(programacaoParadaUgs: ProgramacaoParadaUG[]): Promise<ProgramacaoParadaUG[]>
   deleteAllPpUgByCdParada(cdProgramacaoParada: number): Promise<any>
 }
 
 @injectable()
-@EntityRepository(SAU_PROGRAMACAO_PARADA_UG)
+@EntityRepository(ProgramacaoParadaUG)
 export class SauProgramacaoParadaUgRepository implements ISauProgramacaoParadaUgRepository {
-  public readonly sauProgramacaoParadaUg: Repository<SAU_PROGRAMACAO_PARADA_UG>
+  public readonly sauProgramacaoParadaUg: Repository<ProgramacaoParadaUG>
 
   constructor() {
-    this.sauProgramacaoParadaUg = getRepository(SAU_PROGRAMACAO_PARADA_UG)
+    this.sauProgramacaoParadaUg = getRepository(ProgramacaoParadaUG)
   }
 
   public async saveProgramacaoParadaUgLote(
-    programacaoParadaUgs: SAU_PROGRAMACAO_PARADA_UG[]
-  ): Promise<SAU_PROGRAMACAO_PARADA_UG[]> {
+    programacaoParadaUgs: ProgramacaoParadaUG[]
+  ): Promise<ProgramacaoParadaUG[]> {
     for (const programacaoParadaUg of programacaoParadaUgs) {
       const idUgs = await this.getUgsSeq()
       programacaoParadaUg.CD_PROGRAMACAO_PARADA_UG = idUgs[0].ID

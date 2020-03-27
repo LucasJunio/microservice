@@ -1,19 +1,19 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
-import { SAU_USINA } from '../entities/SAU_USINA'
+import { Usina } from '../entities/usina'
 
 export interface ISauUsinaRepository {
-  getUsinas(): Promise<SAU_USINA[]>
-  getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<SAU_USINA>
+  getUsinas(): Promise<Usina[]>
+  getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina>
 }
 
 @injectable()
 export class SauUsinaRepository implements ISauUsinaRepository {
-  private readonly sauUsinaRepository: Repository<SAU_USINA>
+  private readonly sauUsinaRepository: Repository<Usina>
   private readonly query: string
 
   constructor() {
-    this.sauUsinaRepository = getRepository(SAU_USINA)
+    this.sauUsinaRepository = getRepository(Usina)
     this.query = `
                   SELECT sg_usina       sg_conjunto_usina,
                          cd_usina       cd_conjunto_usina,
@@ -24,7 +24,7 @@ export class SauUsinaRepository implements ISauUsinaRepository {
       `
   }
 
-  public getUsinas(): Promise<SAU_USINA[]> {
+  public getUsinas(): Promise<Usina[]> {
     return this.sauUsinaRepository.query(this.query)
 
     // return this.sauUsinaRepository.find({
@@ -38,7 +38,7 @@ export class SauUsinaRepository implements ISauUsinaRepository {
     // })
   }
 
-  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<SAU_USINA> {
+  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina> {
     if (idConjuntoUsina === 'U') {
       return this.sauUsinaRepository.query(
         `SELECT sg_usina sg_conjunto_usina,

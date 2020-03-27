@@ -1,21 +1,21 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
-import { SAU_PARAM_PROGRAMACAO_PARADAS } from '../entities/SAU_PARAM_PROGRAMACAO_PARADAS'
+import { ParamProgramacaoParadas } from '../entities/paramProgramacaoParadas'
 
 export interface ISauParamProgramacaoParadaRepository {
-  getParamProgramacaoParada(year: string): Promise<SAU_PARAM_PROGRAMACAO_PARADAS>
-  getNroAnosParadaLongoPrazo(): Promise<SAU_PARAM_PROGRAMACAO_PARADAS[]>
+  getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas>
+  getNroAnosParadaLongoPrazo(): Promise<ParamProgramacaoParadas[]>
 }
 
 @injectable()
 export class SauParamProgramacaoParadaRepository implements ISauParamProgramacaoParadaRepository {
-  private readonly sauParamProgramacaoParadaRepository: Repository<SAU_PARAM_PROGRAMACAO_PARADAS>
+  private readonly sauParamProgramacaoParadaRepository: Repository<ParamProgramacaoParadas>
 
   constructor() {
-    this.sauParamProgramacaoParadaRepository = getRepository(SAU_PARAM_PROGRAMACAO_PARADAS)
+    this.sauParamProgramacaoParadaRepository = getRepository(ParamProgramacaoParadas)
   }
 
-  public getParamProgramacaoParada(year: string): Promise<SAU_PARAM_PROGRAMACAO_PARADAS> {
+  public getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas> {
     return this.sauParamProgramacaoParadaRepository
       .createQueryBuilder()
       .select(['dt_final_paradas_anuais', 'dt_final_paradas_programada', 'nr_prazo_parada_urgente'])
@@ -23,7 +23,7 @@ export class SauParamProgramacaoParadaRepository implements ISauParamProgramacao
       .getRawOne()
   }
 
-  public getNroAnosParadaLongoPrazo(): Promise<SAU_PARAM_PROGRAMACAO_PARADAS[]> {
+  public getNroAnosParadaLongoPrazo(): Promise<ParamProgramacaoParadas[]> {
     return this.sauParamProgramacaoParadaRepository.find({
       select: ['NR_ANOS_PARADA_LONGO_PRAZO'],
       take: 1

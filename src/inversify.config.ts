@@ -1,7 +1,7 @@
 import { AsyncContainerModule } from 'inversify'
 import { getDbConnection } from './config/ormconfig'
 import { TYPE } from './constants/types'
-import { logger } from './util/Logger'
+import { logger } from './util/logger'
 import { IUsinaService, UsinaService } from './modules/v1/usina/usinaService'
 import { ISauUsinaRepository, SauUsinaRepository } from './repositories/sauUsinaRepository'
 import {

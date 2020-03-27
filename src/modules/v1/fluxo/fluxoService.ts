@@ -7,17 +7,17 @@ import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepo
 import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
 import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
 
-import { SAU_PROGRAMACAO_PARADA } from '../../../entities/SAU_PROGRAMACAO_PARADA'
+import { ProgramacaoParada } from '../../../entities/programacaoParada'
 
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
-import { SAU_ITEM_LOOKUP } from '../../../entities/SAU_ITEM_LOOKUP'
-import { SAU_PGI } from '../../../entities/SAU_PGI'
+import { TemLookup } from '../../../entities/temLookup'
+import { Pgi } from '../../../entities/pgi'
 
 export interface IFluxoService {
-  nextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA>
-  prevLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA>
-  getStatus(parada: SAU_PROGRAMACAO_PARADA): SAU_ITEM_LOOKUP
-  setStatusPp(parada: SAU_PROGRAMACAO_PARADA, status: string): Promise<SAU_PROGRAMACAO_PARADA>
+  nextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada>
+  prevLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada>
+  getStatus(parada: ProgramacaoParada): TemLookup
+  setStatusPp(parada: ProgramacaoParada, status: string): Promise<ProgramacaoParada>
 }
 
 @injectable()
@@ -36,7 +36,7 @@ export class FluxoService implements IFluxoService {
   @inject(TYPE.SauHistProgramacaoParadaRepository)
   private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
 
-  public async execNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async execNextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'EXECUCAO':
         if (parada.sauPgis.length !== 0) {
@@ -54,7 +54,7 @@ export class FluxoService implements IFluxoService {
     return this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
   }
 
-  public getForwardDate(pgis: SAU_PGI[]): Date {
+  public getForwardDate(pgis: Pgi[]): Date {
     let forward = pgis[0].DT_FIM
 
     for (const di of pgis) {
@@ -64,7 +64,7 @@ export class FluxoService implements IFluxoService {
     }
     return forward
   }
-  public getBackwardDate(pgis: SAU_PGI[]): Date {
+  public getBackwardDate(pgis: Pgi[]): Date {
     let backward = pgis[0].DT_INICIO
 
     for (const di of pgis) {
@@ -75,7 +75,7 @@ export class FluxoService implements IFluxoService {
     return backward
   }
 
-  public async nextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async nextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
     let historico = null
 
     const status = this.getStatus(parada)
@@ -149,7 +149,7 @@ export class FluxoService implements IFluxoService {
     return this.paradaProgramadaService.saveProgramacaoParada(parada)
   }
 
-  public async prevLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async prevLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
     let historico = null
 
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
@@ -169,7 +169,7 @@ export class FluxoService implements IFluxoService {
     return this.paradaProgramadaService.saveProgramacaoParada(parada)
   }
 
-  public async reprNextLevel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async reprNextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
     let historico = null
 
     switch (parada.idStatusReprogramacao.ID_ITEM_LOOKUP) {
@@ -227,7 +227,7 @@ export class FluxoService implements IFluxoService {
     return this.paradaProgramadaService.saveProgramacaoParada(parada)
   }
 
-  public getStatus(parada: SAU_PROGRAMACAO_PARADA): SAU_ITEM_LOOKUP {
+  public getStatus(parada: ProgramacaoParada): TemLookup {
     switch (parada.ID_STATUS_PROGRAMACAO) {
       case 'P':
         return parada.idStatus
@@ -236,7 +236,7 @@ export class FluxoService implements IFluxoService {
     }
   }
 
-  public async setStatusPp(parada: SAU_PROGRAMACAO_PARADA, status: string): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async setStatusPp(parada: ProgramacaoParada, status: string): Promise<ProgramacaoParada> {
     switch (parada.ID_STATUS_PROGRAMACAO) {
       case 'P':
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)

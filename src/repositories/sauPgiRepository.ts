@@ -1,6 +1,6 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
-import { SAU_PGI } from '../entities/SAU_PGI'
+import { Pgi } from '../entities/pgi'
 
 const tableRelations = [
   'cdUnidadeGeradora',
@@ -18,20 +18,20 @@ const tableRelations = [
 ]
 
 export interface ISauPgiRepository {
-  getPgi(numPgi: string): Promise<SAU_PGI>
-  getNumPGI(numParada: number): Promise<SAU_PGI>
-  savePgi(pgi: SAU_PGI): Promise<SAU_PGI>
+  getPgi(numPgi: string): Promise<Pgi>
+  getNumPGI(numParada: number): Promise<Pgi>
+  savePgi(pgi: Pgi): Promise<Pgi>
 }
 
 @injectable()
 export class SauPgiRepository implements ISauPgiRepository {
-  private readonly sauPgiRepository: Repository<SAU_PGI>
+  private readonly sauPgiRepository: Repository<Pgi>
 
   constructor() {
-    this.sauPgiRepository = getRepository(SAU_PGI)
+    this.sauPgiRepository = getRepository(Pgi)
   }
 
-  public getPgi(numPgi: string): Promise<SAU_PGI> {
+  public getPgi(numPgi: string): Promise<Pgi> {
     return this.sauPgiRepository.findOne({
       where: {
         NUM_PGI: numPgi
@@ -39,7 +39,7 @@ export class SauPgiRepository implements ISauPgiRepository {
       relations: tableRelations
     })
   }
-  public getNumPGI(numParada: number): Promise<SAU_PGI> {
+  public getNumPGI(numParada: number): Promise<Pgi> {
     return this.sauPgiRepository.findOne({
       select: ['NUM_PGI'],
       where: {
@@ -48,11 +48,11 @@ export class SauPgiRepository implements ISauPgiRepository {
     })
   }
 
-  public savePgi(pgi: SAU_PGI): Promise<SAU_PGI> {
+  public savePgi(pgi: Pgi): Promise<Pgi> {
     return this.sauPgiRepository.save(pgi)
   }
 
-  public getAllNumPgi(): Promise<SAU_PGI[]> {
+  public getAllNumPgi(): Promise<Pgi[]> {
     return this.sauPgiRepository.find({
       select: ['NUM_PGI']
     })

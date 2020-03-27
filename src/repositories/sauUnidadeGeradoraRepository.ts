@@ -1,20 +1,20 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
-import { SAU_UNIDADE_GERADORA } from '../entities/SAU_UNIDADE_GERADORA'
+import { UnidadeGeradora } from '../entities/unidadeGeradora'
 
 export interface ISauUnidadeGeradoraRepository {
-  getUnidadesGeradoras(cdUsinaPP: number): Promise<SAU_UNIDADE_GERADORA[]>
+  getUnidadesGeradoras(cdUsinaPP: number): Promise<UnidadeGeradora[]>
 }
 
 @injectable()
 export class SauUnidadeGeradoraRepository implements ISauUnidadeGeradoraRepository {
-  private readonly sauUnidadeGeradoraRepository: Repository<SAU_UNIDADE_GERADORA>
+  private readonly sauUnidadeGeradoraRepository: Repository<UnidadeGeradora>
 
   constructor() {
-    this.sauUnidadeGeradoraRepository = getRepository(SAU_UNIDADE_GERADORA)
+    this.sauUnidadeGeradoraRepository = getRepository(UnidadeGeradora)
   }
 
-  public async getUnidadesGeradoras(cdUsinaPP: number): Promise<SAU_UNIDADE_GERADORA[]> {
+  public async getUnidadesGeradoras(cdUsinaPP: number): Promise<UnidadeGeradora[]> {
     return this.sauUnidadeGeradoraRepository.find({
       select: ['SG_UNIDADE_GERADORA', 'CD_UNIDADE_GERADORA'],
       where: {

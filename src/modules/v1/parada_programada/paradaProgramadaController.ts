@@ -13,7 +13,7 @@ import {
 } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
-import Handlers from '../../../core/Handlers'
+import Handlers from '../../../core/handlers'
 
 @controller('/api/v1/parada_programada')
 export class ParadaProgramadaServiceController implements interfaces.Controller {
