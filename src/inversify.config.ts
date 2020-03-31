@@ -26,6 +26,7 @@ import {
   ParadaProgramadaService,
   IParadaProgramadaService
 } from './modules/v1/parada_programada/paradaProgramadaService'
+import { ParamsService, IParamsService } from './modules/v1/params/paramsService'
 import { FluxoService, IFluxoService } from './modules/v1/fluxo/fluxoService'
 import {
   IReprogramacaoParadaService,
@@ -57,6 +58,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     await require('./modules/v1/unidade_geradora/unidadeGeradoraController')
     await require('./modules/v1/fluxo/fluxoController')
     await require('./modules/v1/reprogramacao/reprogramacaoParadaController')
+    await require('./modules/v1/params/paramsController')
 
     // Binding the services
     bind<IParadaProgramadaService>(TYPE.ParadaProgramadaService).to(ParadaProgramadaService)
@@ -64,6 +66,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<IUnidadeGeradoraService>(TYPE.UnidadeGeradoraService).to(UnidadeGeradoraService)
     bind<IFluxoService>(TYPE.FluxoService).to(FluxoService)
     bind<IReprogramacaoParadaService>(TYPE.ReprogramacaoParadaService).to(ReprogramacaoParadaService)
+    bind<IParamsService>(TYPE.ParamsService).to(ParamsService)
 
     // Binding the repositories
     bind<ISauProgramacaoParadaUgRepository>(TYPE.SauProgramacaoParadaUgRepository).to(SauProgramacaoParadaUgRepository)

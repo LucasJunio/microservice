@@ -1,10 +1,13 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
 import { ParamProgramacaoParadas } from '../entities/paramProgramacaoParadas'
+import moment = require('moment')
 
 export interface ISauParamProgramacaoParadaRepository {
   getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas>
   getNroAnosParadaLongoPrazo(): Promise<ParamProgramacaoParadas[]>
+  getParams(dtano: string)
+  saveParams(params: ParamProgramacaoParadas)
 }
 
 @injectable()
@@ -13,6 +16,25 @@ export class SauParamProgramacaoParadaRepository implements ISauParamProgramacao
 
   constructor() {
     this.sauParamProgramacaoParadaRepository = getRepository(ParamProgramacaoParadas)
+  }
+
+  public async saveParams(params: ParamProgramacaoParadas) {
+    if (!params.CD_PARAM_PROGRAMACAO_PARADAS) {
+      const cdParamProgramacaoParadas = await this.getCdParamProgramacaoParadas()
+      params.CD_PARAM_PROGRAMACAO_PARADAS = cdParamProgramacaoParadas[0].ID
+      params.USER_CREATE = params.USER_UPDATE
+      params.DATE_CREATE = new Date()
+    }
+    params.DATE_UPDATE = new Date()
+    return this.sauParamProgramacaoParadaRepository.save(params)
+  }
+
+  public getParams(dtano: string) {
+    return this.sauParamProgramacaoParadaRepository.findOne({
+      where: {
+        DT_ANO: moment(dtano).toDate()
+      }
+    })
   }
 
   public getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas> {
@@ -28,5 +50,11 @@ export class SauParamProgramacaoParadaRepository implements ISauParamProgramacao
       select: ['NR_ANOS_PARADA_LONGO_PRAZO'],
       take: 1
     })
+  }
+
+  public async getCdParamProgramacaoParadas(): Promise<any> {
+    return this.sauParamProgramacaoParadaRepository.query(
+      'select SAU_PARAM_PROGRAMACAO_PARADAS_S.nextval as id FROM DUAL'
+    )
   }
 }
