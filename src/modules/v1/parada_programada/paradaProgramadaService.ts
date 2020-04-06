@@ -134,6 +134,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
       const statusAprov = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
 
+      const from = parada.ID_STATUS_PROGRAMACAO
+
       if (parada.ID_STATUS_PROGRAMACAO === 'C') {
         if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
           parada.ID_STATUS_PROGRAMACAO = 'R'
@@ -156,10 +158,18 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
         }
       }
 
-      await histRepository.sauHistProgramacaoParadaRepository.delete({
-        cdProgramacaoParada: parada,
-        FLOW: 'C'
-      })
+      const historico = histRepository.createDefaultHistorico(
+        parada,
+        'DEVOLVIDO',
+        from,
+        parada.USER_UPDATE,
+        `O documento foi devolvido para o fluxo de ${
+          parada.ID_STATUS_PROGRAMACAO === 'P' ? 'PROGRAMAÇÃO' : 'REPROGRAMAÇÃO'
+        }`
+      )
+
+      await histRepository.saveHistoricoPp(historico)
+
       delete parada.sauProgramacaoParadaUgs
       await progParadaRepository.saveProgramacaoParada(parada)
     })
