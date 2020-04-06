@@ -205,7 +205,7 @@ export class FluxoService implements IFluxoService {
           'APROVADA',
           parada.ID_STATUS_PROGRAMACAO,
           parada.USER_UPDATE,
-          `A Reprogramação foi aprovado` +
+          `A Reprogramação foi aprovada` +
             '\n' +
             `Início previsto ${moment(parada.DT_HORA_INICIO_REPROGRAMACAO)
               .subtract(3, 'hour')
