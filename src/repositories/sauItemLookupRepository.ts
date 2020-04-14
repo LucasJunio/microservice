@@ -5,7 +5,7 @@ import { setYear, differenceInHours, isAfter, isSameYear, isBefore, addYears, di
 import { TemLookup } from '../entities/temLookup'
 
 export interface ISauItemLookUpRepository {
-  getItemLookUpByIdLookup(idLookup: number): Promise<TemLookup[]>
+  getItemLookUpByIdLookup(ID_LOOKUP: string): Promise<TemLookup[]>
   getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<TemLookup>
   getTipoParadaByDate(dateFrom: Date, dateTo: Date): Promise<TemLookup>
 }
@@ -19,16 +19,13 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
   }
 
   // MOTIVO_REPROG_PARADA STATUS_PROG_PARADA SITUACAO_PROG_PARADA
-  public getItemLookUpByIdLookup(idLookup: number): Promise<TemLookup[]> {
-    return this.sauItemLookUpRepository.find({
-      select: ['ID_ITEM_LOOKUP', 'DS_ITEM_LOOKUP', 'CD_ITEM_LOOKUP'],
-      where: {
-        cdLookup: idLookup
-      },
-      order: {
-        DS_ITEM_LOOKUP: 'ASC'
-      }
-    })
+  public getItemLookUpByIdLookup(ID_LOOKUP: string): Promise<TemLookup[]> {
+    return this.sauItemLookUpRepository
+      .createQueryBuilder('l')
+      .innerJoin('l.cdLookup', 'cdLookup')
+      .where('cdLookup.ID_LOOKUP = :ID_LOOKUP', { ID_LOOKUP })
+      .orderBy('l.ID_ITEM_LOOKUP', 'ASC')
+      .getMany()
   }
 
   public getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<TemLookup> {
