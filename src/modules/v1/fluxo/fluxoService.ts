@@ -213,7 +213,9 @@ export class FluxoService implements IFluxoService {
             `\n` +
             `Término previsto ${moment(parada.DT_HORA_TERMINO_REPROGRAMACAO)
               .subtract(3, 'hour')
-              .format('DD/MM/YYYY HH:mm')}`
+              .format('DD/MM/YYYY HH:mm')}` +
+            `\n` +
+            `Motivo: ${parada.DS_MOTIVO_REPROGRAMACAO}`
         )
         break
       case 'APRV':
