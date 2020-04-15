@@ -8,12 +8,12 @@ import { Container } from 'inversify'
 import { InversifyExpressServer } from 'inversify-express-utils'
 import * as morgan from 'morgan'
 import { bindings } from './inversify.config'
-import { logger } from './util/Logger'
+import { logger } from './util/logger'
 const config = require('./config/config')()
 
 export const Server = (async () => {
   try {
-    logger.info('Starting SAU-Backend')
+    logger.info('Starting SAU-PP-API')
 
     const container = new Container()
     await container.loadAsync(bindings)
@@ -48,10 +48,10 @@ export const Server = (async () => {
     const serverPort = normalizePort(port)
 
     server.listen(serverPort, () => {
-      logger.info(`SAU-Backend listening on port ${config.serverPort}!`)
+      logger.info(`SAU-PP-API listening on port ${config.serverPort}!`)
     })
   } catch (error) {
-    logger.error(`SAU-Backend Initialize error: ${error}`)
+    logger.error(`SAU-PP-API Initialize error: ${error}`)
   }
 })()
 

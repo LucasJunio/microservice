@@ -1,8 +1,9 @@
 import { inject, injectable } from 'inversify'
+import { getConnection } from 'typeorm'
 import { SauClassificacaoParadaRepository } from '../../../repositories/sauClassificacaoParadaRepository'
-import { SAU_CLASSIFICACAO_PARADA } from '../../../entities/SAU_CLASSIFICACAO_PARADA'
+import { ClassificacaoParada } from '../../../entities/classificacaoParada'
 import { TYPE } from '../../../constants/types'
-import { SAU_PARAM_PROGRAMACAO_PARADAS } from '../../../entities/SAU_PARAM_PROGRAMACAO_PARADAS'
+import { ParamProgramacaoParadas } from '../../../entities/paramProgramacaoParadas'
 import { SauParamProgramacaoParadaRepository } from '../../../repositories/sauParamProgramacaoParadaRepository'
 import { SauConsultaPpRepository } from '../../../repositories/sauConsultaPpRepository'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
@@ -11,42 +12,33 @@ import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHis
 import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
 import { SauSubClassificacaoParadaRepository } from '../../../repositories/sauSubclassificacaoParadaRepository'
 import { SauProgramacaoParadaUgRepository } from '../../../repositories/sauProgramacaoParadaUgRepository'
-import { SAU_ITEM_LOOKUP } from '../../../entities/SAU_ITEM_LOOKUP'
-import { SAU_PGI } from '../../../entities/SAU_PGI'
-import { SAU_SUBCLASSIFICACAO_PARADA } from '../../../entities/SAU_SUBCLASSIFICACAO_PARADA'
-import { SAU_PROGRAMACAO_PARADA } from '../../../entities/SAU_PROGRAMACAO_PARADA'
-import { PpConsultaDto } from '../../../entities/PpConsultaDto'
-import { SAU_CONSULTA_PP_V } from '../../../entities/SAU_CONSULTA_PP_V'
-import { SAU_HIST_PROGRAMACAO_PARADA } from '../../../entities/SAU_HIST_PROGRAMACAO_PARADA'
-import { SAU_PROGRAMACAO_PARADA_UG } from '../../../entities/SAU_PROGRAMACAO_PARADA_UG'
+import { TemLookup } from '../../../entities/temLookup'
+import { Pgi } from '../../../entities/pgi'
+import { SubclassificacaoParada } from '../../../entities/subclassificacaoParada'
+import { ProgramacaoParada } from '../../../entities/programacaoParada'
+import { PpConsultaDto } from '../../../entities/ppConsultaDto'
+import { ConsultaPPV } from '../../../entities/consultaPPV'
+import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
+import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
 
-import {
-  setYear,
-  fromUnixTime,
-  differenceInHours,
-  isAfter,
-  isSameYear,
-  isBefore,
-  addYears,
-  differenceInYears
-} from 'date-fns'
-import { get } from 'lodash'
+import { fromUnixTime } from 'date-fns'
+import { get, some, filter, map } from 'lodash'
 
 export interface IParadaProgramadaService {
-  getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]>
-  getParamProgramacaoParada(year: string): Promise<SAU_PARAM_PROGRAMACAO_PARADAS>
-  getNroAnosParadaLongoPrazo(): Promise<SAU_PARAM_PROGRAMACAO_PARADAS[]>
-  getItemLookUpByIdLookup(idLookup: number): Promise<SAU_ITEM_LOOKUP[]>
-  getPgi(numPgi: string): Promise<SAU_PGI>
-  getNumPGI(numParada: number): Promise<SAU_PGI>
-  savePgi(pgi: SAU_PGI): Promise<SAU_PGI>
-  getSubClassificacaoParada(cdClassificacao: number, idTipoUsina: string): Promise<SAU_SUBCLASSIFICACAO_PARADA[]>
-  saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA>
-  getById(id: number): Promise<SAU_PROGRAMACAO_PARADA>
-  getAll(): Promise<SAU_PROGRAMACAO_PARADA[]>
-  // getLastIdSeqParada(cdParada: number): Promise<SAU_PROGRAMACAO_PARADA[]>
-  getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]>
-  getDocumentos(filtros: PpConsultaDto): Promise<SAU_CONSULTA_PP_V[]>
+  getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]>
+  getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas>
+  getNroAnosParadaLongoPrazo(): Promise<ParamProgramacaoParadas[]>
+  getItemLookUpByIdLookup(idLookup: number): Promise<TemLookup[]>
+  getPgi(numPgi: string): Promise<Pgi>
+  getNumPGI(numParada: number): Promise<Pgi>
+  savePgi(pgi: Pgi): Promise<Pgi>
+  getSubClassificacaoParada(cdClassificacao: number, idTipoUsina: string): Promise<SubclassificacaoParada[]>
+  saveProgramacaoParada(programcaoParada: ProgramacaoParada): Promise<ProgramacaoParada>
+  getById(id: number): Promise<ProgramacaoParada>
+  getAll(): Promise<ProgramacaoParada[]>
+  // getLastIdSeqParada(cdParada: number): Promise<ProgramacaoParada[]>
+  getLastIdParada(): Promise<ProgramacaoParada[]>
+  getDocumentos(filtros: PpConsultaDto): Promise<ConsultaPPV[]>
   getCountDocumentos(filtros: PpConsultaDto): Promise<number>
 }
 
@@ -79,77 +71,113 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
   @inject(TYPE.SauProgramacaoParadaUgRepository)
   private readonly sauProgramacaoParadaUgRepository: SauProgramacaoParadaUgRepository
 
-  public getClassificacoesParada(sgUsina: string): Promise<SAU_CLASSIFICACAO_PARADA[]> {
+  public getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]> {
     return this.sauClassificacaoParadaRepository.getClassificacoesParada(sgUsina)
   }
 
-  public getParamProgramacaoParada(year: string): Promise<SAU_PARAM_PROGRAMACAO_PARADAS> {
+  public getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas> {
     return this.sauParamProgramacaoParadaRepository.getParamProgramacaoParada(year)
   }
 
-  public getNroAnosParadaLongoPrazo(): Promise<SAU_PARAM_PROGRAMACAO_PARADAS[]> {
+  public getNroAnosParadaLongoPrazo(): Promise<ParamProgramacaoParadas[]> {
     return this.sauParamProgramacaoParadaRepository.getNroAnosParadaLongoPrazo()
   }
 
-  public getItemLookUpByIdLookup(idLookup: number): Promise<SAU_ITEM_LOOKUP[]> {
+  public getItemLookUpByIdLookup(idLookup: number): Promise<TemLookup[]> {
     return this.sauItemLookUpRepository.getItemLookUpByIdLookup(idLookup)
   }
 
-  public async getTipoParadaByDate(dateFrom: number, dateTo: number): Promise<SAU_ITEM_LOOKUP> {
+  public async getTipoParadaByDate(dateFrom: number, dateTo: number): Promise<TemLookup> {
     const datef = fromUnixTime(dateFrom)
     const datet = fromUnixTime(dateTo)
-    const currentYear = new Date().getFullYear()
-    const achorDate = setYear(new Date(2015, 7, 31), currentYear) // 31-08-currentYear
-
-    const difference = differenceInHours(datet, datef)
-
-    if (difference < 24) {
-      // Diferença < 24 horas intempestiva
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PI', 11)
-    }
-
-    if (difference < 48) {
-      // Diferença < 48 horas intempestiva
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PU', 11)
-    }
-
-    // caso datef ser antes de 31/08, datef e datet mesmo ano || caso datef ser depois de 31/08 datet tem que ser ano de datef +1
-    if (
-      (isBefore(datef, achorDate) && isSameYear(datef, datet)) ||
-      (isAfter(datef, achorDate) && isSameYear(datet, addYears(datef, 1)))
-    ) {
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PP', 11)
-    }
-
-    // caso datef ser antes de 30/08 e datet for o ano de datef + 1
-    if (isBefore(datef, achorDate) && isSameYear(datet, addYears(datef, 1))) {
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PA', 11)
-    }
-
-    if (differenceInYears(datet, datef) <= 2) {
-      return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PB', 11)
-    }
-
-    return this.sauItemLookUpRepository.getItemLookUpByCdAndId('PL', 11)
+    return this.sauItemLookUpRepository.getTipoParadaByDate(datef, datet)
   }
 
-  public getPgi(numPgi: string): Promise<SAU_PGI> {
+  public getPgi(numPgi: string): Promise<Pgi> {
     return this.sauPgiRepository.getPgi(numPgi)
   }
 
-  public getNumPGI(numParada: number): Promise<SAU_PGI> {
+  public getNumPGI(numParada: number): Promise<Pgi> {
     return this.sauPgiRepository.getNumPGI(numParada)
   }
 
-  public savePgi(pgi: SAU_PGI): Promise<SAU_PGI> {
+  public savePgi(pgi: Pgi): Promise<Pgi> {
     return this.sauPgiRepository.savePgi(pgi)
   }
 
-  public getHistoricoById(id: number): Promise<SAU_HIST_PROGRAMACAO_PARADA[]> {
+  public getHistoricoById(id: number): Promise<HistProgramacaoParada[]> {
     return this.sauHistProgramacaoParadaRepository.findHistoricoById(id)
   }
 
-  public async cancel(parada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async deleteParadaById(cdPp: number): Promise<any> {
+    await getConnection().transaction(async manager => {
+      const histRepository = manager.getCustomRepository(SauHistProgramacaoParadaRepository)
+      const progParadaRepository = manager.getCustomRepository(SauProgramacaoParadaRepository)
+      const progParadaUg = manager.getCustomRepository(SauProgramacaoParadaUgRepository)
+
+      const parada = await progParadaRepository.getById(cdPp)
+
+      await histRepository.sauHistProgramacaoParadaRepository.delete({ cdProgramacaoParada: parada })
+
+      await progParadaUg.sauProgramacaoParadaUg.delete({ cdProgramacaoParada: parada })
+
+      await progParadaRepository.sauProgramacaoParadaRepository.delete({ CD_PROGRAMACAO_PARADA: cdPp })
+    })
+
+    return true
+  }
+
+  public async back_program(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+    await getConnection().transaction(async manager => {
+      const histRepository = manager.getCustomRepository(SauHistProgramacaoParadaRepository)
+      const progParadaRepository = manager.getCustomRepository(SauProgramacaoParadaRepository)
+
+      const statusAprov = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
+
+      const from = parada.ID_STATUS_PROGRAMACAO
+
+      if (parada.ID_STATUS_PROGRAMACAO === 'C') {
+        if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
+          parada.ID_STATUS_PROGRAMACAO = 'R'
+          parada.idStatusReprogramacao = statusAprov
+        } else {
+          parada.ID_STATUS_PROGRAMACAO = 'P'
+          parada.idStatus = statusAprov
+          parada.idStatusReprogramacao = null
+        }
+      }
+
+      if (parada.ID_STATUS_PROGRAMACAO === 'R') {
+        if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
+          parada.ID_STATUS_PROGRAMACAO = 'R'
+          parada.idStatusReprogramacao = statusAprov
+        } else {
+          parada.ID_STATUS_PROGRAMACAO = 'P'
+          parada.idStatus = statusAprov
+          parada.idStatusReprogramacao = null
+        }
+      }
+
+      const historico = histRepository.createDefaultHistorico(
+        parada,
+        'DEVOLVIDO',
+        from,
+        parada.USER_UPDATE,
+        `O documento foi devolvido para o fluxo de ${
+          parada.ID_STATUS_PROGRAMACAO === 'P' ? 'PROGRAMAÇÃO' : 'REPROGRAMAÇÃO'
+        }`
+      )
+
+      await histRepository.saveHistoricoPp(historico)
+
+      delete parada.sauProgramacaoParadaUgs
+      await progParadaRepository.saveProgramacaoParada(parada)
+    })
+
+    return this.getById(parada.CD_PROGRAMACAO_PARADA)
+  }
+
+  public async cancel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
     parada.ID_STATUS_PROGRAMACAO = 'C'
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
@@ -168,14 +196,11 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.getById(parada.CD_PROGRAMACAO_PARADA)
   }
 
-  public getSubClassificacaoParada(
-    cdClassificacao: number,
-    idTipoUsina: string
-  ): Promise<SAU_SUBCLASSIFICACAO_PARADA[]> {
+  public getSubClassificacaoParada(cdClassificacao: number, idTipoUsina: string): Promise<SubclassificacaoParada[]> {
     return this.sauSubClassificacaoParadaRepository.getSubClassificacaoParada(cdClassificacao, idTipoUsina)
   }
 
-  public async saveProgramacaoParada(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async saveProgramacaoParada(programcaoParada: ProgramacaoParada): Promise<ProgramacaoParada> {
     let saveHistorico = false
     if (!programcaoParada.CD_PROGRAMACAO_PARADA) {
       saveHistorico = true
@@ -183,7 +208,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
     const parada = await this.createAndSavePp(programcaoParada)
 
-    const paradaWithCdParada = new SAU_PROGRAMACAO_PARADA()
+    const paradaWithCdParada = new ProgramacaoParada()
     paradaWithCdParada.CD_PROGRAMACAO_PARADA = get(parada, ['CD_PROGRAMACAO_PARADA'])
 
     const listUgs = this.createListOfUgs(programcaoParada.sauProgramacaoParadaUgs, paradaWithCdParada)
@@ -207,20 +232,20 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return paradaRet
   }
 
-  public async getById(id: number): Promise<SAU_PROGRAMACAO_PARADA> {
+  public async getById(id: number): Promise<ProgramacaoParada> {
     const pp = await this.sauProgramacaoParadaRepository.getById(id)
     return pp
   }
 
-  public getAll(): Promise<SAU_PROGRAMACAO_PARADA[]> {
+  public getAll(): Promise<ProgramacaoParada[]> {
     return this.sauProgramacaoParadaRepository.getAll()
   }
 
-  public getLastIdParada(): Promise<SAU_PROGRAMACAO_PARADA[]> {
+  public getLastIdParada(): Promise<ProgramacaoParada[]> {
     return this.sauProgramacaoParadaRepository.getLastIdParada()
   }
 
-  public async getDocumentos(filtros: PpConsultaDto): Promise<SAU_CONSULTA_PP_V[]> {
+  public async getDocumentos(filtros: PpConsultaDto): Promise<ConsultaPPV[]> {
     return this.sauConsultaPpRepository.getDocumentos(filtros)
   }
 
@@ -228,18 +253,18 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauConsultaPpRepository.getCountDocumentos(filtros)
   }
 
-  public async getAllNumPgi(): Promise<SAU_PGI[]> {
+  public async getAllNumPgi(): Promise<Pgi[]> {
     return this.sauPgiRepository.getAllNumPgi()
   }
 
-  private async createAndSavePp(programcaoParada: SAU_PROGRAMACAO_PARADA): Promise<SAU_PROGRAMACAO_PARADA> {
+  private async createAndSavePp(programcaoParada: ProgramacaoParada): Promise<ProgramacaoParada> {
     if (programcaoParada.CD_PROGRAMACAO_PARADA) {
       await this.sauProgramacaoParadaUgRepository.deleteAllPpUgByCdParada(programcaoParada.CD_PROGRAMACAO_PARADA)
       return this.sauProgramacaoParadaRepository.saveProgramacaoParada(programcaoParada)
     }
 
     const idParada = await this.sauProgramacaoParadaRepository.getLastIdParada()
-    programcaoParada.CD_PARADA = idParada[0].CD_PARADA + 1 // sempre o proximo
+    programcaoParada.CD_PARADA = idParada[0].ID // sempre o proximo
     programcaoParada.ID_STATUS_PROGRAMACAO = 'P'
     programcaoParada.USER_CREATE = programcaoParada.USER_UPDATE
     programcaoParada.DATE_CREATE = programcaoParada.DATE_UPDATE
@@ -247,10 +272,10 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauProgramacaoParadaRepository.saveProgramacaoParada(programcaoParada)
   }
 
-  private createListOfUgs(unidadesGeradoras: any, parada: SAU_PROGRAMACAO_PARADA): any[] {
+  private createListOfUgs(unidadesGeradoras: any, parada: ProgramacaoParada): any[] {
     const list = []
     for (const unidadesGeradora of unidadesGeradoras) {
-      const newUg = new SAU_PROGRAMACAO_PARADA_UG()
+      const newUg = new ProgramacaoParadaUG()
       newUg.cdUnidadeGeradora = unidadesGeradora
       newUg.DATE_CREATE = new Date()
       newUg.cdProgramacaoParada = parada

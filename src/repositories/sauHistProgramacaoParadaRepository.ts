@@ -1,22 +1,23 @@
 import { injectable } from 'inversify'
-import { Repository, getRepository } from 'typeorm'
-import { SAU_HIST_PROGRAMACAO_PARADA } from '../entities/SAU_HIST_PROGRAMACAO_PARADA'
-import { SAU_PROGRAMACAO_PARADA } from '../entities/SAU_PROGRAMACAO_PARADA'
+import { Repository, getRepository, EntityRepository } from 'typeorm'
+import { HistProgramacaoParada } from '../entities/histProgramacaoParada'
+import { ProgramacaoParada } from '../entities/programacaoParada'
 
 export interface ISauHistProgramacaoParadaRepository {
-  findHistoricoById(id: number): Promise<SAU_HIST_PROGRAMACAO_PARADA[]>
-  saveHistoricoPp(historico: SAU_HIST_PROGRAMACAO_PARADA): Promise<SAU_HIST_PROGRAMACAO_PARADA>
+  findHistoricoById(id: number): Promise<HistProgramacaoParada[]>
+  saveHistoricoPp(historico: HistProgramacaoParada): Promise<HistProgramacaoParada>
 }
 
 @injectable()
+@EntityRepository(HistProgramacaoParada)
 export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoParadaRepository {
-  private readonly sauHistProgramacaoParadaRepository: Repository<SAU_HIST_PROGRAMACAO_PARADA>
+  public readonly sauHistProgramacaoParadaRepository: Repository<HistProgramacaoParada>
 
   constructor() {
-    this.sauHistProgramacaoParadaRepository = getRepository(SAU_HIST_PROGRAMACAO_PARADA)
+    this.sauHistProgramacaoParadaRepository = getRepository(HistProgramacaoParada)
   }
 
-  public async findHistoricoById(id: number): Promise<SAU_HIST_PROGRAMACAO_PARADA[]> {
+  public async findHistoricoById(id: number): Promise<HistProgramacaoParada[]> {
     return this.sauHistProgramacaoParadaRepository
       .createQueryBuilder('SAU_HIST_PROGRAMACAO_PARADA')
       .where('CD_PROGRAMACAO_PARADA = :CD_PROGRAMACAO_PARADA', { CD_PROGRAMACAO_PARADA: id })
@@ -24,7 +25,7 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
       .getMany()
   }
 
-  public async saveHistoricoPp(historico: SAU_HIST_PROGRAMACAO_PARADA): Promise<SAU_HIST_PROGRAMACAO_PARADA> {
+  public async saveHistoricoPp(historico: HistProgramacaoParada): Promise<HistProgramacaoParada> {
     const idHistorico = await this.getHistoricoSeq()
     historico.CD_HISTORICO = idHistorico[0].ID
     return this.sauHistProgramacaoParadaRepository.save(historico)
@@ -35,13 +36,13 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
   }
 
   public createDefaultHistorico(
-    parada: SAU_PROGRAMACAO_PARADA,
+    parada: ProgramacaoParada,
     acao: string,
     flow: string,
     user: string,
     msg?: string
-  ): SAU_HIST_PROGRAMACAO_PARADA {
-    const historico = new SAU_HIST_PROGRAMACAO_PARADA()
+  ): HistProgramacaoParada {
+    const historico = new HistProgramacaoParada()
     historico.cdProgramacaoParada = parada
     historico.DATE_CREATE = new Date()
     historico.DT_HISTORICO = new Date()

@@ -1,38 +1,30 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
-import { SAU_USINA } from '../entities/SAU_USINA'
+import { Usina } from '../entities/usina'
 
 export interface ISauUsinaRepository {
-  getUsinas(): Promise<SAU_USINA[]>
-  getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<SAU_USINA>
+  getUsinas(): Promise<Usina[]>
+  getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina>
 }
 
 @injectable()
 export class SauUsinaRepository implements ISauUsinaRepository {
-  private readonly sauUsinaRepository: Repository<SAU_USINA>
+  private readonly sauUsinaRepository: Repository<Usina>
   private readonly query: string
 
   constructor() {
-    this.sauUsinaRepository = getRepository(SAU_USINA)
-    this.query = `SELECT sg_usina       sg_conjunto_usina,
+    this.sauUsinaRepository = getRepository(Usina)
+    this.query = `
+                  SELECT sg_usina       sg_conjunto_usina,
                          cd_usina       cd_conjunto_usina,
                          'U'            id_conjunto_usina,
                          id_tipo_usina  id_tipo_usina
                   FROM sau_usina
                   WHERE fl_ativo = 1
-                  UNION
-                  SELECT scu.sg_conjunto sg_conjunto_usina,
-                         scu.cd_conjunto cd_conjunto_usina,
-                         'C'             id_conjunto_usina,
-                         'E'             id_tipo_usina
-                  FROM sau_agrup_conjunto_usina acu, 
-                       sau_conjunto_usina scu
-                  WHERE scu.fl_ativo = 1 
-                    AND acu.cd_conjunto = scu.cd_conjunto 
-                  ORDER BY 1`
+      `
   }
 
-  public getUsinas(): Promise<SAU_USINA[]> {
+  public getUsinas(): Promise<Usina[]> {
     return this.sauUsinaRepository.query(this.query)
 
     // return this.sauUsinaRepository.find({
@@ -46,7 +38,7 @@ export class SauUsinaRepository implements ISauUsinaRepository {
     // })
   }
 
-  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<SAU_USINA> {
+  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina> {
     if (idConjuntoUsina === 'U') {
       return this.sauUsinaRepository.query(
         `SELECT sg_usina sg_conjunto_usina,
@@ -70,3 +62,15 @@ export class SauUsinaRepository implements ISauUsinaRepository {
     )
   }
 }
+
+// consulta usina antiga
+//             UNION
+//                   SELECT scu.sg_conjunto sg_conjunto_usina,
+//                          scu.cd_conjunto cd_conjunto_usina,
+//                          'C'             id_conjunto_usina,
+//                          'E'             id_tipo_usina
+//                   FROM sau_agrup_conjunto_usina acu,
+//                        sau_conjunto_usina scu
+//                   WHERE scu.fl_ativo = 1
+//                     AND acu.cd_conjunto = scu.cd_conjunto
+//                   ORDER BY 1

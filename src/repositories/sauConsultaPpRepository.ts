@@ -1,22 +1,22 @@
 import { injectable } from 'inversify'
 import { getRepository, Repository, SelectQueryBuilder } from 'typeorm'
-import { SAU_CONSULTA_PP_V } from '../entities/SAU_CONSULTA_PP_V'
-import { PpConsultaDto } from '../entities/PpConsultaDto'
+import { ConsultaPPV } from '../entities/consultaPPV'
+import { PpConsultaDto } from '../entities/ppConsultaDto'
 
 export interface ISauConsultaPpRepository {
-  getDocumentos(filtros: object): Promise<SAU_CONSULTA_PP_V[]>
+  getDocumentos(filtros: object): Promise<ConsultaPPV[]>
   getCountDocumentos(filtros: PpConsultaDto): Promise<number>
 }
 
 @injectable()
 export class SauConsultaPpRepository implements ISauConsultaPpRepository {
-  private readonly sauConsultaPpRepository: Repository<SAU_CONSULTA_PP_V>
+  private readonly sauConsultaPpRepository: Repository<ConsultaPPV>
 
   constructor() {
-    this.sauConsultaPpRepository = getRepository(SAU_CONSULTA_PP_V)
+    this.sauConsultaPpRepository = getRepository(ConsultaPPV)
   }
 
-  public async getDocumentos(filtros: PpConsultaDto): Promise<SAU_CONSULTA_PP_V[]> {
+  public async getDocumentos(filtros: PpConsultaDto): Promise<ConsultaPPV[]> {
     const query = this.createQueryGetDocumentos(filtros)
     const { PAGE, ROWS_PER_PAGE } = filtros
     return query
@@ -30,7 +30,7 @@ export class SauConsultaPpRepository implements ISauConsultaPpRepository {
     return query.getCount()
   }
 
-  private createQueryGetDocumentos(filtros: PpConsultaDto): SelectQueryBuilder<SAU_CONSULTA_PP_V> {
+  private createQueryGetDocumentos(filtros: PpConsultaDto): SelectQueryBuilder<ConsultaPPV> {
     const {
       SG_USINA,
       ID_UNIDADE_GERADORA,

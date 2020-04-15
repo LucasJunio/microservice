@@ -8,11 +8,12 @@ import {
   requestParam,
   httpPost,
   requestBody,
-  queryParam
+  queryParam,
+  httpDelete
 } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
-import Handlers from '../../../core/Handlers'
+import Handlers from '../../../core/handlers'
 
 @controller('/api/v1/parada_programada')
 export class ParadaProgramadaServiceController implements interfaces.Controller {
@@ -33,6 +34,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   public async getUsinas(@response() res: Response, @requestBody() parada: any): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.cancel(parada)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpPost('/back_program')
+  public async back_program(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.back_program(parada)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -128,6 +139,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     try {
       const data = await this.paradaProgramadaService.getNroAnosParadaLongoPrazo()
       return Handlers.onSuccess(res, data[0])
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpDelete('/:id')
+  public async deleteParadaById(@response() res: Response, @requestParam('id') cdPp: number): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.deleteParadaById(cdPp)
+      return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
     }

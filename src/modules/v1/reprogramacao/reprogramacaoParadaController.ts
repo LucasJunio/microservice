@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { inject } from 'inversify'
 import { controller, response, interfaces, httpPost, requestBody } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
-import Handlers from '../../../core/Handlers'
+import Handlers from '../../../core/handlers'
 import { ReprogramacaoParadaService } from './reprogramacaoParadaService'
 
 @controller('/api/v1/reprogramacao')

@@ -2,7 +2,6 @@ import { inject, injectable } from 'inversify'
 import { TYPE } from '../../../constants/types'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
 import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
-import { SauReprogramacaoParadaRepository } from '../../../repositories/sauReprogramacaoParadaRepository'
 import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
 
 export interface IReprogramacaoParadaService {
@@ -12,9 +11,6 @@ export interface IReprogramacaoParadaService {
 @injectable()
 export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
   // REPOSITORIES
-  @inject(TYPE.SauReprogramacaoParadaRepository)
-  private readonly sauReprogramacaoParadaRepository: SauReprogramacaoParadaRepository
-
   @inject(TYPE.SauItemLookUpRepository)
   private readonly sauItemLookUpRepository: SauItemLookUpRepository
 
@@ -28,16 +24,17 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
     const parada = await this.sauProgramacaoParadaRepository.getById(repro.cdPp)
     const statusReprog = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_USINA', 13)
 
-    const reproToSave = await this.sauReprogramacaoParadaRepository.getDefaultReprogramacaoParada(
-      repro,
-      statusReprog,
-      parada
-    )
-
-    await this.sauReprogramacaoParadaRepository.saveReprogramacaoParada(reproToSave)
-
     parada.ID_STATUS_PROGRAMACAO = 'R'
-    delete parada.sauReprogramacaoParadas
+    parada.DT_HORA_INICIO_REPROGRAMACAO = repro.dataInicio
+    parada.DT_HORA_TERMINO_REPROGRAMACAO = repro.dataTermino
+    parada.idStatusReprogramacao = statusReprog
+    parada.idOrigemReprogramacao = null
+    parada.idMotivoReprogramacao = null
+    parada.DS_MOTIVO_REPROGRAMACAO = repro.motivo
+    parada.cdClassifReprogrParada = repro.classificacao
+    parada.cdSubclasReprogrParada = repro.subClassificacao
+    parada.DS_OBSERVACAO_REPROGR_PARADA = null
+    parada.NM_AREA_ORIGEM_REPROGRAMACAO = null
 
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
@@ -46,8 +43,8 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       parada.USER_UPDATE,
       `A reprogramação foi criada no status EM ANÁLISE USINA`
     )
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
 
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
     await this.sauProgramacaoParadaRepository.saveProgramacaoParada(parada)
 
     return this.sauProgramacaoParadaRepository.getById(parada.CD_PROGRAMACAO_PARADA)

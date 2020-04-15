@@ -6,7 +6,7 @@
     "start": "cross-env NODE_ENV=development AWS_ACCESS_KEY_ID=AKIAQQCWYCULOOS5RCOO AWS_SECRET_ACCESS_KEY=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 AWS_REGION=us-east-1 AWS_BUCKET=anexos-sau nodemon src/app.ts",
     "start-prod": "NODE_ENV=production node dist/app.js",
     "build": "tsc -p .",
-    "lint": "tslint src/src/**/*.ts -t verbose --force",
+    "lint": "tslint src/**/*.ts -t verbose --force",
     "test": "NODE_ENV=test nodemon --watch . --ext ts -r ts-node/register --exec \"mocha -r ts-node/register test/**/*.test.ts\"",
     "unit-test": "NODE_ENV=test mocha --opts test/mocha.opts test/unit/unit.test.ts",
     "unit-coverage": "nyc --reporter=html npm run unit-test",
@@ -70,15 +70,9 @@
     "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^3.5.2"
   },
-  "lint-staged": {
-    "*.{ts}": [
-      "tslint --fix",
-      "git add"
-    ]
-  },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "npm run lint"
     }
   }
 }

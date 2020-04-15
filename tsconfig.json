@@ -9,15 +9,16 @@
     "lib": ["es6", "dom"],
     "allowUnreachableCode": true,
     "outDir": "dist",
-    "rootDir": "src",
-    "resolveJsonModule": true,
-    "sourceRoot": "",
-    "baseUrl": "src",
-    "paths": {
-      "@repositories/*": ["repositories/*"]
-    }
+    "resolveJsonModule": true
   },
-  "exclude": ["test/**/*.ts"],
+  "include": [
+    "src/**/*.json",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "test/**/*.ts"
+  ],
   "compileOnSave": false,
   "buildOnSave": false
 }
