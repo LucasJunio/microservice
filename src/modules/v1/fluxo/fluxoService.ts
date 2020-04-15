@@ -42,8 +42,8 @@ export class FluxoService implements IFluxoService {
         if (parada.sauPgis.length !== 0) {
           parada.DT_HORA_TERMINO_SERVICO = this.getForwardDate(parada.sauPgis)
           parada.DT_HORA_INICIO_SERVICO = this.getBackwardDate(parada.sauPgis)
-          parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
         }
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
         break
       case 'AAPRV':
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL', 13)
