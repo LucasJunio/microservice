@@ -28,7 +28,7 @@ export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]>
   getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas>
   getNroAnosParadaLongoPrazo(): Promise<ParamProgramacaoParadas[]>
-  getItemLookUpByIdLookup(idLookup: number): Promise<TemLookup[]>
+  getItemLookUpByIdLookup(idLookup: string): Promise<TemLookup[]>
   getPgi(numPgi: string): Promise<Pgi>
   getNumPGI(numParada: number): Promise<Pgi>
   savePgi(pgi: Pgi): Promise<Pgi>
@@ -83,7 +83,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauParamProgramacaoParadaRepository.getNroAnosParadaLongoPrazo()
   }
 
-  public getItemLookUpByIdLookup(idLookup: number): Promise<TemLookup[]> {
+  public getItemLookUpByIdLookup(idLookup: string): Promise<TemLookup[]> {
     return this.sauItemLookUpRepository.getItemLookUpByIdLookup(idLookup)
   }
 
