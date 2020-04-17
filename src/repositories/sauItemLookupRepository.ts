@@ -32,6 +32,7 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
   }
 
   public getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<TemLookup> {
+    console.log(idItemLookup, cdLookup, '<--------------')
     return this.sauItemLookUpRepository.findOne({
       select: ['ID_ITEM_LOOKUP', 'DS_ITEM_LOOKUP', 'CD_ITEM_LOOKUP'],
       where: {
