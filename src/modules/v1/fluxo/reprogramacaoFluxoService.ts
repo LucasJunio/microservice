@@ -7,6 +7,7 @@ import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepo
 import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
 import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
 import { TYPE } from '../../../constants/types'
+import { parseISO } from 'date-fns'
 
 export interface IReprogramacaoFluxoService {
   handleAgAprUsina(parada: ProgramacaoParada): Promise<ProgramacaoParada>
@@ -32,7 +33,6 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
 
   public async handleAgAprUsina(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
     let historico = null
-
     // caso Longo prazo, intempestiva ou longo prazo, vai direto para aprovado
     if (
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PU' ||
@@ -49,8 +49,8 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
       parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
 
       parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
-        parada.DT_CRIACAO_PARADA,
-        parada.DT_HORA_INICIO_REPROGRAMACAO
+        parseISO(parada.DT_CRIACAO_PARADA.toString()),
+        parseISO(parada.DT_HORA_INICIO_REPROGRAMACAO.toString())
       )
 
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
@@ -99,8 +99,8 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
 
     parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
-      parada.DT_CRIACAO_PARADA,
-      parada.DT_HORA_INICIO_REPROGRAMACAO
+      parseISO(parada.DT_CRIACAO_PARADA.toString()),
+      parseISO(parada.DT_HORA_INICIO_REPROGRAMACAO.toString())
     )
 
     historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(

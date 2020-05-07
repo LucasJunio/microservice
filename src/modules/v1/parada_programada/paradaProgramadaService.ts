@@ -21,7 +21,7 @@ import { ConsultaPPV } from '../../../entities/consultaPPV'
 import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
 
-import { fromUnixTime } from 'date-fns'
+import { fromUnixTime, parseISO } from 'date-fns'
 import { get, some, filter, map } from 'lodash'
 
 export interface IParadaProgramadaService {
@@ -87,10 +87,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauItemLookUpRepository.getItemLookUpByIdLookup(idLookup)
   }
 
-  public async getTipoParadaByDate(dateFrom: number, dateTo: number): Promise<TemLookup> {
-    const datef = fromUnixTime(dateFrom)
-    const datet = fromUnixTime(dateTo)
-    return this.sauItemLookUpRepository.getTipoParadaByDate(datef, datet)
+  public async getTipoParadaByDate(dateFrom: string, dateTo: string): Promise<TemLookup> {
+    return this.sauItemLookUpRepository.getTipoParadaByDate(parseISO(dateFrom), parseISO(dateTo))
   }
 
   public getPgi(numPgi: string): Promise<Pgi> {

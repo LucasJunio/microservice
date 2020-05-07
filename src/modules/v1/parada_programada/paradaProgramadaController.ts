@@ -53,8 +53,8 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   @httpGet('/tipo_parada_by_date')
   public async getTipoParadaByDate(
     @response() res: Response,
-    @queryParam('dateFrom') dateFrom: number,
-    @queryParam('dateTo') dateTo: number
+    @queryParam('dateFrom') dateFrom: string,
+    @queryParam('dateTo') dateTo: string
   ): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.getTipoParadaByDate(dateFrom, dateTo)

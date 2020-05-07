@@ -8,7 +8,9 @@ import {
   isBefore,
   addYears,
   differenceInYears,
-  differenceInDays
+  differenceInDays,
+  getYear,
+  parseISO
 } from 'date-fns'
 
 import { TemLookup } from '../entities/temLookup'
@@ -70,7 +72,6 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
       return this.getItemLookUpByCdAndId('PI', 11)
     }
 
-    // DT_CRIACAO_PARADA > PARAM.DT_FINAL_PARADAS_PROGR
     if (difference < params.NR_PRAZO_PARADA_URGENTE * 24) {
       // Diferença < 48 horas Urgente
       return this.getItemLookUpByCdAndId('PU', 11)
