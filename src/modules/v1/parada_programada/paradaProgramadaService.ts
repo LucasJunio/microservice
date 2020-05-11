@@ -194,7 +194,11 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.getById(parada.CD_PROGRAMACAO_PARADA)
   }
 
-  public getSubClassificacaoParada(cdClassificacao: number, idTipoUsina: string): Promise<SubclassificacaoParada[]> {
+  public async getSubClassificacaoParada(
+    cdClassificacao: number,
+    idTipoUsina: string
+  ): Promise<SubclassificacaoParada[]> {
+    // const cdAplicacaoUsina = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(idTipoUsina, 19)
     return this.sauSubClassificacaoParadaRepository.getSubClassificacaoParada(cdClassificacao, idTipoUsina)
   }
 

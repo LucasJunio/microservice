@@ -85,6 +85,7 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
       //  || as 2 condições nao tem como acontecer juntas
       isAfter(datef, dtFinalParadasProgramadas) &&
       isSameYear(datet, addYears(datef, 1))
+      // inicio - criação >= 48 horas e mesmo ano
     ) {
       return this.getItemLookUpByCdAndId('PP', 11)
     }
