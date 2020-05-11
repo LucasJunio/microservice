@@ -1,0 +1,19 @@
+FROM docker-registry-default.ds55.local/engie-dev/node:10
+
+WORKDIR /src/app
+
+# Install deps for production only
+COPY ./package* ./
+RUN npm install && \
+  npm cache clean --force
+
+# Copy builded source from the upper builder stage
+COPY  . .
+
+RUN mkdir logs
+RUN chmod 777 -R logs/
+
+EXPOSE 8080
+
+# Start the app
+CMD ["npm", "run", "start-prod"]

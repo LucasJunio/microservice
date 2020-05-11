@@ -1,0 +1,97 @@
+---
+#DEPLOYMENT CONFIG
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: __APP_NAME__
+  namespace: __APP_NAMESPACE__
+spec:
+  selector:
+    app: __APP_NAME__
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: __APP_NAME__
+    spec:
+      containers:
+        - name: __APP_NAME__
+          image: "__DOCKER_SERVER__/imagens/__DOCKER_IMAGE__:__branchName__-__buildNumber__"
+          env:
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: sau-database
+                  key: DATABASE_HOST
+              envFrom:
+                secretRef:
+                  name: sau-database
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: sau-database
+                  key: DATABASE_PORT
+              envFrom:
+                secretRef:
+                  name: sau-database
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sau-database
+                  key: DATABASE_USERNAME
+              envFrom:
+                secretRef:
+                  name: sau-database
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sau-database
+                  key: DATABASE_PASSWORD
+              envFrom:
+                secretRef:
+                  name: sau-database
+            - name: DATABASE_SID
+              valueFrom:
+                secretKeyRef:
+                  name: sau-database
+                  key: DATABASE_SID
+              envFrom:
+                secretRef:
+                  name: sau-database
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+
+---
+# SERVICE
+apiVersion: v1
+kind: Service
+metadata:
+  name: __APP_NAME__
+  namespace: __APP_NAMESPACE__
+spec:
+  ports:
+    - name: 8080-tcp
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: __APP_NAME__
+  type: NodePort
+
+---
+# ROUTE
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: __APP_NAME__
+  namespace: __APP_NAMESPACE__
+spec:
+  host: __HOSTNAME__
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: __APP_NAME__
+    weight: 100
+  wildcardPolicy: None
