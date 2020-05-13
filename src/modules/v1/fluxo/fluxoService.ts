@@ -12,6 +12,10 @@ import { ProgramacaoParada } from '../../../entities/programacaoParada'
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
 import { TemLookup } from '../../../entities/temLookup'
 import { Pgi } from '../../../entities/pgi'
+import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
+import { ProgramacaoFluxoService } from './programacaoFluxoService'
+import { ReprogramacaoFluxoService } from './reprogramacaoFluxoService'
+import { CancelamentoFluxoService } from './cancelamentoFluxoService'
 
 export interface IFluxoService {
   nextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada>
@@ -25,6 +29,15 @@ export class FluxoService implements IFluxoService {
   // SERVICES
   @inject(TYPE.ParadaProgramadaService)
   private readonly paradaProgramadaService: ParadaProgramadaService
+
+  @inject(TYPE.ProgramacaoFluxoService)
+  private readonly programacaoFluxoService: ProgramacaoFluxoService
+
+  @inject(TYPE.ReprogramacaoFluxoService)
+  private readonly reprogramacaoFluxoService: ReprogramacaoFluxoService
+
+  @inject(TYPE.CancelamentoFluxoService)
+  private readonly cancelamentoFluxoService: CancelamentoFluxoService
 
   // REPOSITORIES
   @inject(TYPE.SauItemLookUpRepository)
@@ -42,10 +55,14 @@ export class FluxoService implements IFluxoService {
         if (parada.sauPgis.length !== 0) {
           parada.DT_HORA_TERMINO_SERVICO = this.getForwardDate(parada.sauPgis)
           parada.DT_HORA_INICIO_SERVICO = this.getBackwardDate(parada.sauPgis)
-          parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
         }
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
         break
       case 'AAPRV':
+        parada.DT_CONCLUSAO = moment()
+          .utc()
+          .toDate()
+        parada.CD_USUARIO_CONCLUSAO = parada.USER_UPDATE
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL', 13)
         break
     }
@@ -78,78 +95,54 @@ export class FluxoService implements IFluxoService {
     return backward
   }
 
-  public async nextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
-    let historico = null
+  public async selectFinalStatus(parada: ProgramacaoParada): Promise<any> {
+    let status = null
+    let msg = ''
 
+    switch (parada.ID_STATUS_PROGRAMACAO) {
+      case 'C':
+        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+        status = 'CANCELADO'
+        msg = `O documento foi cancelado`
+        parada.DT_CANCELAMENTO = new Date()
+        parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
+        break
+    }
+
+    return { status, msg }
+  }
+
+  public async nextLevel(parada: ProgramacaoParada): Promise<any> {
     const status = this.getStatus(parada)
-
-    switch (status.ID_ITEM_LOOKUP) {
-      case 'RASCUNHO':
-        await this.setStatusPp(parada, 'AAPRV_USINA')
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          'EM ANÁLISE USINA',
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
-        )
-        break
-      case 'AAPRV_USINA':
-        await this.setStatusPp(parada, 'AAPRV_OPE')
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          'EM ANÁLISE OPE',
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
-        )
-        break
-      case 'AAPRV_OPE':
-        let status = null
-        let msg = ''
-
-        switch (parada.ID_STATUS_PROGRAMACAO) {
-          case 'P':
-            parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
-            status = 'APROVADA'
-            msg =
-              `O documento foi aprovado` +
-              '\n' +
-              `Início: ${moment(parada.DT_HORA_INICIO_PROGRAMACAO)
-                .subtract(3, 'hour')
-                .format('DD/MM/YYYY HH:mm')}` +
-              '\n' +
-              `Término: ${moment(parada.DT_HORA_TERMINO_PROGRAMACAO)
-                .subtract(3, 'hour')
-                .format('DD/MM/YYYY HH:mm')}`
-            break
-
-          case 'C':
-            parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
-            status = 'CANCELADO'
-            msg = `O documento foi cancelado`
-            parada.DT_CANCELAMENTO = new Date()
-            parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
-            break
-        }
-
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          status,
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE,
-          msg
-        )
-        break
-      case 'APRV':
-        parada.ID_STATUS_PROGRAMACAO = 'E'
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('EXECUCAO', 13)
-
-        break
+    if (parada.ID_STATUS_PROGRAMACAO === 'P') {
+      switch (status.ID_ITEM_LOOKUP) {
+        case 'RASCUNHO':
+          return this.programacaoFluxoService.handleRascunho(parada)
+          break
+        case 'AAPRV_USINA':
+          return this.programacaoFluxoService.handleAgAprUsina(parada)
+          break
+        case 'AAPRV_OPE':
+          return this.programacaoFluxoService.handleAgAprOpe(parada)
+          break
+        case 'APRV':
+          return this.programacaoFluxoService.handleAprv(parada)
+          break
+        default:
+          break
+      }
+    } else if (parada.ID_STATUS_PROGRAMACAO === 'C') {
+      switch (status.ID_ITEM_LOOKUP) {
+        case 'AAPRV_USINA':
+          return this.cancelamentoFluxoService.handleAgAprUsina(parada)
+          break
+        case 'AAPRV_OPE':
+          return this.cancelamentoFluxoService.handleAgAprOpe(parada)
+          break
+        default:
+          break
+      }
     }
-
-    if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
-    }
-    return this.paradaProgramadaService.saveProgramacaoParada(parada)
   }
 
   public async prevLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
@@ -173,61 +166,19 @@ export class FluxoService implements IFluxoService {
   }
 
   public async reprNextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
-    let historico = null
-
     switch (parada.idStatusReprogramacao.ID_ITEM_LOOKUP) {
       case 'AAPRV_USINA':
-        parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_OPE', 13)
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          'EM ANÁLISE OPE',
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
-        )
+        return this.reprogramacaoFluxoService.handleAgAprUsina(parada)
         break
       case 'AAPRV_OPE':
-        parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
-
-        parada.DT_HORA_INICIO_PROGRAMACAO = parada.DT_HORA_INICIO_REPROGRAMACAO
-        parada.DT_HORA_TERMINO_PROGRAMACAO = parada.DT_HORA_TERMINO_REPROGRAMACAO
-        parada.cdClassificacaoProgrParada = parada.cdClassifReprogrParada
-        parada.cdSubclassifProgrParada = parada.cdSubclasReprogrParada
-        parada.NR_REPROGRAMACOES_APROVADAS += 1
-        parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
-
-        parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
-          parada.DT_CRIACAO_PARADA,
-          parada.DT_HORA_INICIO_REPROGRAMACAO
-        )
-
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          'APROVADA',
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE,
-          `A Reprogramação foi aprovada` +
-            '\n' +
-            `Início previsto ${moment(parada.DT_HORA_INICIO_REPROGRAMACAO)
-              .subtract(3, 'hour')
-              .format('DD/MM/YYYY HH:mm')}` +
-            `\n` +
-            `Término previsto ${moment(parada.DT_HORA_TERMINO_REPROGRAMACAO)
-              .subtract(3, 'hour')
-              .format('DD/MM/YYYY HH:mm')}`
-        )
+        return this.reprogramacaoFluxoService.handleAgAprOpe(parada)
         break
       case 'APRV':
-        parada.ID_STATUS_PROGRAMACAO = 'E'
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('EXECUCAO', 13)
-
+        return this.reprogramacaoFluxoService.handleAprv(parada)
+        break
+      default:
         break
     }
-
-    if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
-    }
-
-    return this.paradaProgramadaService.saveProgramacaoParada(parada)
   }
 
   public getStatus(parada: ProgramacaoParada): TemLookup {
@@ -243,6 +194,9 @@ export class FluxoService implements IFluxoService {
     switch (parada.ID_STATUS_PROGRAMACAO) {
       case 'P':
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
+        return
+      case 'R':
+        parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
         return
       case 'C':
         parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)

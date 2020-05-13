@@ -6,6 +6,9 @@ export const TYPE = {
   FluxoService: Symbol.for('FluxoService'),
   ReprogramacaoParadaService: Symbol.for('ReprogramacaoParadaService'),
   ParamsService: Symbol.for('ParamsService'),
+  ProgramacaoFluxoService: Symbol.for('ProgramacaoFluxoService'),
+  ReprogramacaoFluxoService: Symbol.for('ReprogramacaoFluxoService'),
+  CancelamentoFluxoService: Symbol.for('CancelamentoFluxoService'),
 
   // Repositories
   SauUsinaRepository: Symbol.for('SauUsinaRepository'),

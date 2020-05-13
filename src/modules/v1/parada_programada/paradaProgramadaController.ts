@@ -23,7 +23,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   @httpGet('/tipo_parada')
   public async getTipoParada(@response() res: Response): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(11)
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('TIPO_PARADA')
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -53,8 +53,8 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   @httpGet('/tipo_parada_by_date')
   public async getTipoParadaByDate(
     @response() res: Response,
-    @queryParam('dateFrom') dateFrom: number,
-    @queryParam('dateTo') dateTo: number
+    @queryParam('dateFrom') dateFrom: string,
+    @queryParam('dateTo') dateTo: string
   ): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.getTipoParadaByDate(dateFrom, dateTo)
@@ -67,7 +67,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   @httpGet('/status')
   public async getStatus(@response() res: Response): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(13)
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('STATUS_PROG_PARADA')
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -77,7 +77,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   @httpGet('/status_parada')
   public async getStatusParada(@response() res: Response): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(14)
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('14')
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -87,7 +87,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   @httpGet('/motivo_reprogramacao')
   public async getMotivoReprogramacao(@response() res: Response): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(16)
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('MOTIVO_REPROG_PARADA')
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -187,7 +187,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   @httpGet('/situacao')
   public async getSituacao(@response() res: Response): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup(12)
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('SITUACAO_PROG_PARADA')
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)

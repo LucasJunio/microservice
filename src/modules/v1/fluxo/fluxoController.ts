@@ -4,11 +4,15 @@ import { controller, httpPut, response, interfaces, httpPost, requestBody } from
 import { TYPE } from '../../../constants/types'
 import Handlers from '../../../core/handlers'
 import { FluxoService } from './fluxoService'
+import { ProgramacaoFluxoService } from './programacaoFluxoService'
 
 @controller('/api/v1/fluxo')
 export class FluxoController implements interfaces.Controller {
   @inject(TYPE.FluxoService)
   private readonly fluxoService: FluxoService
+
+  // @inject(TYPE.ProgramacaoFluxoService)
+  // private readonly programacaoFluxoService: ProgramacaoFluxoService
 
   @httpPost('/')
   public async getUsinas(@response() res: Response): Promise<Response> {
