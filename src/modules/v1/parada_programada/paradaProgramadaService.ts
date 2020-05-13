@@ -21,8 +21,8 @@ import { ConsultaPPV } from '../../../entities/consultaPPV'
 import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
 
-import { fromUnixTime, parseISO } from 'date-fns'
-import { get, some, filter, map } from 'lodash'
+import { parseISO } from 'date-fns'
+import { get } from 'lodash'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]>

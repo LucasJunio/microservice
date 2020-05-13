@@ -16,7 +16,7 @@ export class ParamsService implements IParamsService {
     return this.sauParamProgramacaoParadaRepository.saveParams(params)
   }
 
-  public getParams(dtano: string) {
+  public getParams(dtano: number) {
     return this.sauParamProgramacaoParadaRepository.getParams(dtano)
   }
 }

@@ -64,34 +64,22 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
     const dtFinalParadasAnuais = setYear(params.DT_FINAL_PARADAS_ANUAIS, currentYear - 1) // 31-08-currentYear
 
     const difference = differenceInHours(datet, datef)
-    // datef = data do cadastro
-    // datet = data inicio previsto
 
     if (difference <= 24) {
-      // Diferença < 24 horas intempestiva
       return this.getItemLookUpByCdAndId('PI', 11)
     }
 
     if (difference < params.NR_PRAZO_PARADA_URGENTE * 24) {
-      // Diferença < 48 horas Urgente
       return this.getItemLookUpByCdAndId('PU', 11)
     }
 
-    // caso datef ser antes de 31/08, datef e datet mesmo ano
-    // || caso datef ser depois de 31/08 datet tem que ser ano de datef +1
-    // data final parada programada
     if (
-      // (isBefore(datef, dtFinalParadasProgramadas) && isSameYear(datef, datet))
-      //  || as 2 condições nao tem como acontecer juntas
-      isAfter(datef, dtFinalParadasProgramadas) &&
-      isSameYear(datet, addYears(datef, 1))
-      // inicio - criação >= 48 horas e mesmo ano
+      (isAfter(datef, dtFinalParadasProgramadas) && isSameYear(datet, addYears(datef, 1))) ||
+      (difference >= params.NR_PRAZO_PARADA_URGENTE * 24 && isSameYear(datet, datef))
     ) {
       return this.getItemLookUpByCdAndId('PP', 11)
     }
 
-    // caso datef ser antes de 30/08 e datet for o ano de datef + 1
-    // datef +  NR_ANOS_PARADA_LONGO_PRAZO > datet
     if (
       isBefore(datef, dtFinalParadasAnuais) &&
       isSameYear(datet, addYears(datef, params.NR_ANOS_PARADA_LONGO_PRAZO))
@@ -99,11 +87,12 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
       return this.getItemLookUpByCdAndId('PA', 11)
     }
 
-    if (differenceInYears(datet, datef) <= 2) {
+    if (differenceInYears(datet, datef) === 2) {
       return this.getItemLookUpByCdAndId('PB', 11)
     }
 
-    // datef +  NR_ANOS_PARADA_LONGO_PRAZO <= datet
     return this.getItemLookUpByCdAndId('PL', 11)
   }
 }
+
+// quando uma parada acontece antes de dtFinalParadasProgramadas e no ano seguinte da longo prazo
