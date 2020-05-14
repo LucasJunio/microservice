@@ -69,30 +69,28 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
       return this.getItemLookUpByCdAndId('PI', 11)
     }
 
+    // NR_PRAZO_PARADA_URGENTE = 2
     if (difference < params.NR_PRAZO_PARADA_URGENTE * 24) {
       return this.getItemLookUpByCdAndId('PU', 11)
     }
 
     if (
       (isAfter(datef, dtFinalParadasProgramadas) && isSameYear(datet, addYears(datef, 1))) ||
+      // (isBefore(datef, dtFinalParadasProgramadas) && isSameYear(datet, datef))
       (difference >= params.NR_PRAZO_PARADA_URGENTE * 24 && isSameYear(datet, datef))
     ) {
       return this.getItemLookUpByCdAndId('PP', 11)
     }
 
-    if (
-      isBefore(datef, dtFinalParadasAnuais) &&
-      isSameYear(datet, addYears(datef, params.NR_ANOS_PARADA_LONGO_PRAZO))
-    ) {
+    if (isBefore(datef, dtFinalParadasAnuais) && isSameYear(datet, addYears(datef, 1))) {
       return this.getItemLookUpByCdAndId('PA', 11)
     }
 
-    if (differenceInYears(datet, datef) === 2) {
+    if (differenceInYears(datet, datef) === params.NR_PRAZO_PARADA_BIENAL) {
       return this.getItemLookUpByCdAndId('PB', 11)
     }
 
+    //
     return this.getItemLookUpByCdAndId('PL', 11)
   }
 }
-
-// quando uma parada acontece antes de dtFinalParadasProgramadas e no ano seguinte da longo prazo

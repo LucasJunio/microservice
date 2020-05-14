@@ -22,6 +22,18 @@ export class ParamProgramacaoParadas {
   })
   public NR_ANOS_PARADA_LONGO_PRAZO: number | null
 
+  @Column('number', {
+    nullable: true,
+    name: 'NR_PRAZO_PARADA_BIENAL'
+  })
+  public NR_PRAZO_PARADA_BIENAL: number | null
+
+  @Column('number', {
+    nullable: true,
+    name: 'NR_HORIZONTE_LONGO_PRAZO'
+  })
+  public NR_HORIZONTE_LONGO_PRAZO: number | null
+
   @Column('timestamp with local time zone', {
     nullable: true,
     name: 'DT_FINAL_PARADAS_ANUAIS'
