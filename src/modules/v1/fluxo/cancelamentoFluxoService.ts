@@ -39,6 +39,8 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PL'
     ) {
       parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+      parada.idStatus = parada.idStatusCancelamento
+
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
         parada,
         'CANCELADO',
@@ -65,6 +67,7 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
     let historico = null
 
     parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+    parada.idStatus = parada.idStatusCancelamento
 
     historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
