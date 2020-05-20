@@ -30,6 +30,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
+  @httpGet('/tipo_usina')
+  public async getTipoUsina(@response() res: Response): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('TIPO_USINA')
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
   @httpPost('/cancel')
   public async getUsinas(@response() res: Response, @requestBody() parada: any): Promise<Response> {
     try {
