@@ -9,6 +9,7 @@ import { PgiAi } from './pgiAi'
 import { ProgramacaoParada } from './programacaoParada'
 import { ProrrogacaoDocs } from './prorrogacaoDocs'
 import { SubclassificacaoParada } from './subclassificacaoParada'
+import { GrupoRestricao } from './grupoRestricao'
 
 @Entity('SAU_ITEM_LOOKUP')
 export class TemLookup {
@@ -239,4 +240,17 @@ export class TemLookup {
     (SAU_SUBCLASSIFICACAO_PARADA: SubclassificacaoParada) => SAU_SUBCLASSIFICACAO_PARADA.idAplicacaoUsina
   )
   public sauSubclassificacaoParadas: SubclassificacaoParada[]
+
+  @OneToMany(
+    () => GrupoRestricao,
+    (RESTRICAO: GrupoRestricao) => RESTRICAO.idGrupo
+  )
+  public sauIdGrupo: GrupoRestricao[]
+
+  @OneToMany(
+    () => GrupoRestricao,
+    (RESTRICAO: GrupoRestricao) => RESTRICAO.idTipoRestricao
+  )
+  public sauIdTipoRestricao: GrupoRestricao[]
+
 }

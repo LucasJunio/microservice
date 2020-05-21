@@ -26,6 +26,7 @@ export interface ISauProgramacaoParadaRepository {
   getAll(): Promise<ProgramacaoParada[]>
   // getLastIdSeqParada(cdParada: number): Promise<ProgramacaoParada[]>
   getLastIdParada(): Promise<ProgramacaoParada[]>
+  getConflictingPp(params: any): Promise<ProgramacaoParada[]>
 }
 
 @injectable()
@@ -101,4 +102,42 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
       ORDER BY 1`
     )
   }
+
+  public async getConflictingPp(params: any): Promise<ProgramacaoParada[]> {
+    if (!params) {
+      return Promise.resolve([])
+    }
+    const { USINA, INICIO, FIM, CD_PARADA } = params
+
+    const [usina] = await this.sauUsinaRepository.query(`
+      SELECT usina.ID_GRUPO_COINCID_SIMULADOR_PP ID_GRUPO_COINCID_SIMULADOR_PP
+      FROM sau_usina usina
+      WHERE usina.SG_USINA = '${USINA}'
+    `)
+
+    const query = this.sauProgramacaoParadaRepository
+      .createQueryBuilder('pp')
+      .leftJoinAndSelect(Usina, 'usina', 'usina.CD_USINA = pp.CD_CONJUNTO_USINA')
+      .leftJoinAndSelect('pp.sauProgramacaoParadaUgs', 'sauProgramacaoParadaUgs')
+      .leftJoinAndSelect('sauProgramacaoParadaUgs.cdUnidadeGeradora', 'cdUnidadeGeradora')
+      .where('pp.ID_CONJUNTO_USINA = :ID_CONJUNTO_USINA', { ID_CONJUNTO_USINA: 'U' })
+      .andWhere('usina.FL_ATIVO = :FL_ATIVO', { FL_ATIVO: 1 })
+      .andWhere('usina.ID_GRUPO_COINCID_SIMULADOR_PP = :ID_GRUPO', { ID_GRUPO: usina.ID_GRUPO_COINCID_SIMULADOR_PP })
+      .andWhere("TO_CHAR(pp.DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :INICIO", { INICIO })
+      .andWhere("TO_CHAR(pp.DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :FIM", { FIM })
+      
+    CD_PARADA ? query.andWhere('pp.CD_PARADA != :CD_PARADA', { CD_PARADA }) : true
+
+    const pps = await query.getMany()
+
+    if (pps && pps.length) {
+      for (const pp of pps) {
+        const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA)
+        pp.usina = usina[0]
+      }
+    }
+
+    return pps
+  }
+
 }
