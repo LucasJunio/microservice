@@ -70,7 +70,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     const pp = await this.sauProgramacaoParadaRepository.findOne(id, {
       relations: tableRelations,
       join: {
-        alias: 'pp'
+        alias: 'p'
       }
     })
     const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA)
@@ -125,7 +125,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
       .andWhere('usina.ID_GRUPO_COINCID_SIMULADOR_PP = :ID_GRUPO', { ID_GRUPO: usina.ID_GRUPO_COINCID_SIMULADOR_PP })
       .andWhere("TO_CHAR(pp.DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :INICIO", { INICIO })
       .andWhere("TO_CHAR(pp.DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :FIM", { FIM })
-      
+
     CD_PARADA ? query.andWhere('pp.CD_PARADA != :CD_PARADA', { CD_PARADA }) : true
 
     const pps = await query.getMany()
@@ -139,5 +139,4 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
 
     return pps
   }
-
 }
