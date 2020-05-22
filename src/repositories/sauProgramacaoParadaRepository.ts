@@ -120,11 +120,13 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
       .leftJoinAndSelect(Usina, 'usina', 'usina.CD_USINA = pp.CD_CONJUNTO_USINA')
       .leftJoinAndSelect('pp.sauProgramacaoParadaUgs', 'sauProgramacaoParadaUgs')
       .leftJoinAndSelect('sauProgramacaoParadaUgs.cdUnidadeGeradora', 'cdUnidadeGeradora')
+      .leftJoinAndSelect('pp.idStatus', 'idStatus')
       .where('pp.ID_CONJUNTO_USINA = :ID_CONJUNTO_USINA', { ID_CONJUNTO_USINA: 'U' })
       .andWhere('usina.FL_ATIVO = :FL_ATIVO', { FL_ATIVO: 1 })
       .andWhere('usina.ID_GRUPO_COINCID_SIMULADOR_PP = :ID_GRUPO', { ID_GRUPO: usina.ID_GRUPO_COINCID_SIMULADOR_PP })
       .andWhere("TO_CHAR(pp.DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :INICIO", { INICIO })
       .andWhere("TO_CHAR(pp.DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :FIM", { FIM })
+      .andWhere("idStatus.ID_ITEM_LOOKUP NOT IN (:...STATUS)", { STATUS: ['RASCUNHO', 'AAPRV', 'CONCL', 'CANC'] })
       
     CD_PARADA ? query.andWhere('pp.CD_PARADA != :CD_PARADA', { CD_PARADA }) : true
 
