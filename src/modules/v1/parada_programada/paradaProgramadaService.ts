@@ -265,8 +265,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       return this.sauProgramacaoParadaRepository.saveProgramacaoParada(programcaoParada)
     }
 
-    const idParada = await this.sauProgramacaoParadaRepository.getLastIdParada()
-    programcaoParada.CD_PARADA = idParada[0].ID // sempre o proximo
     programcaoParada.ID_STATUS_PROGRAMACAO = 'P'
     programcaoParada.USER_CREATE = programcaoParada.USER_UPDATE
     programcaoParada.DATE_CREATE = programcaoParada.DATE_UPDATE
