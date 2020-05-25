@@ -90,6 +90,8 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       query.andWhere('TIPO_PARADA IN (:...filterTipoParadas)', { filterTipoParadas })
     }
 
+    query.orderBy('SG_CONJUNTO_USINA', 'DESC')
+
     // query.groupBy('SG_CONJUNTO_USINA')
     const paradas = await query.getRawMany()
     filter.paradas = paradas
