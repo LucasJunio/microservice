@@ -41,12 +41,6 @@ export class ConsultaMapaPPV {
   })
   public CD_PROGRAMACAO_PARADA: number | null
 
-  @Column('number', {
-    nullable: false,
-    name: 'CD_PARADA'
-  })
-  public CD_PARADA: number | null
-
   @Column('timestamp with local time zone', {
     nullable: false,
     name: 'DT_HORA_INICIO_PROGRAMACAO'

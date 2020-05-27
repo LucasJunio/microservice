@@ -18,6 +18,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
   }
 
   public async getAll(filter: ConsultaMapaPpVDto): Promise<ConsultaMapaPpVDto> {
+    console.log('aklsdjalksjdkalsjdklajsldkajsl')
     const { dtFim, dtInicio, usinas, status, tipoParadas } = filter
     const columns = [
       'CD_CONJUNTO_USINA',
@@ -26,7 +27,6 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       'SG_UNIDADE_GERADORA',
       'VL_POTENCIA_INSTALADA',
       'CD_PROGRAMACAO_PARADA',
-      'CD_PARADA',
       'DT_HORA_INICIO_PROGRAMACAO',
       'DT_HORA_TERMINO_PROGRAMACAO',
       'DURACAO_PREVISTA',
@@ -89,8 +89,6 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       const filterTipoParadas = reduce(tipoParadas, (acc, tipoParada) => [...acc, tipoParada.ID_ITEM_LOOKUP], [])
       query.andWhere('TIPO_PARADA IN (:...filterTipoParadas)', { filterTipoParadas })
     }
-
-    query.orderBy('SG_CONJUNTO_USINA', 'DESC')
 
     // query.groupBy('SG_CONJUNTO_USINA')
     const paradas = await query.getRawMany()
