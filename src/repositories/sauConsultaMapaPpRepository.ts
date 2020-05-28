@@ -18,7 +18,6 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
   }
 
   public async getAll(filter: ConsultaMapaPpVDto): Promise<ConsultaMapaPpVDto> {
-    console.log('aklsdjalksjdkalsjdklajsldkajsl')
     const { dtFim, dtInicio, usinas, status, tipoParadas } = filter
     const columns = [
       'CD_CONJUNTO_USINA',
@@ -49,23 +48,33 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       'DS_STATUS_PARADA_REPROG',
       'ID_STATUS_CANCELAMENTO',
       'STATUS_PARADA_CANC',
-      'DS_STATUS_PARADA_CANC'
+      'DS_STATUS_PARADA_CANC',
+      'DS_CLASSIFICACAO_PARADA',
+      'DS_SUBCLASSIFICACAO_PARADA'
     ]
     const query = this.sauConsultaMapaPpRepository.createQueryBuilder().select(columns)
 
     query.where('1 = 1')
 
-    !isEmpty(dtInicio)
-      ? query.andWhere("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
-          dtInicio
-        })
-      : true
+    if (!isEmpty(dtInicio) && !isEmpty(dtFim)) {
+      query.andWhere(
+        new Brackets(qb => {
+          qb.andWhere("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+            dtInicio
+          })
+            .andWhere("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
 
-    !isEmpty(dtFim)
-      ? query.andWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
-          dtFim
+            .orWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
         })
-      : true
+      )
+    }
 
     if (!isEmpty(usinas)) {
       const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
@@ -76,11 +85,23 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       const filterStatus = reduce(status, (acc, sts) => [...acc, sts.ID_ITEM_LOOKUP], [])
       query.andWhere(
         new Brackets(qb => {
-          qb.where('STATUS_PARADA IN (:...filterStatus) ', {
-            filterStatus
-          })
-            .orWhere('STATUS_PARADA_REPROG IN (:...filterStatus) ', { filterStatus })
-            .orWhere('STATUS_PARADA_CANC IN (:...filterStatus) ', { filterStatus })
+          qb.where(
+            'STATUS_PARADA IN (:...filterStatus) AND' +
+              '(ID_STATUS_PROGRAMACAO = :stsPr OR ID_STATUS_PROGRAMACAO = :stsEx)',
+            {
+              filterStatus,
+              stsPr: 'P',
+              stsEx: 'E'
+            }
+          )
+            .orWhere('STATUS_PARADA_REPROG IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsRe', {
+              filterStatus,
+              stsRe: 'R'
+            })
+            .orWhere('STATUS_PARADA_CANC IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsCa', {
+              filterStatus,
+              stsCa: 'C'
+            })
         })
       )
     }

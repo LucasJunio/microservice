@@ -190,4 +190,18 @@ export class ConsultaMapaPPV {
     name: 'DS_STATUS_PARADA_CANC'
   })
   public DS_STATUS_PARADA_CANC: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 400,
+    name: 'DS_CLASSIFICACAO_PARADA'
+  })
+  public DS_CLASSIFICACAO_PARADA: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 400,
+    name: 'DS_SUBCLASSIFICACAO_PARADA'
+  })
+  public DS_SUBCLASSIFICACAO_PARADA: string | null
 }
