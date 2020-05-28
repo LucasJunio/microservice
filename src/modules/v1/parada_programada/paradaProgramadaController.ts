@@ -178,7 +178,6 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   @httpPost('/')
   public async saveProgramacaoParada(@response() res: Response, @requestBody() parada: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
     try {
-      console.log('teste 123 ---> ')
       const data = await this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
       return Handlers.onSuccess(res, data)
     } catch (error) {

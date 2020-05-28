@@ -208,7 +208,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
   }
 
   public async saveProgramacaoParada(programcaoParada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
-    console.log({ authorization })
     let saveHistorico = false
     let previus
     if (!programcaoParada.CD_PROGRAMACAO_PARADA) {
@@ -331,7 +330,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     }
   }
 
-  private async fluxoNotificacao(previus: ProgramacaoParada, atual: ProgramacaoParada, authorization: string): Promise<void> {
+  public async fluxoNotificacao(previus: ProgramacaoParada, atual: ProgramacaoParada, authorization: string): Promise<void> {
     if (!atual || !authorization) {
       return
     }
@@ -353,7 +352,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     })
     try {
       await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
-      console.log({ body })
     } catch (error) {
       console.log(`Erro ao invocar o fluxo: ${error}`)
     }
