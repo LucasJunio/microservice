@@ -18,6 +18,14 @@ spec:
         - name: __APP_NAME__
           image: "__DOCKER_SERVER__/imagens/__DOCKER_IMAGE__:__branchName__-__buildNumber__"
           env:
+            - name: SAU_GATEWAY_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: sau-endpoints
+                  key: SAU_GATEWAY_HOST
+              envFrom:
+                secretRef:
+                  name: sau-endpoints
             - name: DATABASE_HOST
               valueFrom:
                 secretKeyRef:

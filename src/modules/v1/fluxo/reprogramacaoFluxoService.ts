@@ -10,9 +10,9 @@ import { TYPE } from '../../../constants/types'
 import { parseISO } from 'date-fns'
 
 export interface IReprogramacaoFluxoService {
-  handleAgAprUsina(parada: ProgramacaoParada): Promise<ProgramacaoParada>
-  handleAgAprOpe(parada: ProgramacaoParada): Promise<ProgramacaoParada>
-  handleAprv(parada: ProgramacaoParada): Promise<ProgramacaoParada>
+  handleAgAprUsina(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
+  handleAgAprOpe(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
+  handleAprv(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
 }
 
 @injectable()
@@ -31,7 +31,7 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
   @inject(TYPE.SauHistProgramacaoParadaRepository)
   private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
 
-  public async handleAgAprUsina(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async handleAgAprUsina(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     let historico = null
     // caso Longo prazo, intempestiva ou longo prazo, vai direto para aprovado
     if (
@@ -83,10 +83,10 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     if (historico) {
       await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
     }
-    return this.paradaProgramadaService.saveProgramacaoParada(parada)
+    return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 
-  public async handleAgAprOpe(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async handleAgAprOpe(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     let historico = null
 
     parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
@@ -124,13 +124,13 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     if (historico) {
       await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
     }
-    return this.paradaProgramadaService.saveProgramacaoParada(parada)
+    return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 
-  public async handleAprv(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async handleAprv(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     parada.ID_STATUS_PROGRAMACAO = 'E'
     parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('EXECUCAO', 13)
 
-    return this.paradaProgramadaService.saveProgramacaoParada(parada)
+    return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 }

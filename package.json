@@ -29,6 +29,7 @@
     "lodash": "^4.14.138",
     "moment": "^2.24.0",
     "morgan": "^1.9.1",
+    "node-fetch": "^2.6.0",
     "oracledb": "^3.1.2",
     "reflect-metadata": "^0.1.13",
     "tslib": "1.11.2",
