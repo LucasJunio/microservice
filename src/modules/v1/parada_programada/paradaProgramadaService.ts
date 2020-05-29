@@ -312,10 +312,11 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     }
     const { ID_STATUS_PROGRAMACAO: ID_STATUS_PROGRAMACAOP } = previus
     const { ID_STATUS_PROGRAMACAO: ID_STATUS_PROGRAMACAOA } = atual
+    console.log({ ID_STATUS_PROGRAMACAOP, ID_STATUS_PROGRAMACAOA })
     if (ID_STATUS_PROGRAMACAOA !== ID_STATUS_PROGRAMACAOP) {
       return (ID_STATUS_PROGRAMACAOA === 'C' || ID_STATUS_PROGRAMACAOA === 'R') ? { statusDe: '' } : { statusDe: previus.idStatus.ID_ITEM_LOOKUP }
     }
-    switch (ID_STATUS_PROGRAMACAOP) {
+    switch (ID_STATUS_PROGRAMACAOA) {
       case 'R': return { statusDe: previus.idStatusReprogramacao.ID_ITEM_LOOKUP }
       case 'C': return { statusDe: previus.idStatusCancelamento.ID_ITEM_LOOKUP }
       default: return { statusDe: previus.idStatus.ID_ITEM_LOOKUP }
@@ -352,6 +353,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     })
     try {
       await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
+      console.log({ body })
     } catch (error) {
       console.log(`Erro ao invocar o fluxo: ${error}`)
     }
