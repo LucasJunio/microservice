@@ -70,7 +70,7 @@ spec:
             - containerPort: 8080
               protocol: TCP
           nodeSelector:
-            ENVIRONMENT: devhml
+            ENVIRONMENT: __NODE__
 
 ---
 # SERVICE
