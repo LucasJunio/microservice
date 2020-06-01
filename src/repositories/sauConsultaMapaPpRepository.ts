@@ -50,7 +50,8 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       'STATUS_PARADA_CANC',
       'DS_STATUS_PARADA_CANC',
       'DS_CLASSIFICACAO_PARADA',
-      'DS_SUBCLASSIFICACAO_PARADA'
+      'DS_SUBCLASSIFICACAO_PARADA',
+      'DT_PRORROGACAO_PGI'
     ]
     const query = this.sauConsultaMapaPpRepository.createQueryBuilder().select(columns)
 
@@ -59,7 +60,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     if (!isEmpty(dtInicio) && !isEmpty(dtFim)) {
       query.andWhere(
         new Brackets(qb => {
-          qb.andWhere("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+          qb.where("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
             dtInicio
           })
             .andWhere("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
@@ -111,6 +112,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       query.andWhere('TIPO_PARADA IN (:...filterTipoParadas)', { filterTipoParadas })
     }
 
+    // query.andWhere('DT_PRORROGACAO_PGI is not null')
     // query.groupBy('SG_CONJUNTO_USINA')
     const paradas = await query.getRawMany()
     filter.paradas = paradas

@@ -69,7 +69,6 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
       return this.getItemLookUpByCdAndId('PI', 11)
     }
 
-    // NR_PRAZO_PARADA_URGENTE = 2
     if (difference < params.NR_PRAZO_PARADA_URGENTE * 24) {
       return this.getItemLookUpByCdAndId('PU', 11)
     }

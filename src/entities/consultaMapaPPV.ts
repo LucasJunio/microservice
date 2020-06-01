@@ -204,4 +204,10 @@ export class ConsultaMapaPPV {
     name: 'DS_SUBCLASSIFICACAO_PARADA'
   })
   public DS_SUBCLASSIFICACAO_PARADA: string | null
+
+  @Column('timestamp with local time zone', {
+    nullable: true,
+    name: 'DT_PRORROGACAO_PGI'
+  })
+  public DT_PRORROGACAO_PGI: Date | null
 }

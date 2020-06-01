@@ -131,18 +131,18 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpGet('/param_programacao_paradas/:year')
-  public async getParamProgramacaoParada(
-    @response() res: Response,
-    @requestParam('year') year: string
-  ): Promise<Response> {
-    try {
-      const data = await this.paradaProgramadaService.getParamProgramacaoParada(year)
-      return Handlers.onSuccess(res, data)
-    } catch (error) {
-      return Handlers.onError(res, error.message, error)
-    }
-  }
+  // @httpGet('/param_programacao_paradas/:year')
+  // public async getParamProgramacaoParada(
+  //   @response() res: Response,
+  //   @requestParam('year') year: string
+  // ): Promise<Response> {
+  //   try {
+  //     const data = await this.paradaProgramadaService.getParamProgramacaoParada(year)
+  //     return Handlers.onSuccess(res, data)
+  //   } catch (error) {
+  //     return Handlers.onError(res, error.message, error)
+  //   }
+  // }
 
   @httpGet('/nro_anos_parada_longo_prazo')
   public async getNroAnosParadaLongoPrazo(@response() res: Response): Promise<Response> {
