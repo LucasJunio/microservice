@@ -9,7 +9,8 @@ import {
   httpPost,
   requestBody,
   queryParam,
-  httpDelete
+  httpDelete,
+  requestHeaders
 } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
@@ -41,9 +42,9 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpPost('/cancel')
-  public async getUsinas(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+  public async getUsinas(@response() res: Response, @requestBody() parada: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.cancel(parada)
+      const data = await this.paradaProgramadaService.cancel(parada, authorization)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -175,9 +176,9 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpPost('/')
-  public async saveProgramacaoParada(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+  public async saveProgramacaoParada(@response() res: Response, @requestBody() parada: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.saveProgramacaoParada(parada)
+      const data = await this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)

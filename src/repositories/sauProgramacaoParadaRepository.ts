@@ -79,7 +79,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     return pp
   }
 
-  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina> {
+  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<any> {
     if (idConjuntoUsina === 'U') {
       return this.sauUsinaRepository.query(
         `SELECT sg_usina sg_conjunto_usina,
