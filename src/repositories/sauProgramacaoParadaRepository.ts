@@ -86,7 +86,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
           cd_usina cd_conjunto_usina,
           'U'      id_conjunto_usina
         FROM sau_usina
-        WHERE fl_ativo = 1 AND cd_usina = ${cdConjuntoUsina}
+        WHERE  cd_usina = ${cdConjuntoUsina}
         ORDER BY 1
         `
       )
@@ -97,8 +97,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
         scu.cd_conjunto cd_conjunto_usina,
         'C'             id_conjunto_usina
       FROM sau_conjunto_usina scu
-      WHERE scu.fl_ativo = 1 
-      AND scu.cd_conjunto = ${cdConjuntoUsina}
+      WHERE scu.cd_conjunto = ${cdConjuntoUsina}
       ORDER BY 1`
     )
   }
