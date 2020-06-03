@@ -2,8 +2,10 @@ import { Column, Entity } from 'typeorm'
 
 @Entity('SAU_MAPA_PARADA_PP_V')
 export class ConsultaMapaPPV {
+  public dtHistoricaObj: any
+
   @Column('number', {
-    nullable: false,
+    nullable: true,
     primary: true,
     name: 'CD_CONJUNTO_USINA'
   })
@@ -15,6 +17,13 @@ export class ConsultaMapaPPV {
     name: 'SG_CONJUNTO_USINA'
   })
   public SG_CONJUNTO_USINA: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 30,
+    name: 'TIPO_USINA'
+  })
+  public TIPO_USINA: string | null
 
   @Column('number', {
     nullable: true,
@@ -210,4 +219,11 @@ export class ConsultaMapaPPV {
     name: 'DT_PRORROGACAO_PGI'
   })
   public DT_PRORROGACAO_PGI: Date | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 1,
+    name: 'ID_ATUAL_HISTORICO'
+  })
+  public ID_ATUAL_HISTORICO: string | null
 }

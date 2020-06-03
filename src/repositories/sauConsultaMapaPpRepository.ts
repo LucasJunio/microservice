@@ -18,10 +18,12 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
   }
 
   public async getAll(filter: ConsultaMapaPpVDto): Promise<ConsultaMapaPpVDto> {
-    const { dtFim, dtInicio, usinas, status, tipoParadas } = filter
+    const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas } = filter
+
     const columns = [
       'CD_CONJUNTO_USINA',
       'SG_CONJUNTO_USINA',
+      'TIPO_USINA',
       'CD_UNIDADE_GERADORA',
       'SG_UNIDADE_GERADORA',
       'VL_POTENCIA_INSTALADA',
@@ -51,72 +53,176 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       'DS_STATUS_PARADA_CANC',
       'DS_CLASSIFICACAO_PARADA',
       'DS_SUBCLASSIFICACAO_PARADA',
-      'DT_PRORROGACAO_PGI'
+      'DT_PRORROGACAO_PGI',
+      'ID_ATUAL_HISTORICO'
     ]
-    const query = this.sauConsultaMapaPpRepository.createQueryBuilder().select(columns)
+    const query = this.sauConsultaMapaPpRepository.createQueryBuilder('SAU_MAPA_PARADA_PP_V').select(columns)
 
     query.where('1 = 1')
 
-    if (!isEmpty(dtInicio) && !isEmpty(dtFim)) {
-      query.andWhere(
-        new Brackets(qb => {
-          qb.where("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
-            dtInicio
-          })
-            .andWhere("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
-              dtFim
-            })
+    query.andWhere(
+      new Brackets(qbAtu => {
+        qbAtu.andWhere('ID_ATUAL_HISTORICO = :idAtual', { idAtual: 'A' })
+        if (!isEmpty(dtInicio) && !isEmpty(dtFim)) {
+          qbAtu.andWhere(
+            new Brackets(qb => {
+              qb.where("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+                dtInicio
+              })
+                .andWhere("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                  dtFim
+                })
 
-            .orWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
-              dtInicio
+                .orWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+                  dtInicio
+                })
+                .andWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                  dtFim
+                })
             })
-            .andWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
-              dtFim
-            })
-        })
-      )
-    }
-
-    if (!isEmpty(usinas)) {
-      const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
-      query.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
-    }
-
-    if (!isEmpty(status)) {
-      const filterStatus = reduce(status, (acc, sts) => [...acc, sts.ID_ITEM_LOOKUP], [])
-      query.andWhere(
-        new Brackets(qb => {
-          qb.where(
-            'STATUS_PARADA IN (:...filterStatus) AND' +
-              '(ID_STATUS_PROGRAMACAO = :stsPr OR ID_STATUS_PROGRAMACAO = :stsEx)',
-            {
-              filterStatus,
-              stsPr: 'P',
-              stsEx: 'E'
-            }
           )
-            .orWhere('STATUS_PARADA_REPROG IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsRe', {
-              filterStatus,
-              stsRe: 'R'
+        }
+
+        if (!isEmpty(usinas)) {
+          const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
+          qbAtu.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
+        }
+
+        if (!isEmpty(tipoUsinas)) {
+          const filterTipoUsina = reduce(tipoUsinas, (acc, tUsina) => [...acc, tUsina.ID_ITEM_LOOKUP], [])
+          qbAtu.andWhere('TIPO_USINA IN (:...filterTipoUsina)', { filterTipoUsina })
+        }
+
+        if (!isEmpty(status)) {
+          const filterStatus = reduce(status, (acc, sts) => [...acc, sts.ID_ITEM_LOOKUP], [])
+          qbAtu.andWhere(
+            new Brackets(qb => {
+              qb.where(
+                'STATUS_PARADA IN (:...filterStatus) AND' +
+                  '(ID_STATUS_PROGRAMACAO = :stsPr OR ID_STATUS_PROGRAMACAO = :stsEx)',
+                {
+                  filterStatus,
+                  stsPr: 'P',
+                  stsEx: 'E'
+                }
+              )
+                .orWhere('STATUS_PARADA_REPROG IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsRe', {
+                  filterStatus,
+                  stsRe: 'R'
+                })
+                .orWhere('STATUS_PARADA_CANC IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsCa', {
+                  filterStatus,
+                  stsCa: 'C'
+                })
             })
-            .orWhere('STATUS_PARADA_CANC IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsCa', {
-              filterStatus,
-              stsCa: 'C'
-            })
+          )
+        }
+
+        if (!isEmpty(tipoParadas)) {
+          const filterTipoParadas = reduce(tipoParadas, (acc, tipoParada) => [...acc, tipoParada.ID_ITEM_LOOKUP], [])
+          qbAtu.andWhere('TIPO_PARADA IN (:...filterTipoParadas)', { filterTipoParadas })
+        }
+      })
+    )
+
+    if (!isEmpty(dtHistorica)) {
+      query.orWhere(
+        new Brackets(qbHist => {
+          qbHist.orWhere('ID_ATUAL_HISTORICO = :idAtualH', { idAtualH: 'H' })
+
+          if (!isEmpty(dtInicio) && !isEmpty(dtFim)) {
+            qbHist.andWhere(
+              new Brackets(qb => {
+                qb.where("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+                  dtInicio
+                })
+                  .andWhere("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                    dtFim
+                  })
+                  .orWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+                    dtInicio
+                  })
+                  .andWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                    dtFim
+                  })
+              })
+            )
+          }
+
+          if (!isEmpty(usinas)) {
+            const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
+            qbHist.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
+          }
+
+          if (!isEmpty(tipoUsinas)) {
+            const filterTipoUsina = reduce(tipoUsinas, (acc, tUsina) => [...acc, tUsina.ID_ITEM_LOOKUP], [])
+            qbHist.andWhere('TIPO_USINA IN (:...filterTipoUsina)', { filterTipoUsina })
+          }
+          if (!isEmpty(status)) {
+            const filterStatus = reduce(status, (acc, sts) => [...acc, sts.ID_ITEM_LOOKUP], [])
+            qbHist.andWhere(
+              new Brackets(qb => {
+                qb.where(
+                  'STATUS_PARADA IN (:...filterStatus) AND' +
+                    '(ID_STATUS_PROGRAMACAO = :stsPr OR ID_STATUS_PROGRAMACAO = :stsEx)',
+                  {
+                    filterStatus,
+                    stsPr: 'P',
+                    stsEx: 'E'
+                  }
+                )
+                  .orWhere('STATUS_PARADA_REPROG IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsRe', {
+                    filterStatus,
+                    stsRe: 'R'
+                  })
+                  .orWhere('STATUS_PARADA_CANC IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsCa', {
+                    filterStatus,
+                    stsCa: 'C'
+                  })
+              })
+            )
+          }
+
+          if (!isEmpty(tipoParadas)) {
+            const filterTipoParadas = reduce(tipoParadas, (acc, tipoParada) => [...acc, tipoParada.ID_ITEM_LOOKUP], [])
+            qbHist.andWhere('TIPO_PARADA IN (:...filterTipoParadas)', { filterTipoParadas })
+          }
+
+          qbHist.andWhere(
+            'DT_CRIACAO_PARADA = ' +
+              query
+                .subQuery()
+                .select('MAX(DT_CRIACAO_PARADA)')
+                .from(ConsultaMapaPPV, 'MAPA_PP_SUBQ')
+                .where('SAU_MAPA_PARADA_PP_V.CD_PROGRAMACAO_PARADA = MAPA_PP_SUBQ.CD_PROGRAMACAO_PARADA')
+                .andWhere('ID_ATUAL_HISTORICO = :idAtualH', { idAtualH: 'H' })
+                .andWhere("TO_CHAR(DT_CRIACAO_PARADA, 'YYYY-MM-DD HH24:MI:SS') <= :dtHistorica", { dtHistorica })
+                .getQuery()
+          )
         })
       )
     }
-
-    if (!isEmpty(tipoParadas)) {
-      const filterTipoParadas = reduce(tipoParadas, (acc, tipoParada) => [...acc, tipoParada.ID_ITEM_LOOKUP], [])
-      query.andWhere('TIPO_PARADA IN (:...filterTipoParadas)', { filterTipoParadas })
-    }
-
     // query.andWhere('DT_PRORROGACAO_PGI is not null')
-    // query.groupBy('SG_CONJUNTO_USINA')
     const paradas = await query.getRawMany()
-    filter.paradas = paradas
+
+    filter.paradas = this.handleDtHistorica(paradas)
 
     return filter
+  }
+
+  public handleDtHistorica(paradas: ConsultaMapaPPV[]): ConsultaMapaPPV[] {
+    const dtHistoricaConsultaPp = paradas.filter(parada => parada.ID_ATUAL_HISTORICO === 'H')
+    const consultaPp = paradas.filter(parada => parada.ID_ATUAL_HISTORICO === 'A')
+
+    consultaPp.forEach(parada => {
+      dtHistoricaConsultaPp.forEach(paradaHist => {
+        if (paradaHist.CD_PROGRAMACAO_PARADA === parada.CD_PROGRAMACAO_PARADA) {
+          parada.dtHistoricaObj = paradaHist
+        }
+      })
+    })
+
+    console.log(dtHistoricaConsultaPp)
+    return consultaPp
   }
 }

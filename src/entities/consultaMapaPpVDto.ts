@@ -5,6 +5,7 @@ import { Usina } from './usina'
 class ConsultaMapaPpVDto {
   public dtInicio: Date
   public dtFim: Date
+  public dtHistorica: Date
   public status: TemLookup[]
   public tipoParadas: TemLookup[]
   public tipoUsinas: TemLookup[]
