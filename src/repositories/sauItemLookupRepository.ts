@@ -65,7 +65,7 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
 
     const difference = differenceInHours(datet, datef)
 
-    if (difference <= 24) {
+    if (difference < 24) {
       return this.getItemLookUpByCdAndId('PI', 11)
     }
 
