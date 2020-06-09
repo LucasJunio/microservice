@@ -204,6 +204,8 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       )
     }
     // query.andWhere('DT_PRORROGACAO_PGI is not null')
+
+    query.orderBy('SG_CONJUNTO_USINA')
     const paradas = await query.getRawMany()
 
     filter.paradas = this.handleDtHistorica(paradas)
