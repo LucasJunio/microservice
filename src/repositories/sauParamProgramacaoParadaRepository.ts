@@ -6,7 +6,7 @@ import moment = require('moment')
 export interface ISauParamProgramacaoParadaRepository {
   getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas>
   getNroAnosParadaLongoPrazo(): Promise<ParamProgramacaoParadas[]>
-  getParams(dtano: string)
+  getParams(dtano: number)
   saveParams(params: ParamProgramacaoParadas)
 }
 
@@ -29,12 +29,8 @@ export class SauParamProgramacaoParadaRepository implements ISauParamProgramacao
     return this.sauParamProgramacaoParadaRepository.save(params)
   }
 
-  public getParams(dtano: string) {
-    return this.sauParamProgramacaoParadaRepository.findOne({
-      where: {
-        DT_ANO: moment(dtano).toDate()
-      }
-    })
+  public getParams(id: number) {
+    return this.sauParamProgramacaoParadaRepository.findOne(id)
   }
 
   public getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas> {

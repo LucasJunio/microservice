@@ -9,6 +9,8 @@ import { PgiAi } from './pgiAi'
 import { ProgramacaoParada } from './programacaoParada'
 import { ProrrogacaoDocs } from './prorrogacaoDocs'
 import { SubclassificacaoParada } from './subclassificacaoParada'
+import { GrupoRestricao } from './grupoRestricao'
+import { HistProgramacaoParada } from './histProgramacaoParada'
 
 @Entity('SAU_ITEM_LOOKUP')
 export class TemLookup {
@@ -239,4 +241,34 @@ export class TemLookup {
     (SAU_SUBCLASSIFICACAO_PARADA: SubclassificacaoParada) => SAU_SUBCLASSIFICACAO_PARADA.idAplicacaoUsina
   )
   public sauSubclassificacaoParadas: SubclassificacaoParada[]
+
+  @OneToMany(
+    () => GrupoRestricao,
+    (RESTRICAO: GrupoRestricao) => RESTRICAO.idGrupo
+  )
+  public sauIdGrupo: GrupoRestricao[]
+
+  @OneToMany(
+    () => GrupoRestricao,
+    (RESTRICAO: GrupoRestricao) => RESTRICAO.idTipoRestricao
+  )
+  public sauIdTipoRestricao: GrupoRestricao[]
+
+  @OneToMany(
+    () => HistProgramacaoParada,
+    (SAU_HIST_PROGRAMACAO_PARADA: HistProgramacaoParada) => SAU_HIST_PROGRAMACAO_PARADA.idStatus
+  )
+  public sauHistProgramacaoParadas2: HistProgramacaoParada[]
+
+  @OneToMany(
+    () => HistProgramacaoParada,
+    (SAU_HIST_PROGRAMACAO_PARADA: HistProgramacaoParada) => SAU_HIST_PROGRAMACAO_PARADA.idStatusReprogramacao
+  )
+  public sauHistProgramacaoParadas3: HistProgramacaoParada[]
+
+  @OneToMany(
+    () => HistProgramacaoParada,
+    (SAU_HIST_PROGRAMACAO_PARADA: HistProgramacaoParada) => SAU_HIST_PROGRAMACAO_PARADA.idStatusCancelamento
+  )
+  public sauHistProgramacaoParadas: HistProgramacaoParada[]
 }

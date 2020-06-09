@@ -31,6 +31,7 @@ import { ParamsService, IParamsService } from './modules/v1/params/paramsService
 import { CancelamentoFluxoService, ICancelamentoFluxoService } from './modules/v1/fluxo/cancelamentoFluxoService'
 import { ReprogramacaoFluxoService, IReprogramacaoFluxoService } from './modules/v1/fluxo/reprogramacaoFluxoService'
 import { ProgramacaoFluxoService, IProgramacaoFluxoService } from './modules/v1/fluxo/programacaoFluxoService'
+import { IMapaService, MapaService } from './modules/v1/mapa/mapaService'
 
 import { FluxoService, IFluxoService } from './modules/v1/fluxo/fluxoService'
 import {
@@ -51,6 +52,13 @@ import {
   ISauProgramacaoParadaUgRepository,
   SauProgramacaoParadaUgRepository
 } from './repositories/sauProgramacaoParadaUgRepository'
+import { ISauConsultaMapaPpRepository, SauConsultaMapaPpRepository } from './repositories/sauConsultaMapaPpRepository'
+
+import {
+  ISauGrupoRestricaoRepository,
+  SauGrupoRestricaoRepository
+} from './repositories/sauRestricaoRepository'
+import { IRestricaoService, RestricaoService } from './modules/v1/restricao/restricaoService'
 
 export const bindings = new AsyncContainerModule(async bind => {
   try {
@@ -64,6 +72,8 @@ export const bindings = new AsyncContainerModule(async bind => {
     await require('./modules/v1/fluxo/fluxoController')
     await require('./modules/v1/reprogramacao/reprogramacaoParadaController')
     await require('./modules/v1/params/paramsController')
+    await require('./modules/v1/mapa/mapaController')
+    await require('./modules/v1/restricao/restricaoController')
 
     // Binding the services
     bind<IParadaProgramadaService>(TYPE.ParadaProgramadaService).to(ParadaProgramadaService)
@@ -75,8 +85,11 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<IProgramacaoFluxoService>(TYPE.ProgramacaoFluxoService).to(ProgramacaoFluxoService)
     bind<IReprogramacaoFluxoService>(TYPE.ReprogramacaoFluxoService).to(ReprogramacaoFluxoService)
     bind<ICancelamentoFluxoService>(TYPE.CancelamentoFluxoService).to(CancelamentoFluxoService)
+    bind<IMapaService>(TYPE.MapaService).to(MapaService)
+    bind<IRestricaoService>(TYPE.RestricaoService).to(RestricaoService)
 
     // Binding the repositories
+    bind<ISauGrupoRestricaoRepository>(TYPE.RestricaoRepository).to(SauGrupoRestricaoRepository)
     bind<ISauProgramacaoParadaUgRepository>(TYPE.SauProgramacaoParadaUgRepository).to(SauProgramacaoParadaUgRepository)
     bind<ISauUsinaRepository>(TYPE.SauUsinaRepository).to(SauUsinaRepository)
     bind<ISauHistProgramacaoParadaRepository>(TYPE.SauHistProgramacaoParadaRepository).to(
@@ -94,6 +107,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<ISauPgiRepository>(TYPE.SauPgiRepository).to(SauPgiRepository)
     bind<ISauProgramacaoParadaRepository>(TYPE.SauProgramacaoParadaRepository).to(SauProgramacaoParadaRepository)
     bind<ISauConsultaPpRepository>(TYPE.SauConsultaPpRepository).to(SauConsultaPpRepository)
+    bind<ISauConsultaMapaPpRepository>(TYPE.SauConsultaMapaPpRepository).to(SauConsultaMapaPpRepository)
 
     logger.info('Binding: Todos Módulos carregados corretamente')
   } catch (error) {

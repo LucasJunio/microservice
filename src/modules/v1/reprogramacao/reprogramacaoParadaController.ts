@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { inject } from 'inversify'
-import { controller, response, interfaces, httpPost, requestBody } from 'inversify-express-utils'
+import { controller, response, interfaces, httpPost, requestBody, requestHeaders } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import Handlers from '../../../core/handlers'
 import { ReprogramacaoParadaService } from './reprogramacaoParadaService'
@@ -11,9 +11,9 @@ export class ReprogramacaoParadaController implements interfaces.Controller {
   private readonly reprogramacaoParadaService: ReprogramacaoParadaService
 
   @httpPost('/')
-  public async getUsinas(@response() res: Response, @requestBody() repro: any): Promise<Response> {
+  public async getUsinas(@response() res: Response, @requestBody() repro: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
     try {
-      const data = await this.reprogramacaoParadaService.saveReprogramacaoParada(repro)
+      const data = await this.reprogramacaoParadaService.saveReprogramacaoParada(repro, authorization)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)

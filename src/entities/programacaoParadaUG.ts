@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { ProgramacaoParada } from './programacaoParada'
 import { UnidadeGeradora } from './unidadeGeradora'
 
-@Entity('SAU_PROGRAMACAO_PARADA_UG')
+@Entity('SAU_PROGR_PARADA_UG')
 export class ProgramacaoParadaUG {
   @Column('number', {
     nullable: false,

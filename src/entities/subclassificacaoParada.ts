@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { ClassificacaoParada } from './classificacaoParada'
 import { TemLookup } from './temLookup'
 import { ProgramacaoParada } from './programacaoParada'
+import { HistProgramacaoParada } from './histProgramacaoParada'
 
 @Entity('SAU_SUBCLASSIFICACAO_PARADA')
 export class SubclassificacaoParada {
@@ -89,4 +90,10 @@ export class SubclassificacaoParada {
     (SAU_PROGRAMACAO_PARADA: ProgramacaoParada) => SAU_PROGRAMACAO_PARADA.cdSubclasReprogrParada
   )
   public sauProgramacaoParadas2: ProgramacaoParada[]
+
+  @OneToMany(
+    () => HistProgramacaoParada,
+    (SAU_HIST_PROGRAMACAO_PARADA: HistProgramacaoParada) => SAU_HIST_PROGRAMACAO_PARADA.cdSubclassifProgrParada
+  )
+  public sauHistProgramacaoParadas: HistProgramacaoParada[]
 }

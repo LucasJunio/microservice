@@ -26,6 +26,7 @@ export interface ISauProgramacaoParadaRepository {
   getAll(): Promise<ProgramacaoParada[]>
   // getLastIdSeqParada(cdParada: number): Promise<ProgramacaoParada[]>
   getLastIdParada(): Promise<ProgramacaoParada[]>
+  getConflictingPp(params: any): Promise<ProgramacaoParada[]>
 }
 
 @injectable()
@@ -66,21 +67,26 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
   }
 
   public async getById(id: number): Promise<ProgramacaoParada> {
-    const pp = await this.sauProgramacaoParadaRepository.findOne(id, { relations: tableRelations })
+    const pp = await this.sauProgramacaoParadaRepository.findOne(id, {
+      relations: tableRelations,
+      join: {
+        alias: 'p'
+      }
+    })
     const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA)
     pp.usina = usina[0]
 
     return pp
   }
 
-  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina> {
+  public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<any> {
     if (idConjuntoUsina === 'U') {
       return this.sauUsinaRepository.query(
         `SELECT sg_usina sg_conjunto_usina,
           cd_usina cd_conjunto_usina,
           'U'      id_conjunto_usina
         FROM sau_usina
-        WHERE fl_ativo = 1 AND cd_usina = ${cdConjuntoUsina}
+        WHERE  cd_usina = ${cdConjuntoUsina}
         ORDER BY 1
         `
       )
@@ -91,9 +97,47 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
         scu.cd_conjunto cd_conjunto_usina,
         'C'             id_conjunto_usina
       FROM sau_conjunto_usina scu
-      WHERE scu.fl_ativo = 1 
-      AND scu.cd_conjunto = ${cdConjuntoUsina}
+      WHERE scu.cd_conjunto = ${cdConjuntoUsina}
       ORDER BY 1`
     )
+  }
+
+  public async getConflictingPp(params: any): Promise<ProgramacaoParada[]> {
+    if (!params) {
+      return Promise.resolve([])
+    }
+    const { USINA, INICIO, FIM, CD_PARADA } = params
+
+    const [usina] = await this.sauUsinaRepository.query(`
+      SELECT usina.ID_GRUPO_COINCID_SIMULADOR_PP ID_GRUPO_COINCID_SIMULADOR_PP
+      FROM sau_usina usina
+      WHERE usina.SG_USINA = '${USINA}'
+    `)
+
+    const query = this.sauProgramacaoParadaRepository
+      .createQueryBuilder('pp')
+      .leftJoinAndSelect(Usina, 'usina', 'usina.CD_USINA = pp.CD_CONJUNTO_USINA')
+      .leftJoinAndSelect('pp.sauProgramacaoParadaUgs', 'sauProgramacaoParadaUgs')
+      .leftJoinAndSelect('sauProgramacaoParadaUgs.cdUnidadeGeradora', 'cdUnidadeGeradora')
+      .leftJoinAndSelect('pp.idStatus', 'idStatus')
+      .where('pp.ID_CONJUNTO_USINA = :ID_CONJUNTO_USINA', { ID_CONJUNTO_USINA: 'U' })
+      .andWhere('usina.FL_ATIVO = :FL_ATIVO', { FL_ATIVO: 1 })
+      .andWhere('usina.ID_GRUPO_COINCID_SIMULADOR_PP = :ID_GRUPO', { ID_GRUPO: usina.ID_GRUPO_COINCID_SIMULADOR_PP })
+      .andWhere("TO_CHAR(pp.DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :INICIO", { INICIO })
+      .andWhere("TO_CHAR(pp.DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :FIM", { FIM })
+      .andWhere('idStatus.ID_ITEM_LOOKUP NOT IN (:...STATUS)', { STATUS: ['RASCUNHO', 'AAPRV', 'CONCL', 'CANC'] })
+
+    CD_PARADA ? query.andWhere('pp.CD_PARADA != :CD_PARADA', { CD_PARADA }) : true
+
+    const pps = await query.getMany()
+
+    if (pps && pps.length) {
+      for (const pp of pps) {
+        const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA)
+        pp.usina = usina[0]
+      }
+    }
+
+    return pps
   }
 }

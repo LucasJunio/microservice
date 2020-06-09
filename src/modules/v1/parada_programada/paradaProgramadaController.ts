@@ -9,7 +9,8 @@ import {
   httpPost,
   requestBody,
   queryParam,
-  httpDelete
+  httpDelete,
+  requestHeaders
 } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
@@ -30,10 +31,20 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpPost('/cancel')
-  public async getUsinas(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+  @httpGet('/tipo_usina')
+  public async getTipoUsina(@response() res: Response): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.cancel(parada)
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('TIPO_USINA')
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpPost('/cancel')
+  public async getUsinas(@response() res: Response, @requestBody() parada: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.cancel(parada, authorization)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -121,18 +132,18 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpGet('/param_programacao_paradas/:year')
-  public async getParamProgramacaoParada(
-    @response() res: Response,
-    @requestParam('year') year: string
-  ): Promise<Response> {
-    try {
-      const data = await this.paradaProgramadaService.getParamProgramacaoParada(year)
-      return Handlers.onSuccess(res, data)
-    } catch (error) {
-      return Handlers.onError(res, error.message, error)
-    }
-  }
+  // @httpGet('/param_programacao_paradas/:year')
+  // public async getParamProgramacaoParada(
+  //   @response() res: Response,
+  //   @requestParam('year') year: string
+  // ): Promise<Response> {
+  //   try {
+  //     const data = await this.paradaProgramadaService.getParamProgramacaoParada(year)
+  //     return Handlers.onSuccess(res, data)
+  //   } catch (error) {
+  //     return Handlers.onError(res, error.message, error)
+  //   }
+  // }
 
   @httpGet('/nro_anos_parada_longo_prazo')
   public async getNroAnosParadaLongoPrazo(@response() res: Response): Promise<Response> {
@@ -165,9 +176,9 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpPost('/')
-  public async saveProgramacaoParada(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+  public async saveProgramacaoParada(@response() res: Response, @requestBody() parada: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.saveProgramacaoParada(parada)
+      const data = await this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)

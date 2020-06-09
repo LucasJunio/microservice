@@ -36,12 +36,6 @@ export class ConsultaPPV {
   public SG_UNIDADE_GERADORA: string | null
 
   @Column('number', {
-    nullable: false,
-    name: 'CD_PARADA'
-  })
-  public CD_PARADA: number | null
-
-  @Column('number', {
     nullable: true,
     name: 'ID_TIPO_PARADA'
   })
