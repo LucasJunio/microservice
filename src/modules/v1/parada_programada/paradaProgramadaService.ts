@@ -277,9 +277,9 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     })
     try {
       await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
-      console.log({ body })
+      // console.log({ body })
     } catch (error) {
-      console.log(`Erro ao invocar o fluxo: ${error}`)
+      // console.log(`Erro ao invocar o fluxo: ${error}`)
     }
   }
 
