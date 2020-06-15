@@ -11,7 +11,7 @@ class ConsultaMapaVDto {
   public status: TemLookup[]
 
   public diType: any
-  public statusDi: any
+  public statusDi: TemLookup
 
   public dtInicio: Date
   public dtFim: Date

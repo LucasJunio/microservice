@@ -18,7 +18,7 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
   }
 
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
-    const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas } = filter
+    const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas, statusDi } = filter
     const columns = [
       'CD_PGI',
       'ID_CONJUNTO_USINA',
@@ -54,6 +54,26 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
                 .andWhere("TO_CHAR(DT_FIM_PREVISTO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
                   dtFim
                 })
+            })
+          )
+        }
+
+        if (!isEmpty(usinas)) {
+          const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
+          qbAtu.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
+        }
+
+        if (!isEmpty(tipoUsinas)) {
+          const filterTipoUsina = reduce(tipoUsinas, (acc, tUsina) => [...acc, tUsina.ID_ITEM_LOOKUP], [])
+          qbAtu.andWhere('TIPO_USINA IN (:...filterTipoUsina)', { filterTipoUsina })
+        }
+
+        if (!isEmpty(statusDi)) {
+          qbAtu.andWhere(
+            new Brackets(qb => {
+              qb.where('SG_STATUS = (:...status) ', {
+                status: statusDi.ID_ITEM_LOOKUP
+              })
             })
           )
         }
