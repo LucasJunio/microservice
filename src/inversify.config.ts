@@ -27,6 +27,11 @@ import {
   IParadaProgramadaService
 } from './modules/v1/parada_programada/paradaProgramadaService'
 import { ParamsService, IParamsService } from './modules/v1/params/paramsService'
+
+import { CancelamentoFluxoService, ICancelamentoFluxoService } from './modules/v1/fluxo/cancelamentoFluxoService'
+import { ReprogramacaoFluxoService, IReprogramacaoFluxoService } from './modules/v1/fluxo/reprogramacaoFluxoService'
+import { ProgramacaoFluxoService, IProgramacaoFluxoService } from './modules/v1/fluxo/programacaoFluxoService'
+
 import { FluxoService, IFluxoService } from './modules/v1/fluxo/fluxoService'
 import {
   IReprogramacaoParadaService,
@@ -67,6 +72,9 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<IFluxoService>(TYPE.FluxoService).to(FluxoService)
     bind<IReprogramacaoParadaService>(TYPE.ReprogramacaoParadaService).to(ReprogramacaoParadaService)
     bind<IParamsService>(TYPE.ParamsService).to(ParamsService)
+    bind<IProgramacaoFluxoService>(TYPE.ProgramacaoFluxoService).to(ProgramacaoFluxoService)
+    bind<IReprogramacaoFluxoService>(TYPE.ReprogramacaoFluxoService).to(ReprogramacaoFluxoService)
+    bind<ICancelamentoFluxoService>(TYPE.CancelamentoFluxoService).to(CancelamentoFluxoService)
 
     // Binding the repositories
     bind<ISauProgramacaoParadaUgRepository>(TYPE.SauProgramacaoParadaUgRepository).to(SauProgramacaoParadaUgRepository)

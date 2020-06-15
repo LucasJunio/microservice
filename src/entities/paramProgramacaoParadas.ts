@@ -30,9 +30,9 @@ export class ParamProgramacaoParadas {
 
   @Column('timestamp with local time zone', {
     nullable: true,
-    name: 'DT_FINAL_PARADAS_PROGRAMADA'
+    name: 'DT_FINAL_APROVACAO'
   })
-  public DT_FINAL_PARADAS_PROGRAMADA: Date | null
+  public DT_FINAL_APROVACAO: Date | null
 
   @Column('number', {
     nullable: true,

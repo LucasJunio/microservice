@@ -66,7 +66,12 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
   }
 
   public async getById(id: number): Promise<ProgramacaoParada> {
-    const pp = await this.sauProgramacaoParadaRepository.findOne(id, { relations: tableRelations })
+    const pp = await this.sauProgramacaoParadaRepository.findOne(id, {
+      relations: tableRelations,
+      join: {
+        alias: 'pp'
+      }
+    })
     const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA)
     pp.usina = usina[0]
 
