@@ -3,10 +3,10 @@ import { getRepository, Repository, Brackets } from 'typeorm'
 import { isEmpty, reduce } from 'lodash'
 
 import { ConsultaMapaPPV } from '../entities/consultaMapaPPV'
-import ConsultaMapaPpVDto from '../entities/consultaMapaPpVDto'
+import ConsultaMapaVDto from '../entities/consultaMapaVDto'
 
 export interface ISauConsultaMapaPpRepository {
-  getAll(filter: ConsultaMapaPpVDto): Promise<ConsultaMapaPpVDto>
+  getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
 }
 
 @injectable()
@@ -17,7 +17,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     this.sauConsultaMapaPpRepository = getRepository(ConsultaMapaPPV)
   }
 
-  public async getAll(filter: ConsultaMapaPpVDto): Promise<ConsultaMapaPpVDto> {
+  public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
     const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas } = filter
 
     const columns = [

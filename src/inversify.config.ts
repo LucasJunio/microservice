@@ -53,11 +53,12 @@ import {
   SauProgramacaoParadaUgRepository
 } from './repositories/sauProgramacaoParadaUgRepository'
 import { ISauConsultaMapaPpRepository, SauConsultaMapaPpRepository } from './repositories/sauConsultaMapaPpRepository'
-
 import {
-  ISauGrupoRestricaoRepository,
-  SauGrupoRestricaoRepository
-} from './repositories/sauRestricaoRepository'
+  ISauConsultaMapaPgiRepository,
+  SauConsultaMapaPgiRepository
+} from './repositories/sauConsultaMapaPgiRepository'
+
+import { ISauGrupoRestricaoRepository, SauGrupoRestricaoRepository } from './repositories/sauRestricaoRepository'
 import { IRestricaoService, RestricaoService } from './modules/v1/restricao/restricaoService'
 
 export const bindings = new AsyncContainerModule(async bind => {
@@ -108,6 +109,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<ISauProgramacaoParadaRepository>(TYPE.SauProgramacaoParadaRepository).to(SauProgramacaoParadaRepository)
     bind<ISauConsultaPpRepository>(TYPE.SauConsultaPpRepository).to(SauConsultaPpRepository)
     bind<ISauConsultaMapaPpRepository>(TYPE.SauConsultaMapaPpRepository).to(SauConsultaMapaPpRepository)
+    bind<ISauConsultaMapaPgiRepository>(TYPE.SauConsultaMapaPgiRepository).to(SauConsultaMapaPgiRepository)
 
     logger.info('Binding: Todos Módulos carregados corretamente')
   } catch (error) {
