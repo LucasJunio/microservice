@@ -81,4 +81,17 @@ export class ConsultaMapaPgiV {
     name: 'DS_STATUS'
   })
   public DS_STATUS: string | null
+
+  @Column('number', {
+    nullable: true,
+    name: 'CD_PROGRAMACAO_PARADA'
+  })
+  public CD_PROGRAMACAO_PARADA: number | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 1,
+    name: 'ID_RESTRICAO'
+  })
+  public ID_RESTRICAO: string | null
 }

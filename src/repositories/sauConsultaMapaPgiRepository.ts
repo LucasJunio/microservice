@@ -18,7 +18,7 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
   }
 
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
-    const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas, statusDi } = filter
+    const { dtFim, dtInicio, usinas, tipoUsinas, statusDi, diType } = filter
     const columns = [
       'CD_PGI',
       'ID_CONJUNTO_USINA',
@@ -31,7 +31,9 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
       'DT_FIM_PREVISTO',
       'ID_STATUS',
       'SG_STATUS',
-      'DS_STATUS'
+      'DS_STATUS',
+      'CD_PROGRAMACAO_PARADA',
+      'ID_RESTRICAO'
     ]
     const query = this.sauConsultaMapaPgiRepository.createQueryBuilder('SAU_MAPA_PGI_V').select(columns)
 
@@ -58,20 +60,24 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
           )
         }
 
+        if (!isEmpty(diType)) {
+          qbAtu.andWhere('ID_RESTRICAO = :restricaoType', { restricaoType: diType.ID === 1 ? 'S' : 'N' })
+        }
+
         if (!isEmpty(usinas)) {
           const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
           qbAtu.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
         }
 
-        if (!isEmpty(tipoUsinas)) {
-          const filterTipoUsina = reduce(tipoUsinas, (acc, tUsina) => [...acc, tUsina.ID_ITEM_LOOKUP], [])
-          qbAtu.andWhere('TIPO_USINA IN (:...filterTipoUsina)', { filterTipoUsina })
-        }
+        // if (!isEmpty(tipoUsinas)) {
+        //   const filterTipoUsina = reduce(tipoUsinas, (acc, tUsina) => [...acc, tUsina.ID_ITEM_LOOKUP], [])
+        //   qbAtu.andWhere('TIPO_USINA IN (:...filterTipoUsina)', { filterTipoUsina })
+        // }
 
         if (!isEmpty(statusDi)) {
           qbAtu.andWhere(
             new Brackets(qb => {
-              qb.where('SG_STATUS = (:...status) ', {
+              qb.where('SG_STATUS = :status ', {
                 status: statusDi.ID_ITEM_LOOKUP
               })
             })
