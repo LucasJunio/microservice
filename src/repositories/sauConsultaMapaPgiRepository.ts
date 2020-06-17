@@ -24,6 +24,7 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
       'ID_CONJUNTO_USINA',
       'CD_CONJUNTO_USINA',
       'SG_CONJUNTO_USINA',
+      'TIPO_USINA',
       'CD_UNIDADE_GERADORA',
       'SG_UNIDADE_GERADORA',
       'NUM_PGI',
@@ -33,7 +34,15 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
       'SG_STATUS',
       'DS_STATUS',
       'CD_PROGRAMACAO_PARADA',
-      'ID_RESTRICAO'
+      'ID_RESTRICAO',
+      'DT_INICIO',
+      'DT_FIM',
+      'NM_DESP_ONS_AGENTE_INICIO',
+      'NM_OPERADOR_COS_INICIO',
+      'NM_OPERADOR_USINA_INICIO',
+      'NM_DESP_ONS_AGENTE_FIM',
+      'NM_OPERADOR_COS_FIM',
+      'NM_OPERADOR_USINA_FIM'
     ]
     const query = this.sauConsultaMapaPgiRepository.createQueryBuilder('SAU_MAPA_PGI_V').select(columns)
 
@@ -69,10 +78,10 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
           qbAtu.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
         }
 
-        // if (!isEmpty(tipoUsinas)) {
-        //   const filterTipoUsina = reduce(tipoUsinas, (acc, tUsina) => [...acc, tUsina.ID_ITEM_LOOKUP], [])
-        //   qbAtu.andWhere('TIPO_USINA IN (:...filterTipoUsina)', { filterTipoUsina })
-        // }
+        if (!isEmpty(tipoUsinas)) {
+          const filterTipoUsina = reduce(tipoUsinas, (acc, tUsina) => [...acc, tUsina.ID_ITEM_LOOKUP], [])
+          qbAtu.andWhere('TIPO_USINA IN (:...filterTipoUsina)', { filterTipoUsina })
+        }
 
         if (!isEmpty(statusDi)) {
           qbAtu.andWhere(

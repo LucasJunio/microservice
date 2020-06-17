@@ -30,6 +30,13 @@ export class ConsultaMapaPgiV {
   })
   public SG_CONJUNTO_USINA: string | null
 
+  @Column('varchar2', {
+    nullable: true,
+    length: 30,
+    name: 'TIPO_USINA'
+  })
+  public TIPO_USINA: string | null
+
   @Column('number', {
     nullable: true,
     name: 'CD_UNIDADE_GERADORA'
@@ -94,4 +101,58 @@ export class ConsultaMapaPgiV {
     name: 'ID_RESTRICAO'
   })
   public ID_RESTRICAO: string | null
+
+  @Column('timestamp with local time zone', {
+    nullable: false,
+    name: 'DT_INICIO'
+  })
+  public DT_INICIO: Date | null
+
+  @Column('timestamp with local time zone', {
+    nullable: false,
+    name: 'DT_FIM'
+  })
+  public DT_FIM: Date | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 100,
+    name: 'NM_DESP_ONS_AGENTE_INICIO'
+  })
+  public NM_DESP_ONS_AGENTE_INICIO: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 100,
+    name: 'NM_OPERADOR_COS_INICIO'
+  })
+  public NM_OPERADOR_COS_INICIO: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 100,
+    name: 'NM_OPERADOR_USINA_INICIO'
+  })
+  public NM_OPERADOR_USINA_INICIO: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 100,
+    name: 'NM_DESP_ONS_AGENTE_FIM'
+  })
+  public NM_DESP_ONS_AGENTE_FIM: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 100,
+    name: 'NM_OPERADOR_COS_FIM'
+  })
+  public NM_OPERADOR_COS_FIM: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 100,
+    name: 'NM_OPERADOR_USINA_FIM'
+  })
+  public NM_OPERADOR_USINA_FIM: string | null
 }
