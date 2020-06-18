@@ -2,6 +2,7 @@ import { injectable } from 'inversify'
 import { Repository, getRepository, EntityRepository } from 'typeorm'
 import { HistProgramacaoParada } from '../entities/histProgramacaoParada'
 import { ProgramacaoParada } from '../entities/programacaoParada'
+import createDate from '../util/createDate'
 
 export interface ISauHistProgramacaoParadaRepository {
   findHistoricoById(id: number): Promise<HistProgramacaoParada[]>
@@ -44,8 +45,8 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
   ): HistProgramacaoParada {
     const historico = new HistProgramacaoParada()
     historico.cdProgramacaoParada = parada
-    historico.DATE_CREATE = new Date()
-    historico.DT_HISTORICO = new Date()
+    historico.DATE_CREATE = parada.DATE_UPDATE
+    historico.DT_HISTORICO = parada.DATE_UPDATE
     historico.CD_USUARIO = user
     historico.USER_CREATE = historico.CD_USUARIO
     historico.DS_ACAO = acao

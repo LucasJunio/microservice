@@ -114,6 +114,7 @@ export class FluxoService implements IFluxoService {
 
   public async nextLevel(parada: ProgramacaoParada, authorization: string): Promise<any> {
     const status = this.getStatus(parada)
+
     if (parada.ID_STATUS_PROGRAMACAO === 'P') {
       switch (status.ID_ITEM_LOOKUP) {
         case 'RASCUNHO':

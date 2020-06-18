@@ -40,7 +40,7 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       cdClassifReprogrParada: repro.classificacao,
       cdSubclasReprogrParada: repro.subClassificacao,
       DS_OBSERVACAO_REPROGR_PARADA: null,
-      NM_AREA_ORIGEM_REPROGRAMACAO: null,
+      NM_AREA_ORIGEM_REPROGRAMACAO: null
     }
 
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(

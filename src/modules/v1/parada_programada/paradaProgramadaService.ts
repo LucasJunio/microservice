@@ -188,11 +188,11 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       parada.ID_STATUS_PROGRAMACAO,
       parada.USER_UPDATE
     )
-    parada.DT_CANCELAMENTO = new Date()
+    parada.DT_CANCELAMENTO = parada.DATE_UPDATE
     parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
     parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_USINA', 13)
-    parada.NM_AREA_ORIGEM_CANCELAMENTO = 'VERIFICAR'
-    parada.CD_USUARIO_CANCELAMENTO = 'EDISON'
+    parada.NM_AREA_ORIGEM_CANCELAMENTO = null
+    parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
 
     await this.saveProgramacaoParada(parada, authorization)
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
@@ -431,7 +431,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     for (const unidadesGeradora of unidadesGeradoras) {
       const newUg = new ProgramacaoParadaUG()
       newUg.cdUnidadeGeradora = unidadesGeradora
-      newUg.DATE_CREATE = new Date()
+      newUg.DATE_CREATE = parada.DATE_UPDATE
       newUg.cdProgramacaoParada = parada
       list.push(newUg)
       // falta informaçes aqui
