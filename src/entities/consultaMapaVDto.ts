@@ -9,17 +9,18 @@ class ConsultaMapaVDto {
   public dtHistorica: Date
   public tipoParadas: TemLookup[]
   public status: TemLookup[]
+  public paradas: ConsultaMapaPPV[]
 
   public diType: any
   public statusDi: TemLookup
+  public dis: ConsultaMapaPgiV[]
+
+  public isDiSemParada: boolean
 
   public dtInicio: Date
   public dtFim: Date
   public usinas: any[]
   public tipoUsinas: TemLookup[]
-
-  public paradas: ConsultaMapaPPV[]
-  public dis: ConsultaMapaPgiV[]
 }
 
 export default ConsultaMapaVDto

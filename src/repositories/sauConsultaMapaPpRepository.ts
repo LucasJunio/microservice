@@ -20,6 +20,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
     const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas } = filter
 
+    console.log(filter)
     const columns = [
       'CD_CONJUNTO_USINA',
       'SG_CONJUNTO_USINA',
@@ -129,7 +130,6 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       query.orWhere(
         new Brackets(qbHist => {
           qbHist.orWhere('ID_ATUAL_HISTORICO = :idAtualH', { idAtualH: 'H' })
-
           if (!isEmpty(dtInicio) && !isEmpty(dtFim)) {
             qbHist.andWhere(
               new Brackets(qb => {
@@ -148,46 +148,6 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
               })
             )
           }
-
-          // if (!isEmpty(usinas)) {
-          //   const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
-          //   qbHist.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
-          // }
-
-          // if (!isEmpty(tipoUsinas)) {
-          //   const filterTipoUsina = reduce(tipoUsinas, (acc, tUsina) => [...acc, tUsina.ID_ITEM_LOOKUP], [])
-          //   qbHist.andWhere('TIPO_USINA IN (:...filterTipoUsina)', { filterTipoUsina })
-          // }
-          // if (!isEmpty(status)) {
-          //   const filterStatus = reduce(status, (acc, sts) => [...acc, sts.ID_ITEM_LOOKUP], [])
-          //   qbHist.andWhere(
-          //     new Brackets(qb => {
-          //       qb.where(
-          //         'STATUS_PARADA IN (:...filterStatus) AND' +
-          //           '(ID_STATUS_PROGRAMACAO = :stsPr OR ID_STATUS_PROGRAMACAO = :stsEx)',
-          //         {
-          //           filterStatus,
-          //           stsPr: 'P',
-          //           stsEx: 'E'
-          //         }
-          //       )
-          //         .orWhere('STATUS_PARADA_REPROG IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsRe', {
-          //           filterStatus,
-          //           stsRe: 'R'
-          //         })
-          //         .orWhere('STATUS_PARADA_CANC IN (:...filterStatus) AND ID_STATUS_PROGRAMACAO = :stsCa', {
-          //           filterStatus,
-          //           stsCa: 'C'
-          //         })
-          //     })
-          //   )
-          // }
-
-          // if (!isEmpty(tipoParadas)) {
-          //   const filterTipoParadas = reduce(tipoParadas, (acc, tipoParada) => [...acc, tipoParada.ID_ITEM_LOOKUP],
-          // [])
-          //   qbHist.andWhere('TIPO_PARADA IN (:...filterTipoParadas)', { filterTipoParadas })
-          // }
 
           qbHist.andWhere(
             'DT_CRIACAO_PARADA = ' +

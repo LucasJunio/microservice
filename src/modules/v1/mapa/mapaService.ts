@@ -28,6 +28,7 @@ export class MapaService implements IMapaService {
   }
 
   public async getParadasDi(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
+    filter = await this.sauConsultaMapaPgiRepository.getAll(filter)
     return this.sauConsultaMapaPpRepository.getAll(filter)
   }
 }
