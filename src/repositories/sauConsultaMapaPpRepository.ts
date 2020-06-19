@@ -55,7 +55,8 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       'DS_CLASSIFICACAO_PARADA',
       'DS_SUBCLASSIFICACAO_PARADA',
       'DT_PRORROGACAO_PGI',
-      'ID_ATUAL_HISTORICO'
+      'ID_ATUAL_HISTORICO',
+      'DS_MOTIVO_CANCELAMENTO'
     ]
     const query = this.sauConsultaMapaPpRepository.createQueryBuilder('SAU_MAPA_PARADA_PP_V').select(columns)
 
