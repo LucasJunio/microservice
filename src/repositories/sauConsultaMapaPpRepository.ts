@@ -20,7 +20,6 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
     const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas } = filter
 
-    console.log(filter)
     const columns = [
       'CD_CONJUNTO_USINA',
       'SG_CONJUNTO_USINA',
