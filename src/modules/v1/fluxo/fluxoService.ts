@@ -59,9 +59,7 @@ export class FluxoService implements IFluxoService {
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
         break
       case 'AAPRV':
-        parada.DT_CONCLUSAO = moment()
-          .utc()
-          .toDate()
+        parada.DT_CONCLUSAO = parada.DATE_UPDATE
         parada.CD_USUARIO_CONCLUSAO = parada.USER_UPDATE
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL', 13)
         break
