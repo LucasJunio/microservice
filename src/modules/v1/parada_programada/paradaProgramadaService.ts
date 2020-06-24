@@ -130,7 +130,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return true
   }
 
-  public async back_program(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async back_program(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
+    const previus = await this.getById(parada.CD_PROGRAMACAO_PARADA)
     await getConnection().transaction(async manager => {
       const histRepository = manager.getCustomRepository(SauHistProgramacaoParadaRepository)
       const progParadaRepository = manager.getCustomRepository(SauProgramacaoParadaRepository)
@@ -176,8 +177,9 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       delete parada.sauProgramacaoParadaUgs
       await progParadaRepository.saveProgramacaoParada(parada)
     })
-
-    return this.getById(parada.CD_PROGRAMACAO_PARADA)
+    const paradaRet = await this.getById(parada.CD_PROGRAMACAO_PARADA)
+    this.fluxoNotificacaoCancRepr(previus, paradaRet, authorization)
+    return paradaRet
   }
 
   public async cancel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
@@ -277,7 +279,40 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     })
     try {
       await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
-      // console.log({ body })
+    } catch (error) {
+      // console.log(`Erro ao invocar o fluxo: ${error}`)
+    }
+  }
+
+  public async fluxoNotificacaoCancRepr(
+    previus: ProgramacaoParada,
+    atual: ProgramacaoParada,
+    authorization: string
+  ): Promise<void> {
+    if (!atual || !authorization) {
+      return
+    }
+    const [usina] = await this.sauProgramacaoParadaRepository.getUsinaByCdAndId(
+      atual.CD_CONJUNTO_USINA,
+      atual.ID_CONJUNTO_USINA
+    )
+    const userUpdate = await this.getUsuario(atual.USER_UPDATE, authorization)
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: authorization
+    }
+    const body = JSON.stringify({
+      sgSistema: 'SAU',
+      cdTela: 'SAU3100',
+      aplicacoes: [usina.SG_CONJUNTO_USINA],
+      link: `/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
+      variaveis: this.getVariaveisPp(atual, usina, userUpdate),
+      statusDe: '*',
+      statusPara: '',
+      ...this.getTipo(previus)
+    })
+    try {
+      await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
     } catch (error) {
       // console.log(`Erro ao invocar o fluxo: ${error}`)
     }
