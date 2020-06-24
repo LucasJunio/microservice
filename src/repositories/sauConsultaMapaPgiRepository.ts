@@ -42,7 +42,8 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
       'NM_OPERADOR_USINA_INICIO',
       'NM_DESP_ONS_AGENTE_FIM',
       'NM_OPERADOR_COS_FIM',
-      'NM_OPERADOR_USINA_FIM'
+      'NM_OPERADOR_USINA_FIM',
+      'NUM_DOC_EXTERNO'
     ]
     const query = this.sauConsultaMapaPgiRepository.createQueryBuilder('SAU_MAPA_PGI_V').select(columns)
 

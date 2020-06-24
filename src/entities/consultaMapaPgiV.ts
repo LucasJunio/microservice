@@ -155,4 +155,11 @@ export class ConsultaMapaPgiV {
     name: 'NM_OPERADOR_USINA_FIM'
   })
   public NM_OPERADOR_USINA_FIM: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 20,
+    name: 'NUM_DOC_EXTERNO'
+  })
+  public NUM_DOC_EXTERNO: string | null
 }
