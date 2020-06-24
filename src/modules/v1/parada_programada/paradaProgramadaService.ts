@@ -366,17 +366,17 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   private getTipo(atual: ProgramacaoParada): any {
     const { idTipoParada: idTipoParadaA, ID_STATUS_PROGRAMACAO: ID_STATUS_PROGRAMACAOA } = atual
-    const isPa = 'PA-PB-PL'.includes(idTipoParadaA.ID_ITEM_LOOKUP)
+    const isPa = 'PB-PP-PA'.includes(idTipoParadaA.ID_ITEM_LOOKUP)
     let tipoInformacao
     switch (ID_STATUS_PROGRAMACAOA) {
       case 'R':
-        tipoInformacao = `PP-REPROGRAMACAO${isPa ? '_PA-PB-PL' : '_PP-PI-PU'}`
+        tipoInformacao = `PP-REPROGRAMACAO${isPa ? '_PB-PP-PA' : '_PU-PI-PL'}`
         break
       case 'C':
-        tipoInformacao = `PP-CANCELAMENTO${isPa ? '_PA-PB-PL' : '_PP-PI-PU'}`
+        tipoInformacao = `PP-CANCELAMENTO${isPa ? '_PB-PP-PA' : '_PU-PI-PL'}`
         break
       default:
-        tipoInformacao = `PP-PROGRAMACAO${isPa ? '-PA-PB-PL' : '_PP-PI-PU'}`
+        tipoInformacao = `PP-PROGRAMACAO${isPa ? '_PB-PP-PA' : '_PU-PI-PL'}`
     }
     return { tipoInformacao }
   }
