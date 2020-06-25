@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { Pgi } from './pgi'
 
-@Entity('SAU_DETALHAMENTO_EXECUCAO_PGI')
+@Entity('SAU_DET_EXECUCAO_PGI')
 export class DetalhamentoExecucaoPgi {
   @ManyToOne(
     () => Pgi,

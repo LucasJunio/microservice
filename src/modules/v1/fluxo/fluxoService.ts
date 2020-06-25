@@ -18,8 +18,8 @@ import { ReprogramacaoFluxoService } from './reprogramacaoFluxoService'
 import { CancelamentoFluxoService } from './cancelamentoFluxoService'
 
 export interface IFluxoService {
-  nextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada>
-  prevLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada>
+  nextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
+  prevLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
   getStatus(parada: ProgramacaoParada): TemLookup
   setStatusPp(parada: ProgramacaoParada, status: string): Promise<ProgramacaoParada>
 }
@@ -49,7 +49,7 @@ export class FluxoService implements IFluxoService {
   @inject(TYPE.SauHistProgramacaoParadaRepository)
   private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
 
-  public async execNextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async execNextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'EXECUCAO':
         if (parada.sauPgis.length !== 0) {
@@ -67,7 +67,7 @@ export class FluxoService implements IFluxoService {
         break
     }
 
-    await this.paradaProgramadaService.saveProgramacaoParada(parada)
+    await this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
     return this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
   }
 
@@ -112,21 +112,21 @@ export class FluxoService implements IFluxoService {
     return { status, msg }
   }
 
-  public async nextLevel(parada: ProgramacaoParada): Promise<any> {
+  public async nextLevel(parada: ProgramacaoParada, authorization: string): Promise<any> {
     const status = this.getStatus(parada)
     if (parada.ID_STATUS_PROGRAMACAO === 'P') {
       switch (status.ID_ITEM_LOOKUP) {
         case 'RASCUNHO':
-          return this.programacaoFluxoService.handleRascunho(parada)
+          return this.programacaoFluxoService.handleRascunho(parada, authorization)
           break
         case 'AAPRV_USINA':
-          return this.programacaoFluxoService.handleAgAprUsina(parada)
+          return this.programacaoFluxoService.handleAgAprUsina(parada, authorization)
           break
         case 'AAPRV_OPE':
-          return this.programacaoFluxoService.handleAgAprOpe(parada)
+          return this.programacaoFluxoService.handleAgAprOpe(parada, authorization)
           break
         case 'APRV':
-          return this.programacaoFluxoService.handleAprv(parada)
+          return this.programacaoFluxoService.handleAprv(parada, authorization)
           break
         default:
           break
@@ -134,10 +134,10 @@ export class FluxoService implements IFluxoService {
     } else if (parada.ID_STATUS_PROGRAMACAO === 'C') {
       switch (status.ID_ITEM_LOOKUP) {
         case 'AAPRV_USINA':
-          return this.cancelamentoFluxoService.handleAgAprUsina(parada)
+          return this.cancelamentoFluxoService.handleAgAprUsina(parada, authorization)
           break
         case 'AAPRV_OPE':
-          return this.cancelamentoFluxoService.handleAgAprOpe(parada)
+          return this.cancelamentoFluxoService.handleAgAprOpe(parada, authorization)
           break
         default:
           break
@@ -145,7 +145,7 @@ export class FluxoService implements IFluxoService {
     }
   }
 
-  public async prevLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async prevLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     let historico = null
 
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
@@ -162,19 +162,19 @@ export class FluxoService implements IFluxoService {
     }
 
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
-    return this.paradaProgramadaService.saveProgramacaoParada(parada)
+    return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 
-  public async reprNextLevel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async reprNextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     switch (parada.idStatusReprogramacao.ID_ITEM_LOOKUP) {
       case 'AAPRV_USINA':
-        return this.reprogramacaoFluxoService.handleAgAprUsina(parada)
+        return this.reprogramacaoFluxoService.handleAgAprUsina(parada, authorization)
         break
       case 'AAPRV_OPE':
-        return this.reprogramacaoFluxoService.handleAgAprOpe(parada)
+        return this.reprogramacaoFluxoService.handleAgAprOpe(parada, authorization)
         break
       case 'APRV':
-        return this.reprogramacaoFluxoService.handleAprv(parada)
+        return this.reprogramacaoFluxoService.handleAprv(parada, authorization)
         break
       default:
         break

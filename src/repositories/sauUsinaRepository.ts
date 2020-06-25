@@ -20,8 +20,8 @@ export class SauUsinaRepository implements ISauUsinaRepository {
                          'U'            id_conjunto_usina,
                          id_tipo_usina  id_tipo_usina
                   FROM sau_usina
-                  WHERE fl_ativo = 1
-      `
+                  `
+    // WHERE fl_ativo = 1
   }
 
   public getUsinas(): Promise<Usina[]> {
@@ -45,7 +45,7 @@ export class SauUsinaRepository implements ISauUsinaRepository {
           cd_usina cd_conjunto_usina,
           'U'      id_conjunto_usina
         FROM sau_usina
-        WHERE fl_ativo = 1 AND cd_usina = ${cdConjuntoUsina}
+        WHERE cd_usina = ${cdConjuntoUsina}
         ORDER BY 1
         `
       )
@@ -56,8 +56,7 @@ export class SauUsinaRepository implements ISauUsinaRepository {
         scu.cd_conjunto cd_conjunto_usina,
         'C'             id_conjunto_usina
       FROM sau_conjunto_usina scu
-      WHERE scu.fl_ativo = 1 
-      AND scu.cd_conjunto = ${cdConjuntoUsina}
+      WHERE scu.cd_conjunto = ${cdConjuntoUsina}
       ORDER BY 1`
     )
   }

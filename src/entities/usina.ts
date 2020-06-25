@@ -116,6 +116,22 @@ export class Usina {
   })
   public VL_COEFICIENTE_B: number | null
 
+  @Column('number', {
+    nullable: true,
+    precision: 10,
+    scale: 2,
+    name: 'ID_GRUPO_HIDRO_SIMULADOR_PP'
+  })
+  public ID_GRUPO_HIDRO_SIMULADOR_PP: number | null
+
+  @Column('number', {
+    nullable: true,
+    precision: 10,
+    scale: 2,
+    name: 'ID_GRUPO_COINCID_SIMULADOR_PP'
+  })
+  public ID_GRUPO_COINCID_SIMULADOR_PP: number | null
+
   @Column('varchar2', {
     nullable: true,
     length: 30,

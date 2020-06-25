@@ -20,9 +20,14 @@ import { PpConsultaDto } from '../../../entities/ppConsultaDto'
 import { ConsultaPPV } from '../../../entities/consultaPPV'
 import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
+import promiseTimeout from '../../../util/promiseTimeout'
+import { AuthService, FluxoService } from '../../../constants/services'
+import { Usina } from '../../../entities/usina'
+import * as moment from 'moment'
+import fetch from 'node-fetch'
 
-import { fromUnixTime, parseISO } from 'date-fns'
-import { get, some, filter, map } from 'lodash'
+import { parseISO } from 'date-fns'
+import { get } from 'lodash'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]>
@@ -33,7 +38,7 @@ export interface IParadaProgramadaService {
   getNumPGI(numParada: number): Promise<Pgi>
   savePgi(pgi: Pgi): Promise<Pgi>
   getSubClassificacaoParada(cdClassificacao: number, idTipoUsina: string): Promise<SubclassificacaoParada[]>
-  saveProgramacaoParada(programcaoParada: ProgramacaoParada): Promise<ProgramacaoParada>
+  saveProgramacaoParada(programcaoParada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
   getById(id: number): Promise<ProgramacaoParada>
   getAll(): Promise<ProgramacaoParada[]>
   // getLastIdSeqParada(cdParada: number): Promise<ProgramacaoParada[]>
@@ -175,7 +180,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.getById(parada.CD_PROGRAMACAO_PARADA)
   }
 
-  public async cancel(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async cancel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     parada.ID_STATUS_PROGRAMACAO = 'C'
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
@@ -189,7 +194,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     parada.NM_AREA_ORIGEM_CANCELAMENTO = 'VERIFICAR'
     parada.CD_USUARIO_CANCELAMENTO = 'EDISON'
 
-    await this.saveProgramacaoParada(parada)
+    await this.saveProgramacaoParada(parada, authorization)
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
     return this.getById(parada.CD_PROGRAMACAO_PARADA)
   }
@@ -202,10 +207,16 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauSubClassificacaoParadaRepository.getSubClassificacaoParada(cdClassificacao, idTipoUsina)
   }
 
-  public async saveProgramacaoParada(programcaoParada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async saveProgramacaoParada(
+    programcaoParada: ProgramacaoParada,
+    authorization: string
+  ): Promise<ProgramacaoParada> {
     let saveHistorico = false
+    let previus
     if (!programcaoParada.CD_PROGRAMACAO_PARADA) {
       saveHistorico = true
+    } else {
+      previus = await this.sauProgramacaoParadaRepository.getById(programcaoParada.CD_PROGRAMACAO_PARADA)
     }
 
     const parada = await this.createAndSavePp(programcaoParada)
@@ -218,6 +229,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
     const paradaRet = await this.getById(parada.CD_PROGRAMACAO_PARADA)
 
+    this.fluxoNotificacao(previus, paradaRet, authorization)
+
     if (!saveHistorico) {
       return paradaRet
     }
@@ -229,9 +242,45 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       parada.USER_UPDATE,
       `O documento foi criado com status RASCUNHO`
     )
+
     await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
 
     return paradaRet
+  }
+
+  public async fluxoNotificacao(
+    previus: ProgramacaoParada,
+    atual: ProgramacaoParada,
+    authorization: string
+  ): Promise<void> {
+    if (!atual || !authorization) {
+      return
+    }
+    const [usina] = await this.sauProgramacaoParadaRepository.getUsinaByCdAndId(
+      atual.CD_CONJUNTO_USINA,
+      atual.ID_CONJUNTO_USINA
+    )
+    const userUpdate = await this.getUsuario(atual.USER_UPDATE, authorization)
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: authorization
+    }
+    const body = JSON.stringify({
+      sgSistema: 'SAU',
+      cdTela: 'SAU3100',
+      aplicacoes: [usina.SG_CONJUNTO_USINA],
+      link: `/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
+      variaveis: this.getVariaveisPp(atual, usina, userUpdate),
+      ...this.getTipo(atual),
+      ...this.getStatusDe(previus, atual),
+      ...this.getStatusPara(atual)
+    })
+    try {
+      await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
+      console.log({ body })
+    } catch (error) {
+      console.log(`Erro ao invocar o fluxo: ${error}`)
+    }
   }
 
   public async getById(id: number): Promise<ProgramacaoParada> {
@@ -259,14 +308,117 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return this.sauPgiRepository.getAllNumPgi()
   }
 
+  private async getUsuario(cdUsuario: string, authorization: string): Promise<any> {
+    if (!cdUsuario) {
+      return null
+    }
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: authorization
+    }
+    try {
+      const usuario = await promiseTimeout(
+        3000,
+        fetch(`${AuthService.URL_LOAD_USUARIO}${cdUsuario}`, { method: 'GET', headers })
+      )
+      return usuario.json()
+    } catch (e) {
+      return null
+    }
+  }
+
+  private getVariaveisPp(pp: ProgramacaoParada, usina, userUpdate): any {
+    return {
+      CLASSIFICACAO: pp.cdClassificacaoProgrParada ? pp.cdClassificacaoProgrParada.DS_CLASSIFICACAO_PARADA : '',
+      DES_MOTIVO: pp.DS_MOTIVO_REPROGRAMACAO || '',
+      DES_PARADA: pp.DS_PROGRAMACAO_PARADA || '',
+      DS_SERVICO: pp.DS_SERVICO_EXECUTADO || '',
+      DT_CANCELAMENTO: pp.DT_CANCELAMENTO ? moment(pp.DT_CANCELAMENTO).format('DD/MM/YYYY HH:mm') : '',
+      DT_FIM_PROG: pp.DT_HORA_TERMINO_PROGRAMACAO
+        ? moment(pp.DT_HORA_TERMINO_PROGRAMACAO).format('DD/MM/YYYY HH:mm')
+        : '',
+      DT_FIM_REPROG: pp.DT_HORA_TERMINO_REPROGRAMACAO
+        ? moment(pp.DT_HORA_TERMINO_REPROGRAMACAO).format('DD/MM/YYYY HH:mm')
+        : '',
+      DT_FIM_SERVICO: pp.DT_HORA_TERMINO_SERVICO ? moment(pp.DT_HORA_TERMINO_SERVICO).format('DD/MM/YYYY HH:mm') : '',
+      DT_INICIO_PROG: pp.DT_HORA_INICIO_PROGRAMACAO
+        ? moment(pp.DT_HORA_INICIO_PROGRAMACAO).format('DD/MM/YYYY HH:mm')
+        : '',
+      DT_INICIO_REPROG: pp.DT_HORA_INICIO_REPROGRAMACAO
+        ? moment(pp.DT_HORA_INICIO_REPROGRAMACAO).format('DD/MM/YYYY HH:mm')
+        : '',
+      DT_INICIO_SERVICO: pp.DT_HORA_INICIO_SERVICO ? moment(pp.DT_HORA_INICIO_SERVICO).format('DD/MM/YYYY HH:mm') : '',
+      MOTIVO_CANCELAMENTO: pp.DS_MOTIVO_CANCELAMENTO || '',
+      MOTIVO_REPROG: pp.idMotivoReprogramacao ? pp.idMotivoReprogramacao.DS_ITEM_LOOKUP : '',
+      NM_AREA_ORIGEM: pp.NM_AREA_ORIGEM || '',
+      NM_AREA_ORIGEM_CANCEL: pp.NM_AREA_ORIGEM_CANCELAMENTO || '',
+      NM_AREA_ORIGEM_REPROG: pp.NM_AREA_ORIGEM_REPROGRAMACAO || '',
+      NUM_PARADA: pp.CD_PROGRAMACAO_PARADA || '',
+      NUM_PGI: pp.sauPgis && pp.sauPgis.length ? pp.sauPgis[0].NUM_PGI : '',
+      ORIGEM_REPROG: pp.idOrigemReprogramacao ? pp.idOrigemReprogramacao.DS_ITEM_LOOKUP : '',
+      TIPO: pp.idTipoParada ? pp.idTipoParada.DS_ITEM_LOOKUP : '',
+      TIPO_PROG: pp.idTipoProgramacao ? pp.idTipoProgramacao.DS_ITEM_LOOKUP : '',
+      UG: pp.sauProgramacaoParadaUgs ? pp.sauProgramacaoParadaUgs[0].cdUnidadeGeradora.SG_UNIDADE_GERADORA : '',
+      USINA: usina ? usina.SG_CONJUNTO_USINA : '',
+      USUARIO: userUpdate ? userUpdate.NM_USUARIO : ''
+    }
+  }
+
+  private getTipo(atual: ProgramacaoParada): any {
+    const { idTipoParada: idTipoParadaA, ID_STATUS_PROGRAMACAO: ID_STATUS_PROGRAMACAOA } = atual
+    const isPa = 'PA-PB-PL'.includes(idTipoParadaA.ID_ITEM_LOOKUP)
+    let tipoInformacao
+    switch (ID_STATUS_PROGRAMACAOA) {
+      case 'R':
+        tipoInformacao = `PP-REPROGRAMACAO${isPa ? '_PA-PB-PL' : '_PP-PI-PU'}`
+        break
+      case 'C':
+        tipoInformacao = `PP-CANCELAMENTO${isPa ? '_PA-PB-PL' : '_PP-PI-PU'}`
+        break
+      default:
+        tipoInformacao = `PP-PROGRAMACAO${isPa ? '-PA-PB-PL' : '_PP-PI-PU'}`
+    }
+    return { tipoInformacao }
+  }
+
+  private getStatusDe(previus: ProgramacaoParada, atual: ProgramacaoParada): any {
+    if (!previus) {
+      return { statusDe: '' }
+    }
+    const { ID_STATUS_PROGRAMACAO: ID_STATUS_PROGRAMACAOP } = previus
+    const { ID_STATUS_PROGRAMACAO: ID_STATUS_PROGRAMACAOA } = atual
+    if (ID_STATUS_PROGRAMACAOA !== ID_STATUS_PROGRAMACAOP) {
+      return ID_STATUS_PROGRAMACAOA === 'C' || ID_STATUS_PROGRAMACAOA === 'R'
+        ? { statusDe: '' }
+        : { statusDe: previus.idStatus.ID_ITEM_LOOKUP }
+    }
+    switch (ID_STATUS_PROGRAMACAOA) {
+      case 'R':
+        return { statusDe: previus.idStatusReprogramacao.ID_ITEM_LOOKUP }
+      case 'C':
+        return { statusDe: previus.idStatusCancelamento.ID_ITEM_LOOKUP }
+      default:
+        return { statusDe: previus.idStatus.ID_ITEM_LOOKUP }
+    }
+  }
+
+  private getStatusPara(atual: ProgramacaoParada): any {
+    switch (atual.ID_STATUS_PROGRAMACAO) {
+      case 'R':
+        return { statusPara: atual.idStatusReprogramacao.ID_ITEM_LOOKUP }
+      case 'C':
+        return { statusPara: atual.idStatusCancelamento.ID_ITEM_LOOKUP }
+      default:
+        return { statusPara: atual.idStatus.ID_ITEM_LOOKUP }
+    }
+  }
+
   private async createAndSavePp(programcaoParada: ProgramacaoParada): Promise<ProgramacaoParada> {
     if (programcaoParada.CD_PROGRAMACAO_PARADA) {
       await this.sauProgramacaoParadaUgRepository.deleteAllPpUgByCdParada(programcaoParada.CD_PROGRAMACAO_PARADA)
       return this.sauProgramacaoParadaRepository.saveProgramacaoParada(programcaoParada)
     }
 
-    const idParada = await this.sauProgramacaoParadaRepository.getLastIdParada()
-    programcaoParada.CD_PARADA = idParada[0].ID // sempre o proximo
     programcaoParada.ID_STATUS_PROGRAMACAO = 'P'
     programcaoParada.USER_CREATE = programcaoParada.USER_UPDATE
     programcaoParada.DATE_CREATE = programcaoParada.DATE_UPDATE

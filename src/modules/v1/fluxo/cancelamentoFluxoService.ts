@@ -9,8 +9,8 @@ import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHis
 import { TYPE } from '../../../constants/types'
 
 export interface ICancelamentoFluxoService {
-  handleAgAprUsina(parada: ProgramacaoParada): Promise<ProgramacaoParada>
-  handleAgAprOpe(parada: ProgramacaoParada): Promise<ProgramacaoParada>
+  handleAgAprUsina(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
+  handleAgAprOpe(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
 }
 
 @injectable()
@@ -29,7 +29,7 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
   @inject(TYPE.SauHistProgramacaoParadaRepository)
   private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
 
-  public async handleAgAprUsina(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async handleAgAprUsina(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     let historico = null
 
     // caso Longo prazo, intempestiva ou longo prazo, vai direto para aprovado
@@ -39,6 +39,8 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PL'
     ) {
       parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+      parada.idStatus = parada.idStatusCancelamento
+
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
         parada,
         'CANCELADO',
@@ -58,13 +60,14 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
     if (historico) {
       await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
     }
-    return this.paradaProgramadaService.saveProgramacaoParada(parada)
+    return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 
-  public async handleAgAprOpe(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async handleAgAprOpe(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     let historico = null
 
     parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+    parada.idStatus = parada.idStatusCancelamento
 
     historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       parada,
@@ -75,6 +78,6 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
     if (historico) {
       await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
     }
-    return this.paradaProgramadaService.saveProgramacaoParada(parada)
+    return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 }

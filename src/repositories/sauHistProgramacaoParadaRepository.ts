@@ -51,6 +51,21 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     historico.DS_ACAO = acao
     historico.DS_OBSERVACAO = msg || `O Status do documento foi alterado para ${historico.DS_ACAO} `
     historico.FLOW = flow // 'FLOW'; // REPR // CANC
+
+    historico.DT_HORA_INICIO_PROGRAMACAO = parada.DT_HORA_INICIO_PROGRAMACAO
+    historico.DT_HORA_TERMINO_PROGRAMACAO = parada.DT_HORA_TERMINO_PROGRAMACAO
+    historico.DS_PROGRAMACAO_PARADA = parada.DS_PROGRAMACAO_PARADA
+    historico.ID_STATUS_PROGRAMACAO = parada.ID_STATUS_PROGRAMACAO
+    historico.idStatus = parada.idStatus
+    historico.DS_NUM_CEL_ANEEL = parada.DS_NUM_CEL_ANEEL
+    historico.DT_HORA_INICIO_PROGRAMACAO = parada.DT_HORA_INICIO_PROGRAMACAO
+    historico.DT_HORA_TERMINO_SERVICO = parada.DT_HORA_TERMINO_SERVICO
+    historico.DS_SERVICO_EXECUTADO = parada.DS_SERVICO_EXECUTADO
+    historico.idStatusReprogramacao = parada.idStatusReprogramacao
+    historico.idStatusCancelamento = parada.idStatusCancelamento
+    historico.cdClassificacaoProgrParada = parada.cdClassificacaoProgrParada
+    historico.cdSubclassifProgrParada = parada.cdSubclassifProgrParada
+
     return historico
   }
 }
