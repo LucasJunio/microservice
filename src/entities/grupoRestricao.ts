@@ -3,7 +3,6 @@ import { TemLookup } from './temLookup'
 
 @Entity('SAU_GRUPO_RESTRICAO')
 export class GrupoRestricao {
-
   @Column('number', {
     nullable: false,
     primary: true,
@@ -40,5 +39,4 @@ export class GrupoRestricao {
   )
   @JoinColumn({ name: 'ID_TIPO_RESTRICAO' })
   public idTipoRestricao: TemLookup | null
-
 }
