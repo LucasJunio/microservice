@@ -160,7 +160,7 @@ export class FluxoService implements IFluxoService {
         break
     }
 
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 

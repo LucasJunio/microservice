@@ -56,7 +56,11 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpPost('/back_program')
-  public async back_program(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+  public async back_program(
+    @response() res: Response,
+    @requestBody() parada: any,
+    @requestHeaders('authorization') authorization: string
+  ): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.back_program(parada)
       return Handlers.onSuccess(res, data)

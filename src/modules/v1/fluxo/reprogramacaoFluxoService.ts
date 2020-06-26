@@ -81,7 +81,7 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     }
 
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
@@ -122,7 +122,7 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     )
 
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }

@@ -44,7 +44,7 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
     )
 
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
@@ -76,7 +76,7 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
     }
 
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
@@ -93,7 +93,7 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
       parada.USER_UPDATE
     )
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }

@@ -51,7 +51,7 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       `A reprogramação foi criada no status EM ANÁLISE USINA`
     )
 
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     await this.sauProgramacaoParadaRepository.saveProgramacaoParada(newParada)
 
     await this.paradaProgramadaService.fluxoNotificacao(parada, newParada, authorization)

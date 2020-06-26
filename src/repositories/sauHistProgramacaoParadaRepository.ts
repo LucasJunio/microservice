@@ -3,10 +3,11 @@ import { Repository, getRepository, EntityRepository } from 'typeorm'
 import { HistProgramacaoParada } from '../entities/histProgramacaoParada'
 import { ProgramacaoParada } from '../entities/programacaoParada'
 import createDate from '../util/createDate'
+import { AuthService } from '../constants/services'
 
 export interface ISauHistProgramacaoParadaRepository {
   findHistoricoById(id: number): Promise<HistProgramacaoParada[]>
-  saveHistoricoPp(historico: HistProgramacaoParada): Promise<HistProgramacaoParada>
+  saveHistoricoPp(historico: HistProgramacaoParada, authorization: string): Promise<HistProgramacaoParada>
 }
 
 @injectable()
@@ -26,9 +27,14 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
       .getMany()
   }
 
-  public async saveHistoricoPp(historico: HistProgramacaoParada): Promise<HistProgramacaoParada> {
+  public async saveHistoricoPp(
+    historico: HistProgramacaoParada,
+    authorization: string
+  ): Promise<HistProgramacaoParada> {
+    const userUpdade = await this.getUsuario(historico.NM_USUARIO, authorization)
     const idHistorico = await this.getHistoricoSeq()
     historico.CD_HISTORICO = idHistorico[0].ID
+    historico.NM_USUARIO = userUpdade.NM_USUARIO
     return this.sauHistProgramacaoParadaRepository.save(historico)
   }
 
@@ -47,8 +53,8 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     historico.cdProgramacaoParada = parada
     historico.DATE_CREATE = parada.DATE_UPDATE
     historico.DT_HISTORICO = parada.DATE_UPDATE
-    historico.CD_USUARIO = user
-    historico.USER_CREATE = historico.CD_USUARIO
+    historico.NM_USUARIO = user
+    historico.USER_CREATE = historico.NM_USUARIO
     historico.DS_ACAO = acao
     historico.DS_OBSERVACAO = msg || `O Status do documento foi alterado para ${historico.DS_ACAO} `
     historico.FLOW = flow // 'FLOW'; // REPR // CANC
@@ -68,5 +74,24 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     historico.cdSubclassifProgrParada = parada.cdSubclassifProgrParada
 
     return historico
+  }
+
+  private async getUsuario(cdUsuario: string, authorization: string): Promise<any> {
+    if (!cdUsuario) {
+      return null
+    }
+
+    try {
+      const usuario = await fetch(`${AuthService.URL_LOAD_USUARIO}${cdUsuario}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authorization
+        }
+      })
+      return usuario.json()
+    } catch (e) {
+      return null
+    }
   }
 }

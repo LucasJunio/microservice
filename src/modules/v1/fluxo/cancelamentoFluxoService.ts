@@ -58,7 +58,7 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
     }
 
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
@@ -76,7 +76,7 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
       parada.USER_UPDATE
     )
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }

@@ -29,10 +29,10 @@ export class HistProgramacaoParada {
 
   @Column('varchar2', {
     nullable: true,
-    length: 30,
-    name: 'CD_USUARIO'
+    length: 200,
+    name: 'NM_USUARIO'
   })
-  public CD_USUARIO: string | null
+  public NM_USUARIO: string | null
 
   @Column('varchar2', {
     nullable: true,

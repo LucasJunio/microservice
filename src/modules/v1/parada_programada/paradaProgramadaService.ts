@@ -130,7 +130,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return true
   }
 
-  public async back_program(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+  public async back_program(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     await getConnection().transaction(async manager => {
       const histRepository = manager.getCustomRepository(SauHistProgramacaoParadaRepository)
       const progParadaRepository = manager.getCustomRepository(SauProgramacaoParadaRepository)
@@ -171,7 +171,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
         }`
       )
 
-      await histRepository.saveHistoricoPp(historico)
+      await histRepository.saveHistoricoPp(historico, authorization)
 
       delete parada.sauProgramacaoParadaUgs
       await progParadaRepository.saveProgramacaoParada(parada)
@@ -195,7 +195,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
 
     await this.saveProgramacaoParada(parada, authorization)
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     return this.getById(parada.CD_PROGRAMACAO_PARADA)
   }
 
@@ -243,7 +243,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       `O documento foi criado com status RASCUNHO`
     )
 
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
 
     return paradaRet
   }
