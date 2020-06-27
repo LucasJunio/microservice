@@ -4,6 +4,7 @@ import { HistProgramacaoParada } from '../entities/histProgramacaoParada'
 import { ProgramacaoParada } from '../entities/programacaoParada'
 import createDate from '../util/createDate'
 import { AuthService } from '../constants/services'
+import fetch from 'node-fetch'
 
 export interface ISauHistProgramacaoParadaRepository {
   findHistoricoById(id: number): Promise<HistProgramacaoParada[]>
