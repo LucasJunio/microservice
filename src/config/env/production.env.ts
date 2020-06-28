@@ -9,5 +9,6 @@ module.exports = {
   sid: process.env.DATABASE_SID || 'OMDES',
   serverPort: 8080,
   path: 'dist',
+  logging: true,
   extension: 'js'
 }

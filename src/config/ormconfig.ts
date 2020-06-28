@@ -14,7 +14,7 @@ export async function getDbConnection(): Promise<Connection> {
     password: config.password,
     sid: config.sid,
     synchronize: false,
-    logging: true,
+    logging: config.logging,
     entities,
     migrations
   })
