@@ -46,6 +46,7 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
       parada.cdClassificacaoProgrParada = parada.cdClassifReprogrParada
       parada.cdSubclassifProgrParada = parada.cdSubclasReprogrParada
       parada.NR_REPROGRAMACOES_APROVADAS += 1
+      parada.DS_PROGRAMACAO_PARADA = parada.DS_NOVA_DESCRICAO_PROGR_PARADA
       parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
 
       parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
@@ -96,6 +97,7 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     parada.cdClassificacaoProgrParada = parada.cdClassifReprogrParada
     parada.cdSubclassifProgrParada = parada.cdSubclasReprogrParada
     parada.NR_REPROGRAMACOES_APROVADAS += 1
+    parada.DS_PROGRAMACAO_PARADA = parada.DS_NOVA_DESCRICAO_PROGR_PARADA
     parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
 
     parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(

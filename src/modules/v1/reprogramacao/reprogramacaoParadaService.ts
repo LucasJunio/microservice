@@ -36,6 +36,7 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       idStatusReprogramacao: statusReprog,
       idOrigemReprogramacao: null,
       idMotivoReprogramacao: null,
+      DS_NOVA_DESCRICAO_PROGR_PARADA: repro.descricao,
       DS_MOTIVO_REPROGRAMACAO: repro.motivo,
       cdClassifReprogrParada: repro.classificacao,
       cdSubclasReprogrParada: repro.subClassificacao,
