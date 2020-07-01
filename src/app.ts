@@ -19,27 +19,15 @@ export const Server = (async () => {
     await container.loadAsync(bindings)
     const app = new InversifyExpressServer(container)
     app.setConfig(app => {
-      app.use(
-        bodyParser.urlencoded({
-          extended: true
-        })
-      )
-      app.use(
-        fileUpload({
-          limits: { fileSize: 300 * 1024 * 1024 }
-        })
-      )
+      app.use(bodyParser.urlencoded({ extended: true }))
+      app.use(fileUpload({ limits: { fileSize: 300 * 1024 * 1024 } }))
       app.use(bodyParser.json())
       app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         logger.error(err.stack)
         next(err)
       })
       app.use(cors())
-      app.use(
-        morgan('common', {
-          stream: fs.createWriteStream('./logs/access.log', { flags: 'a' })
-        })
-      )
+      app.use(morgan('common', { stream: fs.createWriteStream('./logs/access.log', { flags: 'a' }) }))
       app.use(morgan('dev'))
     })
     const server = app.build()
