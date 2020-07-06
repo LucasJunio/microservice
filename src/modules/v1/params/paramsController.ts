@@ -13,7 +13,6 @@ export class ParamsController implements interfaces.Controller {
 
   @httpPost('/')
   public async postParams(@response() res: Response, @requestBody() params: any): Promise<Response> {
-    console.log(params)
     try {
       const data = await this.paramsService.saveParams(params)
       return Handlers.onSuccess(res, data)
