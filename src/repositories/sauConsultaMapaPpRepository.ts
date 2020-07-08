@@ -57,7 +57,9 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       'ID_ATUAL_HISTORICO',
       'DS_MOTIVO_CANCELAMENTO',
       'CD_PGI',
-      'NUM_PGI'
+      'NUM_PGI',
+      'ORDEM_USINA',
+      'REGIONAL_USINA'
     ]
     const query = this.sauConsultaMapaPpRepository.createQueryBuilder('SAU_MAPA_PARADA_PP_V').select(columns)
 
@@ -167,7 +169,11 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     }
     // query.andWhere('DT_PRORROGACAO_PGI is not null')
 
-    query.orderBy('SG_CONJUNTO_USINA').addOrderBy('SG_UNIDADE_GERADORA')
+    query
+      .orderBy('ORDEM_USINA')
+      .addOrderBy('REGIONAL_USINA')
+      .addOrderBy('SG_CONJUNTO_USINA')
+      .addOrderBy('SG_UNIDADE_GERADORA')
     const paradas = await query.getRawMany()
 
     filter.paradas = this.handleDtHistorica(paradas)

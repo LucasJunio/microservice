@@ -247,4 +247,17 @@ export class ConsultaMapaPPV {
     name: 'NUM_PGI'
   })
   public NUM_PGI: string | null
+
+  @Column('number', {
+    nullable: true,
+    name: 'ORDEM_USINA'
+  })
+  public ORDEM_USINA: number | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 30,
+    name: 'REGIONAL_USINA'
+  })
+  public REGIONAL_USINA: string | null
 }
