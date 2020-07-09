@@ -56,12 +56,18 @@ export class FluxoService implements IFluxoService {
           parada.DT_HORA_TERMINO_SERVICO = this.getForwardDate(parada.sauPgis)
           parada.DT_HORA_INICIO_SERVICO = this.getBackwardDate(parada.sauPgis)
         }
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV', 13)
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'AAPRV'
+        )
         break
       case 'AAPRV':
         parada.DT_CONCLUSAO = parada.DATE_UPDATE
         parada.CD_USUARIO_CONCLUSAO = parada.USER_UPDATE
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CONCL', 13)
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'CONCL'
+        )
         break
     }
 
@@ -99,7 +105,10 @@ export class FluxoService implements IFluxoService {
 
     switch (parada.ID_STATUS_PROGRAMACAO) {
       case 'C':
-        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'CANC'
+        )
         status = 'CANCELADO'
         msg = `O documento foi cancelado`
         parada.DT_CANCELAMENTO = new Date()
@@ -150,7 +159,10 @@ export class FluxoService implements IFluxoService {
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'AAPRV_USINA':
       case 'AAPRV_OPE':
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('RASCUNHO', 13)
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'RASCUNHO'
+        )
         historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
           parada,
           'RASCUNHO',
@@ -192,13 +204,22 @@ export class FluxoService implements IFluxoService {
   public async setStatusPp(parada: ProgramacaoParada, status: string): Promise<ProgramacaoParada> {
     switch (parada.ID_STATUS_PROGRAMACAO) {
       case 'P':
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          status
+        )
         return
       case 'R':
-        parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
+        parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          status
+        )
         return
       case 'C':
-        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(status, 13)
+        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          status
+        )
         return
     }
   }
