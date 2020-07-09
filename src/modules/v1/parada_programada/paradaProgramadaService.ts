@@ -217,6 +217,10 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     let previus
     if (!programcaoParada.CD_PROGRAMACAO_PARADA) {
       saveHistorico = true
+      programcaoParada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+        'STATUS_PROG_PARADA',
+        'RASCUNHO'
+      )
     } else {
       previus = await this.sauProgramacaoParadaRepository.getById(programcaoParada.CD_PROGRAMACAO_PARADA)
     }

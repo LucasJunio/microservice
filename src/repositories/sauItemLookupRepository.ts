@@ -20,6 +20,7 @@ export interface ISauItemLookUpRepository {
   getItemLookUpByIdLookup(ID_LOOKUP: string): Promise<TemLookup[]>
   getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<TemLookup>
   getTipoParadaByDate(dateFrom: Date, dateTo: Date): Promise<TemLookup>
+  getItemLookUpByIdLookupAndIdItemLookup(idLookup, idItemLookup): Promise<TemLookup>
 }
 
 @injectable()
@@ -50,6 +51,15 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
         ID_ITEM_LOOKUP: idItemLookup
       }
     })
+  }
+
+  public getItemLookUpByIdLookupAndIdItemLookup(idLookup, idItemLookup): Promise<TemLookup> {
+    return this.sauItemLookUpRepository
+      .createQueryBuilder('l')
+      .innerJoin('l.cdLookup', 'cdLookup')
+      .where('cdLookup.ID_LOOKUP = :idLookup', { idLookup })
+      .andWhere('l.ID_ITEM_LOOKUP = :idItemLookup', { idItemLookup })
+      .getOne()
   }
 
   public async getTipoParadaByDate(datef: Date, datet: Date): Promise<TemLookup> {
