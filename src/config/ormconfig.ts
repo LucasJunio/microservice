@@ -1,6 +1,8 @@
 import { createConnection, Connection } from 'typeorm'
 import { logger } from '../util/logger'
 const config = require('./config')()
+const oracledb = require('oracledb')
+oracledb.poolMax = 20
 
 const migrations = []
 const entities = [`${config.path}/entities/*.${config.extension}`]
