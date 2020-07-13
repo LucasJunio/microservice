@@ -122,7 +122,7 @@ export class ProgramacaoParada {
 
   @Column('varchar2', {
     nullable: true,
-    length: 500,
+    length: 4000,
     name: 'DS_SERVICO_EXECUTADO'
   })
   public DS_SERVICO_EXECUTADO: string | null
