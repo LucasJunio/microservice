@@ -63,6 +63,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
+src/config/env/development.env.ts
 .env
 .env.test
 
