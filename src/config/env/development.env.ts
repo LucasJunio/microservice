@@ -9,6 +9,6 @@ module.exports = {
   sid: process.env.DATABASE_SID || 'OMDES',
   serverPort: 3000,
   path: 'src',
-  logging: true,
+  logging: false,
   extension: 'ts'
 }

@@ -17,8 +17,8 @@ export async function getDbConnection(): Promise<Connection> {
     password: config.password,
     sid: config.sid,
     synchronize: false,
-    logging: ['error', 'schema'],
-    maxQueryExecutionTime: 10,
+    logging: config.logging,
+    maxQueryExecutionTime: 10000,
     entities,
     migrations,
     extra: {
