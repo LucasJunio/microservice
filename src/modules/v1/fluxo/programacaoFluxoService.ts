@@ -8,6 +8,7 @@ import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHis
 import { ProgramacaoParada } from '../../../entities/programacaoParada'
 import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
+import { PgiIntegrationService } from '../pgiIntegration/pgiIntegrationService'
 
 export interface IProgramacaoFluxoService {
   handleRascunho(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
@@ -31,6 +32,9 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
 
   @inject(TYPE.SauHistProgramacaoParadaRepository)
   private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
+
+  @inject(TYPE.PgiIntegrationService)
+  private readonly pgiIntegrationService: PgiIntegrationService
 
   public async handleRascunho(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     let historico = null
@@ -71,6 +75,7 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
         parada.ID_STATUS_PROGRAMACAO,
         parada.USER_UPDATE
       )
+      await this.pgiIntegrationService.handleLinkWithPgi(parada, authorization)
     } else {
       parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
         'STATUS_PROG_PARADA',
@@ -107,6 +112,8 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
     if (historico) {
       await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
+
+    await this.pgiIntegrationService.handleLinkWithPgi(parada, authorization)
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 
