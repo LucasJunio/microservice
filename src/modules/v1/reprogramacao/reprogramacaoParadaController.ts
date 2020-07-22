@@ -11,7 +11,11 @@ export class ReprogramacaoParadaController implements interfaces.Controller {
   private readonly reprogramacaoParadaService: ReprogramacaoParadaService
 
   @httpPost('/')
-  public async getUsinas(@response() res: Response, @requestBody() repro: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
+  public async getUsinas(
+    @response() res: Response,
+    @requestBody() repro: any,
+    @requestHeaders('authorization') authorization: string
+  ): Promise<Response> {
     try {
       const data = await this.reprogramacaoParadaService.saveReprogramacaoParada(repro, authorization)
       return Handlers.onSuccess(res, data)

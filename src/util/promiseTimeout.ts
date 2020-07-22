@@ -1,5 +1,4 @@
-
-const promiseTimeout = function (ms, promise): Promise<Response> {
+const promiseTimeout = (ms, promise): Promise<Response> => {
   const timeout = new Promise((resolve, reject) => {
     const id = setTimeout(() => {
       clearTimeout(id)

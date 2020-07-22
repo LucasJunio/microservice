@@ -11,6 +11,7 @@ export const TYPE = {
   CancelamentoFluxoService: Symbol.for('CancelamentoFluxoService'),
   MapaService: Symbol.for('MapaService'),
   RestricaoService: Symbol.for('RestricaoService'),
+  PgiIntegrationService: Symbol.for('PgiIntegrationService'),
 
   // Repositories
   SauUsinaRepository: Symbol.for('SauUsinaRepository'),
@@ -25,5 +26,6 @@ export const TYPE = {
   SauHistProgramacaoParadaRepository: Symbol.for('SauHistProgramacaoParadaRepository'),
   SauProgramacaoParadaUgRepository: Symbol.for('SauProgramacaoParadaUgRepository'),
   SauConsultaMapaPpRepository: Symbol.for('SauConsultaMapaPpRepository'),
+  SauConsultaMapaPgiRepository: Symbol.for('SauConsultaMapaPgiRepository'),
   RestricaoRepository: Symbol.for('RestricaoRepository')
 }

@@ -38,7 +38,10 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PI' ||
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PL'
     ) {
-      parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+      parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+        'STATUS_PROG_PARADA',
+        'CANC'
+      )
       parada.idStatus = parada.idStatusCancelamento
 
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
@@ -48,7 +51,10 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
         parada.USER_UPDATE
       )
     } else {
-      parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_OPE', 13)
+      parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+        'STATUS_PROG_PARADA',
+        'AAPRV_OPE'
+      )
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
         parada,
         'EM ANÁLISE OPE',
@@ -58,7 +64,7 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
     }
 
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
@@ -66,7 +72,10 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
   public async handleAgAprOpe(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     let historico = null
 
-    parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('CANC', 13)
+    parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+      'STATUS_PROG_PARADA',
+      'CANC'
+    )
     parada.idStatus = parada.idStatusCancelamento
 
     historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
@@ -76,7 +85,7 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
       parada.USER_UPDATE
     )
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
