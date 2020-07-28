@@ -194,7 +194,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     parada.DT_CANCELAMENTO = parada.DATE_UPDATE
     parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
     parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_USINA', 13)
-    parada.NM_AREA_ORIGEM_CANCELAMENTO = null
     parada.CD_USUARIO_CANCELAMENTO = parada.USER_UPDATE
 
     await this.saveProgramacaoParada(parada, authorization)
