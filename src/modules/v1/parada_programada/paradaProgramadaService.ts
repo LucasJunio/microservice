@@ -400,9 +400,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     variaveis.NUM_PGI = pp.sauPgis && pp.sauPgis.length ? pp.sauPgis[0].NUM_PGI : 'N/A'
     variaveis.MOTIVO_REPROG = pp.DS_MOTIVO_REPROGRAMACAO || 'N/A'
     variaveis.ORIGEM_REPROG = pp.idOrigemReprogramacao ? pp.idOrigemReprogramacao.DS_ITEM_LOOKUP : 'N/A'
-    variaveis.DES_MOTIVO = pp.idMotivoReprogramacao
-      ? pp.idMotivoReprogramacao.DS_ITEM_LOOKUP
-      : 'N/A'
+    variaveis.DES_MOTIVO = pp.idMotivoReprogramacao ? pp.idMotivoReprogramacao.DS_ITEM_LOOKUP : 'N/A'
+    variaveis.DT_INICIO_REPROG = pp.DT_HORA_INICIO_REPROGRAMACAO
       ? moment(pp.DT_HORA_INICIO_REPROGRAMACAO).format('DD/MM/YYYY HH:mm')
       : 'N/A'
     variaveis.DT_FIM_REPROG = pp.DT_HORA_TERMINO_REPROGRAMACAO
