@@ -39,7 +39,7 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
       .createQueryBuilder('l')
       .innerJoin('l.cdLookup', 'cdLookup')
       .where('cdLookup.ID_LOOKUP = :ID_LOOKUP', { ID_LOOKUP })
-      .orderBy('l.ID_ITEM_LOOKUP', 'ASC')
+      .orderBy('l.DS_ITEM_LOOKUP', 'ASC')
       .getMany()
   }
 

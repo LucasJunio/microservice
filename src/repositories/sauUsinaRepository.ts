@@ -20,6 +20,7 @@ export class SauUsinaRepository implements ISauUsinaRepository {
                          'U'            id_conjunto_usina,
                          id_tipo_usina  id_tipo_usina
                   FROM sau_usina
+                  ORDER BY sg_usina
                   `
     // WHERE fl_ativo = 1
   }
