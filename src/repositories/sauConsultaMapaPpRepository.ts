@@ -69,6 +69,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       new Brackets(qbAtu => {
         if (!isEmpty(dtInicio) && !isEmpty(dtFim)) {
           qbAtu
+            // programação
             .where("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
               dtInicio
             })
@@ -80,6 +81,29 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
               dtInicio
             })
             .andWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
+
+            // execução
+            .orWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
+
+            .orWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
+
+            // prorrogação
+            .orWhere("TO_CHAR(DT_PRORROGACAO_PGI, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_PRORROGACAO_PGI, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
               dtFim
             })
         }
