@@ -59,7 +59,9 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       'CD_PGI',
       'NUM_PGI',
       'ORDEM_USINA',
-      'REGIONAL_USINA'
+      'REGIONAL_USINA',
+      'DT_INICIO_REPROG',
+      'DT_FIM_REPROG'
     ]
     const query = this.sauConsultaMapaPpRepository.createQueryBuilder('SAU_MAPA_PARADA_PP_V').select(columns)
 
@@ -99,6 +101,17 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
               dtFim
             })
 
+            // execução sem fim
+            .orWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') is not null", {
+              dtFim
+            })
+
             // prorrogação
             .orWhere("TO_CHAR(DT_PRORROGACAO_PGI, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
               dtInicio
@@ -106,6 +119,21 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
             .andWhere("TO_CHAR(DT_PRORROGACAO_PGI, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
               dtFim
             })
+
+          // Reprogramacao
+          // .orWhere("TO_CHAR(DT_INICIO_REPROG, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+          //   dtInicio
+          // })
+          // .andWhere("TO_CHAR(DT_INICIO_REPROG, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+          //   dtFim
+          // })
+
+          // .orWhere("TO_CHAR(DT_FIM_REPROG, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+          //   dtInicio
+          // })
+          // .andWhere("TO_CHAR(DT_FIM_REPROG, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+          //   dtFim
+          // })
         }
       })
     )
