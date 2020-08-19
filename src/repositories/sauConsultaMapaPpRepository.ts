@@ -103,7 +103,10 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
             })
 
             // execução sem fim
-            .orWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') is not null")
+            .orWhere('DT_HORA_TERMINO_SERVICO is null')
+            .andWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
             .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
               dtInicio,
               now: formatDate()
