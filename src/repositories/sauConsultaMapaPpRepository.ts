@@ -4,6 +4,7 @@ import { isEmpty, reduce } from 'lodash'
 
 import { ConsultaMapaPPV } from '../entities/consultaMapaPPV'
 import ConsultaMapaVDto from '../entities/consultaMapaVDto'
+import formatDate from '../util/formatDate'
 
 export interface ISauConsultaMapaPpRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
@@ -102,14 +103,14 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
             })
 
             // execução sem fim
-            .orWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
-              dtInicio
+            .orWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') is not null")
+            .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio,
+              now: formatDate()
             })
-            .andWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
-              dtInicio
-            })
-            .andWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') is not null", {
-              dtFim
+            .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim,
+              now: formatDate()
             })
 
             // prorrogação

@@ -4,6 +4,7 @@ import { isEmpty, reduce } from 'lodash'
 
 import { ConsultaMapaPgiV } from '../entities/consultaMapaPgiV'
 import ConsultaMapaVDto from '../entities/consultaMapaVDto'
+import formatDate from '../util/formatDate'
 
 export interface ISauConsultaMapaPgiRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
@@ -86,14 +87,14 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
                 })
 
                 // execução sem fim
-                .orWhere("TO_CHAR(DT_INICIO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
-                  dtInicio
+                .orWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') is not null")
+                .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+                  dtInicio,
+                  now: formatDate()
                 })
-                .orWhere("TO_CHAR(DT_INICIO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
-                  dtInicio
-                })
-                .andWhere("TO_CHAR(DT_FIM, 'YYYY-MM-DD HH24:MI:SS') is not null", {
-                  dtFim
+                .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                  dtFim,
+                  now: formatDate()
                 })
             })
           )
