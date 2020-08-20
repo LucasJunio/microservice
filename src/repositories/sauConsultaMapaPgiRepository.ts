@@ -87,7 +87,7 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
                 })
 
                 // execução sem fim
-                .orWhere('DT_HORA_TERMINO_SERVICO is null')
+                .orWhere('DT_FIM is null')
                 .andWhere("TO_CHAR(DT_INICIO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
                   dtFim
                 })
