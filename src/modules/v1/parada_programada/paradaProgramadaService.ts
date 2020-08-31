@@ -29,6 +29,7 @@ import fetch from 'node-fetch'
 import { parseISO } from 'date-fns'
 import { get } from 'lodash'
 import { PpVariables } from '../../../util/notificationVariables'
+import { logger } from '../../../util/logger'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]>
@@ -285,7 +286,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     try {
       await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
     } catch (error) {
-      // console.log(`Erro ao invocar o fluxo: ${error}`)
+      logger.error(`Erro ao invocar o fluxo: ${error}`)
     }
   }
 
@@ -347,6 +348,15 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   public async getAllNumPgi(): Promise<Pgi[]> {
     return this.sauPgiRepository.getAllNumPgi()
+  }
+
+  public async sendFluxoPPDI(
+    actual: ProgramacaoParada,
+    previous: ProgramacaoParada,
+    authorization: string
+  ): Promise<void> {
+    await this.fluxoNotificacao(previous, actual, authorization)
+    return null
   }
 
   private async getUsuario(cdUsuario: string, authorization: string): Promise<any> {
