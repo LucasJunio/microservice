@@ -277,4 +277,18 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
       return Handlers.onError(res, error.message, error)
     }
   }
+
+  @httpPost('/fluxoPP')
+  public async fluxoPP(
+    @response() res: Response,
+    @requestHeaders('authorization') authorization: string,
+    @requestBody() body: any
+  ): Promise<Response> {
+    try {
+      await this.paradaProgramadaService.sendFluxoPPDI(body.actual, body.previous, authorization)
+      return Handlers.onSuccess(res, { fluxo: 'ok' })
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
 }
