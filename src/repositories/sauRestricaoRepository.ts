@@ -9,7 +9,6 @@ export interface ISauGrupoRestricaoRepository {
 
 @injectable()
 export class SauGrupoRestricaoRepository implements ISauGrupoRestricaoRepository {
-
   private readonly repository: Repository<GrupoRestricao>
 
   constructor() {
@@ -28,5 +27,4 @@ export class SauGrupoRestricaoRepository implements ISauGrupoRestricaoRepository
       .where('LOWER(usina.SG_USINA) = LOWER(:CD_USINA)', { CD_USINA: cdUsina })
       .getMany()
   }
-
 }

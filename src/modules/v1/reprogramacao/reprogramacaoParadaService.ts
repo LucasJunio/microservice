@@ -36,11 +36,13 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       idStatusReprogramacao: statusReprog,
       idOrigemReprogramacao: null,
       idMotivoReprogramacao: null,
+      DS_NOVA_DESCRICAO_PROGR_PARADA: repro.descricao,
       DS_MOTIVO_REPROGRAMACAO: repro.motivo,
       cdClassifReprogrParada: repro.classificacao,
       cdSubclasReprogrParada: repro.subClassificacao,
       DS_OBSERVACAO_REPROGR_PARADA: null,
       NM_AREA_ORIGEM_REPROGRAMACAO: null,
+      USER_UPDATE: repro.user
     }
 
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
@@ -51,7 +53,7 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       `A reprogramação foi criada no status EM ANÁLISE USINA`
     )
 
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     await this.sauProgramacaoParadaRepository.saveProgramacaoParada(newParada)
 
     await this.paradaProgramadaService.fluxoNotificacao(parada, newParada, authorization)

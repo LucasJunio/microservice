@@ -39,14 +39,21 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PI' ||
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PL'
     ) {
-      parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
+      parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+        'STATUS_PROG_PARADA',
+        'APRV'
+      )
 
       parada.DT_HORA_INICIO_PROGRAMACAO = parada.DT_HORA_INICIO_REPROGRAMACAO
       parada.DT_HORA_TERMINO_PROGRAMACAO = parada.DT_HORA_TERMINO_REPROGRAMACAO
       parada.cdClassificacaoProgrParada = parada.cdClassifReprogrParada
       parada.cdSubclassifProgrParada = parada.cdSubclasReprogrParada
       parada.NR_REPROGRAMACOES_APROVADAS += 1
-      parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
+      parada.DS_PROGRAMACAO_PARADA = parada.DS_NOVA_DESCRICAO_PROGR_PARADA
+      parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+        'SITUACAO_PROG_PARADA',
+        'R'
+      )
 
       parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
         parseISO(parada.DT_CRIACAO_PARADA.toString()),
@@ -71,7 +78,10 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
           `Motivo: ${parada.DS_MOTIVO_REPROGRAMACAO}`
       )
     } else {
-      parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_OPE', 13)
+      parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+        'STATUS_PROG_PARADA',
+        'AAPRV_OPE'
+      )
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
         parada,
         'EM ANÁLISE OPE',
@@ -81,7 +91,7 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     }
 
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
@@ -89,14 +99,21 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
   public async handleAgAprOpe(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     let historico = null
 
-    parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
+    parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+      'STATUS_PROG_PARADA',
+      'APRV'
+    )
 
     parada.DT_HORA_INICIO_PROGRAMACAO = parada.DT_HORA_INICIO_REPROGRAMACAO
     parada.DT_HORA_TERMINO_PROGRAMACAO = parada.DT_HORA_TERMINO_REPROGRAMACAO
     parada.cdClassificacaoProgrParada = parada.cdClassifReprogrParada
     parada.cdSubclassifProgrParada = parada.cdSubclasReprogrParada
     parada.NR_REPROGRAMACOES_APROVADAS += 1
-    parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('R', 12)
+    parada.DS_PROGRAMACAO_PARADA = parada.DS_NOVA_DESCRICAO_PROGR_PARADA
+    parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+      'SITUACAO_PROG_PARADA',
+      'R'
+    )
 
     parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
       parseISO(parada.DT_CRIACAO_PARADA.toString()),
@@ -122,14 +139,17 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     )
 
     if (historico) {
-      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico)
+      await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 
   public async handleAprv(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     parada.ID_STATUS_PROGRAMACAO = 'E'
-    parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('EXECUCAO', 13)
+    parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+      'STATUS_PROG_PARADA',
+      'EXECUCAO'
+    )
 
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }

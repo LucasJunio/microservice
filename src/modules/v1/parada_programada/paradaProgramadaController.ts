@@ -42,7 +42,11 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpPost('/cancel')
-  public async getUsinas(@response() res: Response, @requestBody() parada: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
+  public async getUsinas(
+    @response() res: Response,
+    @requestBody() parada: any,
+    @requestHeaders('authorization') authorization: string
+  ): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.cancel(parada, authorization)
       return Handlers.onSuccess(res, data)
@@ -52,9 +56,13 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpPost('/back_program')
-  public async back_program(@response() res: Response, @requestBody() parada: any): Promise<Response> {
+  public async back_program(
+    @response() res: Response,
+    @requestBody() parada: any,
+    @requestHeaders('authorization') authorization: string
+  ): Promise<Response> {
     try {
-      const data = await this.paradaProgramadaService.back_program(parada)
+      const data = await this.paradaProgramadaService.back_program(parada, authorization)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -79,6 +87,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   public async getStatus(@response() res: Response): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('STATUS_PROG_PARADA')
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpGet('/status_di')
+  public async getStatusDi(@response() res: Response): Promise<Response> {
+    try {
+      const data = await this.paradaProgramadaService.getItemLookUpByIdLookup('STATUS_PGI')
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
@@ -176,7 +194,11 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
   }
 
   @httpPost('/')
-  public async saveProgramacaoParada(@response() res: Response, @requestBody() parada: any, @requestHeaders('authorization') authorization: string): Promise<Response> {
+  public async saveProgramacaoParada(
+    @response() res: Response,
+    @requestBody() parada: any,
+    @requestHeaders('authorization') authorization: string
+  ): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
       return Handlers.onSuccess(res, data)
@@ -251,6 +273,20 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     try {
       const hist = await this.paradaProgramadaService.getHistoricoById(numParada)
       return Handlers.onSuccess(res, hist)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpPost('/fluxoPP')
+  public async fluxoPP(
+    @response() res: Response,
+    @requestHeaders('authorization') authorization: string,
+    @requestBody() body: any
+  ): Promise<Response> {
+    try {
+      await this.paradaProgramadaService.sendFluxoPPDI(body.actual, body.previous, authorization)
+      return Handlers.onSuccess(res, { fluxo: 'ok' })
     } catch (error) {
       return Handlers.onError(res, error.message, error)
     }

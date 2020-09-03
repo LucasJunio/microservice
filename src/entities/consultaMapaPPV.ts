@@ -226,4 +226,38 @@ export class ConsultaMapaPPV {
     name: 'ID_ATUAL_HISTORICO'
   })
   public ID_ATUAL_HISTORICO: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 70,
+    name: 'DS_MOTIVO_CANCELAMENTO'
+  })
+  public DS_MOTIVO_CANCELAMENTO: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 4000,
+    name: 'CD_PGI'
+  })
+  public CD_PGI: string | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 4000,
+    name: 'NUM_PGI'
+  })
+  public NUM_PGI: string | null
+
+  @Column('number', {
+    nullable: true,
+    name: 'ORDEM_USINA'
+  })
+  public ORDEM_USINA: number | null
+
+  @Column('varchar2', {
+    nullable: true,
+    length: 30,
+    name: 'REGIONAL_USINA'
+  })
+  public REGIONAL_USINA: string | null
 }
