@@ -15,6 +15,7 @@ import {
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
 import Handlers from '../../../core/handlers'
+import { CheckVersionPP } from '../../../middleware/versionMiddleware'
 
 @controller('/api/v1/parada_programada')
 export class ParadaProgramadaServiceController implements interfaces.Controller {
@@ -193,7 +194,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpPost('/')
+  @httpPost('/', CheckVersionPP)
   public async saveProgramacaoParada(
     @response() res: Response,
     @requestBody() parada: any,
