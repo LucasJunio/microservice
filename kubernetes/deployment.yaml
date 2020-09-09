@@ -73,9 +73,9 @@ spec:
             ENVIRONMENT: __NODE__
           resources:
             limits:
-              cpu: 350m
+              cpu: 400m
             requests:
-              cpu: 500m
+              cpu: 400m
 
 ---
 # SERVICE
