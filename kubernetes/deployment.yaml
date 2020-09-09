@@ -71,6 +71,11 @@ spec:
               protocol: TCP
           nodeSelector:
             ENVIRONMENT: __NODE__
+          resources:
+            limits:
+              cpu: 350m
+            requests:
+              cpu: 500m
 
 ---
 # SERVICE
