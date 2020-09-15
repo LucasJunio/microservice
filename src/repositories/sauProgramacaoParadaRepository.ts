@@ -45,6 +45,7 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
       const idParada = await this.getParadaSeq()
       programcaoParada.CD_PROGRAMACAO_PARADA = idParada[0].ID
     }
+    programcaoParada.VERSION += 1
     return this.sauProgramacaoParadaRepository.save(programcaoParada)
   }
 
@@ -139,5 +140,10 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     }
 
     return pps
+  }
+
+  public async getPpVersion(cdPp: number): Promise<number> {
+    const pp = await this.sauProgramacaoParadaRepository.findOne(cdPp, { select: ['VERSION'] })
+    return pp.VERSION
   }
 }
