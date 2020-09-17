@@ -42,7 +42,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpPost('/cancel')
+  @httpPost('/cancel', CheckVersionPP)
   public async getUsinas(
     @response() res: Response,
     @requestBody() parada: any,
@@ -174,7 +174,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpDelete('/:id')
+  @httpDelete('/:id', CheckVersionPP)
   public async deleteParadaById(@response() res: Response, @requestParam('id') cdPp: number): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.deleteParadaById(cdPp)
