@@ -292,4 +292,14 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
       return Handlers.onError(res, error.message, error)
     }
   }
+
+  @httpGet('/version')
+  public async getVersion(@response() res: Response, @queryParam('cdPp') cdPp: number): Promise<Response> {
+    try {
+      const response = await this.paradaProgramadaService.getPgiVersion(cdPp)
+      return Handlers.onSuccess(res, response)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
 }
