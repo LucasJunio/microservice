@@ -42,7 +42,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpPost('/cancel')
+  @httpPost('/cancel', CheckVersionPP)
   public async getUsinas(
     @response() res: Response,
     @requestBody() parada: any,
@@ -174,7 +174,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpDelete('/:id')
+  @httpDelete('/:id', CheckVersionPP)
   public async deleteParadaById(@response() res: Response, @requestParam('id') cdPp: number): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.deleteParadaById(cdPp)
@@ -288,6 +288,16 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     try {
       await this.paradaProgramadaService.sendFluxoPPDI(body.actual, body.previous, authorization)
       return Handlers.onSuccess(res, { fluxo: 'ok' })
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpGet('/version')
+  public async getVersion(@response() res: Response, @queryParam('cdPp') cdPp: number): Promise<Response> {
+    try {
+      const response = await this.paradaProgramadaService.getPgiVersion(cdPp)
+      return Handlers.onSuccess(res, response)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
     }

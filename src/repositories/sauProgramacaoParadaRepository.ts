@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { Repository, getRepository, EntityRepository } from 'typeorm'
+import { Repository, getRepository, EntityRepository, UpdateResult } from 'typeorm'
 import { ProgramacaoParada } from '../entities/programacaoParada'
 import { Usina } from '../entities/usina'
 
@@ -47,6 +47,10 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
     }
     programcaoParada.VERSION += 1
     return this.sauProgramacaoParadaRepository.save(programcaoParada)
+  }
+
+  public async addVersion(cdPP: number, version: number): Promise<UpdateResult> {
+    return this.sauProgramacaoParadaRepository.update(cdPP, { VERSION: version += 1 })
   }
 
   public getAll(): Promise<ProgramacaoParada[]> {

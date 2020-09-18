@@ -359,6 +359,10 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return null
   }
 
+  public getPgiVersion(cdPp: number): Promise<number> {
+    return this.sauProgramacaoParadaRepository.getPpVersion(cdPp)
+  }
+
   private async getUsuario(cdUsuario: string, authorization: string): Promise<any> {
     if (!cdUsuario) {
       return null

@@ -13,11 +13,31 @@ const CheckVersionPP = async (req: Request, res: Response, next: NextFunction): 
 
   if (CD_PROGRAMACAO_PARADA && VERSION < savedPpVersion) {
     const error = new Error('Document VERSION is different')
-    Handlers.onBadRequest(res, error.message)
+    Handlers.conflict(res, error.message)
     return
   }
 
   next()
 }
 
-export { CheckVersionPP }
+const CheckVersionPPReproExclu = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  const { cdPp, version } = req.body
+  let savedPpVersion = -1
+  const repository = new SauProgramacaoParadaRepository()
+
+  if (cdPp) {
+    savedPpVersion = await repository.getPpVersion(cdPp)
+  }
+
+  if (cdPp && version < savedPpVersion) {
+    const error = new Error('Document VERSION is different')
+    Handlers.conflict(res, error.message)
+    return
+  }
+
+  await repository.addVersion(cdPp, version)
+
+  next()
+}
+
+export { CheckVersionPP, CheckVersionPPReproExclu }
