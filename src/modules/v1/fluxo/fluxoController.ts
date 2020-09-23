@@ -12,15 +12,12 @@ import {
 import { TYPE } from '../../../constants/types'
 import Handlers from '../../../core/handlers'
 import { FluxoService } from './fluxoService'
-import { ProgramacaoFluxoService } from './programacaoFluxoService'
+import { CheckVersionPP } from '../../../middleware/versionMiddleware'
 
 @controller('/api/v1/fluxo')
 export class FluxoController implements interfaces.Controller {
   @inject(TYPE.FluxoService)
   private readonly fluxoService: FluxoService
-
-  // @inject(TYPE.ProgramacaoFluxoService)
-  // private readonly programacaoFluxoService: ProgramacaoFluxoService
 
   @httpPost('/')
   public async getUsinas(@response() res: Response): Promise<Response> {
@@ -30,7 +27,7 @@ export class FluxoController implements interfaces.Controller {
       return Handlers.onError(res, error.message, error)
     }
   }
-  @httpPut('/exec/next_level')
+  @httpPut('/exec/next_level', CheckVersionPP)
   public async execNextLevel(
     @response() res: Response,
     @requestBody() parada: any,
@@ -44,7 +41,7 @@ export class FluxoController implements interfaces.Controller {
     }
   }
 
-  @httpPut('/prog/next_level')
+  @httpPut('/prog/next_level', CheckVersionPP)
   public async nextLevel(
     @response() res: Response,
     @requestBody() parada: any,
@@ -58,7 +55,7 @@ export class FluxoController implements interfaces.Controller {
     }
   }
 
-  @httpPut('/repr/next_level')
+  @httpPut('/repr/next_level', CheckVersionPP)
   public async reprNextLevel(
     @response() res: Response,
     @requestBody() parada: any,
@@ -72,7 +69,7 @@ export class FluxoController implements interfaces.Controller {
     }
   }
 
-  @httpPut('/prog/prev_level')
+  @httpPut('/prog/prev_level', CheckVersionPP)
   public async prevLevel(
     @response() res: Response,
     @requestBody() parada: any,

@@ -15,6 +15,7 @@ import {
 import { TYPE } from '../../../constants/types'
 import { ParadaProgramadaService } from './paradaProgramadaService'
 import Handlers from '../../../core/handlers'
+import { CheckVersionPP } from '../../../middleware/versionMiddleware'
 
 @controller('/api/v1/parada_programada')
 export class ParadaProgramadaServiceController implements interfaces.Controller {
@@ -41,7 +42,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpPost('/cancel')
+  @httpPost('/cancel', CheckVersionPP)
   public async getUsinas(
     @response() res: Response,
     @requestBody() parada: any,
@@ -173,7 +174,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpDelete('/:id')
+  @httpDelete('/:id', CheckVersionPP)
   public async deleteParadaById(@response() res: Response, @requestParam('id') cdPp: number): Promise<Response> {
     try {
       const data = await this.paradaProgramadaService.deleteParadaById(cdPp)
@@ -193,7 +194,7 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     }
   }
 
-  @httpPost('/')
+  @httpPost('/', CheckVersionPP)
   public async saveProgramacaoParada(
     @response() res: Response,
     @requestBody() parada: any,
@@ -273,6 +274,30 @@ export class ParadaProgramadaServiceController implements interfaces.Controller 
     try {
       const hist = await this.paradaProgramadaService.getHistoricoById(numParada)
       return Handlers.onSuccess(res, hist)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpPost('/fluxoPP')
+  public async fluxoPP(
+    @response() res: Response,
+    @requestHeaders('authorization') authorization: string,
+    @requestBody() body: any
+  ): Promise<Response> {
+    try {
+      await this.paradaProgramadaService.sendFluxoPPDI(body.actual, body.previous, authorization)
+      return Handlers.onSuccess(res, { fluxo: 'ok' })
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
+  @httpGet('/version')
+  public async getVersion(@response() res: Response, @queryParam('cdPp') cdPp: number): Promise<Response> {
+    try {
+      const response = await this.paradaProgramadaService.getPgiVersion(cdPp)
+      return Handlers.onSuccess(res, response)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
     }

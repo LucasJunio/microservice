@@ -3,6 +3,7 @@ import { inject } from 'inversify'
 import { controller, response, interfaces, httpPost, requestBody, requestHeaders } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import Handlers from '../../../core/handlers'
+import { CheckVersionPPReproExclu } from '../../../middleware/versionMiddleware'
 import { ReprogramacaoParadaService } from './reprogramacaoParadaService'
 
 @controller('/api/v1/reprogramacao')
@@ -10,7 +11,7 @@ export class ReprogramacaoParadaController implements interfaces.Controller {
   @inject(TYPE.ReprogramacaoParadaService)
   private readonly reprogramacaoParadaService: ReprogramacaoParadaService
 
-  @httpPost('/')
+  @httpPost('/', CheckVersionPPReproExclu)
   public async getUsinas(
     @response() res: Response,
     @requestBody() repro: any,
