@@ -4,6 +4,7 @@ import { isEmpty, reduce } from 'lodash'
 
 import { ConsultaMapaPPV } from '../entities/consultaMapaPPV'
 import ConsultaMapaVDto from '../entities/consultaMapaVDto'
+import formatDate from '../util/formatDate'
 
 export interface ISauConsultaMapaPpRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
@@ -59,7 +60,9 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       'CD_PGI',
       'NUM_PGI',
       'ORDEM_USINA',
-      'REGIONAL_USINA'
+      'REGIONAL_USINA',
+      'DT_INICIO_REPROG',
+      'DT_FIM_REPROG'
     ]
     const query = this.sauConsultaMapaPpRepository.createQueryBuilder('SAU_MAPA_PARADA_PP_V').select(columns)
 
@@ -69,6 +72,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       new Brackets(qbAtu => {
         if (!isEmpty(dtInicio) && !isEmpty(dtFim)) {
           qbAtu
+            // programação
             .where("TO_CHAR(DT_HORA_INICIO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
               dtInicio
             })
@@ -82,6 +86,58 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
             .andWhere("TO_CHAR(DT_HORA_TERMINO_PROGRAMACAO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
               dtFim
             })
+
+            // execução
+            .orWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
+
+            .orWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_HORA_TERMINO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
+
+            // execução sem fim
+            .orWhere('DT_HORA_TERMINO_SERVICO is null')
+            .andWhere("TO_CHAR(DT_HORA_INICIO_SERVICO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
+            .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio,
+              now: formatDate()
+            })
+            .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim,
+              now: formatDate()
+            })
+
+            // prorrogação
+            .orWhere("TO_CHAR(DT_PRORROGACAO_PGI, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+              dtInicio
+            })
+            .andWhere("TO_CHAR(DT_PRORROGACAO_PGI, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+              dtFim
+            })
+
+          // Reprogramacao
+          // .orWhere("TO_CHAR(DT_INICIO_REPROG, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+          //   dtInicio
+          // })
+          // .andWhere("TO_CHAR(DT_INICIO_REPROG, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+          //   dtFim
+          // })
+
+          // .orWhere("TO_CHAR(DT_FIM_REPROG, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+          //   dtInicio
+          // })
+          // .andWhere("TO_CHAR(DT_FIM_REPROG, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+          //   dtFim
+          // })
         }
       })
     )

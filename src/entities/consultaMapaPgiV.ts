@@ -175,4 +175,16 @@ export class ConsultaMapaPgiV {
     name: 'REGIONAL_USINA'
   })
   public REGIONAL_USINA: string | null
+
+  @Column('timestamp with local time zone', {
+    nullable: true,
+    name: 'DT_INICIO_REPROG'
+  })
+  public DT_INICIO_REPROG: Date | null
+
+  @Column('timestamp with local time zone', {
+    nullable: true,
+    name: 'DT_FIM_REPROG'
+  })
+  public DT_FIM_REPROG: Date | null
 }

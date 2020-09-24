@@ -4,6 +4,7 @@ import { isEmpty, reduce } from 'lodash'
 
 import { ConsultaMapaPgiV } from '../entities/consultaMapaPgiV'
 import ConsultaMapaVDto from '../entities/consultaMapaVDto'
+import formatDate from '../util/formatDate'
 
 export interface ISauConsultaMapaPgiRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
@@ -45,7 +46,9 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
       'NM_OPERADOR_USINA_FIM',
       'NUM_DOC_EXTERNO',
       'ORDEM_USINA',
-      'REGIONAL_USINA'
+      'REGIONAL_USINA',
+      'DT_INICIO_REPROG',
+      'DT_FIM_REPROG'
     ]
     const query = this.sauConsultaMapaPgiRepository.createQueryBuilder('SAU_MAPA_PGI_V').select(columns)
 
@@ -67,6 +70,34 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
                 })
                 .andWhere("TO_CHAR(DT_FIM_PREVISTO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
                   dtFim
+                })
+                // execução
+                .orWhere("TO_CHAR(DT_INICIO, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+                  dtInicio
+                })
+                .andWhere("TO_CHAR(DT_INICIO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                  dtFim
+                })
+
+                .orWhere("TO_CHAR(DT_FIM, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+                  dtInicio
+                })
+                .andWhere("TO_CHAR(DT_FIM, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                  dtFim
+                })
+
+                // execução sem fim
+                .orWhere('DT_FIM is null')
+                .andWhere("TO_CHAR(DT_INICIO, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                  dtFim
+                })
+                .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') >= :dtInicio", {
+                  dtInicio,
+                  now: formatDate()
+                })
+                .andWhere("TO_CHAR(:now, 'YYYY-MM-DD HH24:MI:SS') <= :dtFim", {
+                  dtFim,
+                  now: formatDate()
                 })
             })
           )

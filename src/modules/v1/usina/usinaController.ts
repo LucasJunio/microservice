@@ -19,4 +19,14 @@ export class UsinaController implements interfaces.Controller {
       return Handlers.onError(res, error.message, error)
     }
   }
+
+  @httpGet('/all')
+  public async getUsinasAll(@response() res: Response): Promise<Response> {
+    try {
+      const data = await this.usinaService.getUsinasAll()
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
 }

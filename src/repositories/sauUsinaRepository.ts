@@ -1,10 +1,12 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
 import { Usina } from '../entities/usina'
+import { TemLookup } from '../entities/temLookup'
 
 export interface ISauUsinaRepository {
   getUsinas(): Promise<Usina[]>
   getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina>
+  getUsinasAll(itemLookUp: TemLookup): Promise<Usina[]>
 }
 
 @injectable()
@@ -27,16 +29,27 @@ export class SauUsinaRepository implements ISauUsinaRepository {
 
   public getUsinas(): Promise<Usina[]> {
     return this.sauUsinaRepository.query(this.query)
+  }
 
-    // return this.sauUsinaRepository.find({
-    //   select: ['SG_USINA', 'CD_USINA', 'ID_TIPO_USINA'],
-    //   where: {
-    //     FL_ATIVO: 1
-    //   },
-    //   order: {
-    //     SG_USINA: 'ASC'
-    //   }
-    // })
+  public getUsinasAll(itemLookUp): Promise<Usina[]> {
+    const { CD_ITEM_LOOKUP } = itemLookUp
+    const query = `
+          SELECT  su.sg_usina       sg_conjunto_usina,
+                  su.cd_usina       cd_conjunto_usina,
+                  'U'               id_conjunto_usina,
+                  su.id_tipo_usina  id_tipo_usina
+          FROM sau_usina su
+            WHERE su.fl_ativo = 1
+        UNION
+          SELECT scu.sg_conjunto  sg_conjunto_usina,
+                 scu.cd_conjunto  cd_conjunto_usina,
+                 'C'              id_conjunto_usina,
+                 ${CD_ITEM_LOOKUP}             id_tipo_usina
+          FROM sau_conjunto_usina scu
+            WHERE scu.fl_ativo = 1
+          `
+
+    return this.sauUsinaRepository.query(query)
   }
 
   public getUsinaByCdAndId(cdConjuntoUsina: number, idConjuntoUsina: string): Promise<Usina> {
