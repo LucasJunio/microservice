@@ -21,6 +21,8 @@ class ConsultaMapaVDto {
   public dtFim: Date
   public usinas: any[]
   public tipoUsinas: TemLookup[]
+
+  public usinasToShow: any[]
 }
 
 export default ConsultaMapaVDto
