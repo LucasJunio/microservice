@@ -19,7 +19,7 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
   }
 
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
-    const { dtFim, dtInicio, usinas, tipoUsinas, statusDi, diType, isDiSemParada } = filter
+    const { dtFim, dtInicio, usinas, tipoUsinas, statusDi, diType, isDiSemParada, usinasToShow } = filter
     const columns = [
       'CD_PGI',
       'ID_CONJUNTO_USINA',
@@ -110,6 +110,9 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
         if (!isEmpty(usinas)) {
           const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
           qbAtu.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
+        } else {
+          const filterUsinas = reduce(usinasToShow, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
+          query.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
         }
 
         if (!isEmpty(tipoUsinas)) {

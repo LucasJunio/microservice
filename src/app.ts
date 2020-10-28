@@ -27,7 +27,12 @@ export const Server = (async () => {
         next(err)
       })
       app.use(cors())
-      app.use(morgan('common', { stream: fs.createWriteStream('./logs/access.log', { flags: 'a' }) }))
+      app.use(
+        morgan('common', {
+          stream: fs.createWriteStream('./logs/access.log', { flags: 'a' }),
+          skip: (req: Request, res: Response) => res.statusCode < 400
+        })
+      )
       app.use(
         morgan('dev', {
           skip: (req: Request, res: Response) => res.statusCode < 400

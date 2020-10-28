@@ -19,7 +19,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
   }
 
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
-    const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas } = filter
+    const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas, usinasToShow } = filter
 
     const columns = [
       'CD_CONJUNTO_USINA',
@@ -144,6 +144,9 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
 
     if (!isEmpty(usinas)) {
       const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
+      query.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
+    } else {
+      const filterUsinas = reduce(usinasToShow, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
       query.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
     }
 
