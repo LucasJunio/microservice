@@ -3,12 +3,13 @@ import { inject, injectable } from 'inversify'
 import { TYPE } from '../../../constants/types'
 import { SauConsultaMapaPpRepository } from '../../../repositories/sauConsultaMapaPpRepository'
 import { SauConsultaMapaPgiRepository } from '../../../repositories/sauConsultaMapaPgiRepository'
+import { SauUsinaRepository } from '../../../repositories/sauUsinaRepository'
 import ConsultaMapaVDto from '../../../entities/consultaMapaVDto'
 
 export interface IMapaService {
-  getParadas(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
-  getDi(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
-  getParadasDi(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
+  getParadas(filterDto: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
+  getDi(filterDto: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
+  getParadasDi(filterDto: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
 }
 
 @injectable()
@@ -19,16 +20,19 @@ export class MapaService implements IMapaService {
   @inject(TYPE.SauConsultaMapaPgiRepository)
   private readonly sauConsultaMapaPgiRepository: SauConsultaMapaPgiRepository
 
-  public async getParadas(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
-    return this.sauConsultaMapaPpRepository.getAll(filter)
+  @inject(TYPE.SauUsinaRepository)
+  private readonly sauUsinaRepository: SauUsinaRepository
+
+  public async getParadas(filterDto: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
+    return this.sauConsultaMapaPpRepository.getAll(filterDto)
   }
 
-  public async getDi(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
-    return this.sauConsultaMapaPgiRepository.getAll(filter)
+  public async getDi(filterDto: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
+    return this.sauConsultaMapaPgiRepository.getAll(filterDto)
   }
 
-  public async getParadasDi(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
-    filter = await this.sauConsultaMapaPgiRepository.getAll(filter)
-    return this.sauConsultaMapaPpRepository.getAll(filter)
+  public async getParadasDi(filterDto: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
+    filterDto = await this.sauConsultaMapaPgiRepository.getAll(filterDto)
+    return this.sauConsultaMapaPpRepository.getAll(filterDto)
   }
 }

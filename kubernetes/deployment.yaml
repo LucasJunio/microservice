@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: __APP_NAME__
-          image: "__DOCKER_SERVER__/imagens/__DOCKER_IMAGE__:__branchName__-__buildNumber__"
+          image: '__DOCKER_SERVER__/imagens/__DOCKER_IMAGE__:__branchName__-__buildNumber__'
           env:
             - name: SAU_GATEWAY_HOST
               valueFrom:
@@ -71,6 +71,11 @@ spec:
               protocol: TCP
           nodeSelector:
             ENVIRONMENT: __NODE__
+          resources:
+            limits:
+              cpu: 400m
+            requests:
+              cpu: 400m
 
 ---
 # SERVICE
