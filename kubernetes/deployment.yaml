@@ -73,7 +73,7 @@ spec:
             limits:
               cpu: 400m
             requests:
-              cpu: 400m
+              cpu: 100m
       nodeSelector:
         ENVIRONMENT: __NODE__
 
