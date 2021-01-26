@@ -1,4 +1,5 @@
 import { injectable } from 'inversify'
+import { isEmpty } from 'lodash'
 import { Repository, getRepository, EntityRepository, UpdateResult } from 'typeorm'
 import { ProgramacaoParada } from '../entities/programacaoParada'
 import { Usina } from '../entities/usina'
@@ -78,6 +79,12 @@ export class SauProgramacaoParadaRepository implements ISauProgramacaoParadaRepo
         alias: 'p'
       }
     })
+
+    if (isEmpty(pp.sauPgis)) {
+      pp.FL_VINCULO_DI = 0
+      await this.sauProgramacaoParadaRepository.save(pp)
+    }
+
     const usina = await this.getUsinaByCdAndId(pp.CD_CONJUNTO_USINA, pp.ID_CONJUNTO_USINA)
     pp.usina = usina[0]
 

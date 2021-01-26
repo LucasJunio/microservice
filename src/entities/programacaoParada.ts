@@ -359,4 +359,13 @@ export class ProgramacaoParada {
     (SAU_PROGRAMACAO_PARADA_UG: ProgramacaoParadaUG) => SAU_PROGRAMACAO_PARADA_UG.cdProgramacaoParada
   )
   public sauProgramacaoParadaUgs: ProgramacaoParadaUG[]
+
+  @Column('number', {
+    nullable: true,
+    default: () => '0',
+    precision: 1,
+    scale: 0,
+    name: 'FL_VINCULO_DI'
+  })
+  public FL_VINCULO_DI: number | null
 }
