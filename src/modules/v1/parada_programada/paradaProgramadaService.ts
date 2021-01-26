@@ -132,58 +132,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return true
   }
 
-  public async back_program(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
-    const previus = await this.getById(parada.CD_PROGRAMACAO_PARADA)
-    await getConnection().transaction(async manager => {
-      const histRepository = manager.getCustomRepository(SauHistProgramacaoParadaRepository)
-      const progParadaRepository = manager.getCustomRepository(SauProgramacaoParadaRepository)
-
-      const statusAprov = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
-
-      const from = parada.ID_STATUS_PROGRAMACAO
-
-      if (parada.ID_STATUS_PROGRAMACAO === 'C') {
-        if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
-          parada.ID_STATUS_PROGRAMACAO = 'R'
-          parada.idStatusReprogramacao = statusAprov
-        } else {
-          parada.ID_STATUS_PROGRAMACAO = 'P'
-          parada.idStatus = statusAprov
-          parada.idStatusReprogramacao = null
-        }
-      }
-
-      if (parada.ID_STATUS_PROGRAMACAO === 'R') {
-        if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
-          parada.ID_STATUS_PROGRAMACAO = 'R'
-          parada.idStatusReprogramacao = statusAprov
-        } else {
-          parada.ID_STATUS_PROGRAMACAO = 'P'
-          parada.idStatus = statusAprov
-          parada.idStatusReprogramacao = null
-        }
-      }
-
-      const historico = histRepository.createDefaultHistorico(
-        parada,
-        'DEVOLVIDO',
-        from,
-        parada.USER_UPDATE,
-        `O documento foi devolvido para o fluxo de ${
-          parada.ID_STATUS_PROGRAMACAO === 'P' ? 'PROGRAMAÇÃO' : 'REPROGRAMAÇÃO'
-        }`
-      )
-
-      await histRepository.saveHistoricoPp(historico, authorization)
-
-      delete parada.sauProgramacaoParadaUgs
-      await progParadaRepository.saveProgramacaoParada(parada)
-    })
-    const paradaRet = await this.getById(parada.CD_PROGRAMACAO_PARADA)
-    this.fluxoNotificacaoCancRepr(previus, paradaRet, authorization)
-    return paradaRet
-  }
-
   public async cancel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     parada.ID_STATUS_PROGRAMACAO = 'C'
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(

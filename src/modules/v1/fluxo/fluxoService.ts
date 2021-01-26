@@ -222,4 +222,56 @@ export class FluxoService implements IFluxoService {
         return
     }
   }
+
+  public async back_program(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
+    const previus = await this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
+
+    const statusAprov = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+      'STATUS_PROG_PARADA',
+      'APRV'
+    )
+
+    const from = parada.ID_STATUS_PROGRAMACAO
+
+    if (parada.ID_STATUS_PROGRAMACAO === 'C') {
+      if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
+        parada.ID_STATUS_PROGRAMACAO = 'R'
+        parada.idStatusReprogramacao = statusAprov
+      } else {
+        parada.ID_STATUS_PROGRAMACAO = 'P'
+        parada.idStatus = statusAprov
+        parada.idStatusReprogramacao = null
+      }
+    }
+
+    if (parada.ID_STATUS_PROGRAMACAO === 'R') {
+      if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
+        parada.ID_STATUS_PROGRAMACAO = 'R'
+        parada.idStatusReprogramacao = statusAprov
+      } else {
+        parada.ID_STATUS_PROGRAMACAO = 'P'
+        parada.idStatus = statusAprov
+        parada.idStatusReprogramacao = null
+      }
+    }
+
+    const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+      parada,
+      'DEVOLVIDO',
+      from,
+      parada.USER_UPDATE,
+      `O documento foi devolvido para o fluxo de ${
+        parada.ID_STATUS_PROGRAMACAO === 'P' ? 'PROGRAMAÇÃO' : 'REPROGRAMAÇÃO'
+      }`
+    )
+
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
+
+    delete parada.sauProgramacaoParadaUgs
+    await this.sauProgramacaoParadaRepository.saveProgramacaoParada(parada)
+    const paradaRet = await this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
+
+    this.paradaProgramadaService.fluxoNotificacaoCancRepr(previus, paradaRet, authorization)
+    return paradaRet
+  }
 }
