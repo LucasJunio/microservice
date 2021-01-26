@@ -4,6 +4,7 @@ export const TYPE = {
   UsinaService: Symbol.for('UsinaService'),
   UnidadeGeradoraService: Symbol.for('UnidadeGeradoraService'),
   FluxoService: Symbol.for('FluxoService'),
+  ExecucaoFluxoService: Symbol.for('ExecucaoFluxoService'),
   ReprogramacaoParadaService: Symbol.for('ReprogramacaoParadaService'),
   ParamsService: Symbol.for('ParamsService'),
   ProgramacaoFluxoService: Symbol.for('ProgramacaoFluxoService'),

@@ -28,9 +28,19 @@ import {
 } from './modules/v1/parada_programada/paradaProgramadaService'
 import { ParamsService, IParamsService } from './modules/v1/params/paramsService'
 
-import { CancelamentoFluxoService, ICancelamentoFluxoService } from './modules/v1/fluxo/cancelamentoFluxoService'
-import { ReprogramacaoFluxoService, IReprogramacaoFluxoService } from './modules/v1/fluxo/reprogramacaoFluxoService'
-import { ProgramacaoFluxoService, IProgramacaoFluxoService } from './modules/v1/fluxo/programacaoFluxoService'
+import {
+  CancelamentoFluxoService,
+  ICancelamentoFluxoService
+} from './modules/v1/fluxo/fluxoStatus/cancelamentoFluxoService'
+import { ExecucaoFluxoService, IExecucaoFluxoService } from './modules/v1/fluxo/fluxoStatus/execucaoFluxoService'
+import {
+  ReprogramacaoFluxoService,
+  IReprogramacaoFluxoService
+} from './modules/v1/fluxo/fluxoStatus/reprogramacaoFluxoService'
+import {
+  ProgramacaoFluxoService,
+  IProgramacaoFluxoService
+} from './modules/v1/fluxo/fluxoStatus/programacaoFluxoService'
 import { IMapaService, MapaService } from './modules/v1/mapa/mapaService'
 
 import { FluxoService, IFluxoService } from './modules/v1/fluxo/fluxoService'
@@ -90,6 +100,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<IMapaService>(TYPE.MapaService).to(MapaService)
     bind<IRestricaoService>(TYPE.RestricaoService).to(RestricaoService)
     bind<IPgiIntegrationService>(TYPE.PgiIntegrationService).to(PgiIntegrationService)
+    bind<IExecucaoFluxoService>(TYPE.ExecucaoFluxoService).to(ExecucaoFluxoService)
 
     // Binding the repositories
     bind<ISauGrupoRestricaoRepository>(TYPE.RestricaoRepository).to(SauGrupoRestricaoRepository)

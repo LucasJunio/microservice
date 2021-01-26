@@ -13,9 +13,11 @@ import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaSe
 import { TemLookup } from '../../../entities/temLookup'
 import { Pgi } from '../../../entities/pgi'
 import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
-import { ProgramacaoFluxoService } from './programacaoFluxoService'
-import { ReprogramacaoFluxoService } from './reprogramacaoFluxoService'
-import { CancelamentoFluxoService } from './cancelamentoFluxoService'
+import { ProgramacaoFluxoService } from './fluxoStatus/programacaoFluxoService'
+import { ReprogramacaoFluxoService } from './fluxoStatus/reprogramacaoFluxoService'
+import { CancelamentoFluxoService } from './fluxoStatus/cancelamentoFluxoService'
+import { throws } from 'assert'
+import { ExecucaoFluxoService } from './fluxoStatus/execucaoFluxoService'
 
 export interface IFluxoService {
   nextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
@@ -38,6 +40,9 @@ export class FluxoService implements IFluxoService {
 
   @inject(TYPE.CancelamentoFluxoService)
   private readonly cancelamentoFluxoService: CancelamentoFluxoService
+
+  @inject(TYPE.ExecucaoFluxoService)
+  private readonly execucaoFluxoService: ExecucaoFluxoService
 
   // REPOSITORIES
   @inject(TYPE.SauItemLookUpRepository)
@@ -137,6 +142,7 @@ export class FluxoService implements IFluxoService {
           return this.programacaoFluxoService.handleAprv(parada, authorization)
           break
         default:
+          throw new Error('Documento nao pode avançar no fluxo.')
           break
       }
     } else if (parada.ID_STATUS_PROGRAMACAO === 'C') {
@@ -148,32 +154,25 @@ export class FluxoService implements IFluxoService {
           return this.cancelamentoFluxoService.handleAgAprOpe(parada, authorization)
           break
         default:
+          throw new Error('Documento nao pode voltar no fluxo.')
           break
       }
     }
   }
 
   public async prevLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
-    let historico = null
-
-    switch (parada.idStatus.ID_ITEM_LOOKUP) {
-      case 'AAPRV_USINA':
-      case 'AAPRV_OPE':
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'RASCUNHO'
-        )
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          'RASCUNHO',
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
-        )
-        break
+    if (parada.ID_STATUS_PROGRAMACAO === 'P') {
+      return this.programacaoFluxoService.handlePrevLevel(parada, authorization)
     }
-
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
-    return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
+    if (parada.ID_STATUS_PROGRAMACAO === 'C') {
+      return this.cancelamentoFluxoService.handlePrevLevel(parada, authorization)
+    }
+    if (parada.ID_STATUS_PROGRAMACAO === 'R') {
+      return this.reprogramacaoFluxoService.handlePrevLevel(parada, authorization)
+    }
+    if (parada.ID_STATUS_PROGRAMACAO === 'E') {
+      return this.execucaoFluxoService.handlePrevLevel(parada, authorization)
+    }
   }
 
   public async reprNextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
