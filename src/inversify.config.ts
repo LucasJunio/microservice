@@ -28,6 +28,7 @@ import {
 } from './modules/v1/parada_programada/paradaProgramadaService'
 import { ParamsService, IParamsService } from './modules/v1/params/paramsService'
 
+import { FluxoUtilsService, IFluxoUtilsService } from './modules/v1/fluxo/utils/fluxoUtilsService'
 import {
   CancelamentoFluxoService,
   ICancelamentoFluxoService
@@ -101,6 +102,7 @@ export const bindings = new AsyncContainerModule(async bind => {
     bind<IRestricaoService>(TYPE.RestricaoService).to(RestricaoService)
     bind<IPgiIntegrationService>(TYPE.PgiIntegrationService).to(PgiIntegrationService)
     bind<IExecucaoFluxoService>(TYPE.ExecucaoFluxoService).to(ExecucaoFluxoService)
+    bind<IFluxoUtilsService>(TYPE.FluxoUtilsService).to(FluxoUtilsService)
 
     // Binding the repositories
     bind<ISauGrupoRestricaoRepository>(TYPE.RestricaoRepository).to(SauGrupoRestricaoRepository)

@@ -16,7 +16,6 @@ import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoFluxoService } from './fluxoStatus/programacaoFluxoService'
 import { ReprogramacaoFluxoService } from './fluxoStatus/reprogramacaoFluxoService'
 import { CancelamentoFluxoService } from './fluxoStatus/cancelamentoFluxoService'
-import { throws } from 'assert'
 import { ExecucaoFluxoService } from './fluxoStatus/execucaoFluxoService'
 
 export interface IFluxoService {
@@ -57,51 +56,14 @@ export class FluxoService implements IFluxoService {
   public async execNextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'EXECUCAO':
-        if (parada.sauPgis.length !== 0) {
-          parada.DT_HORA_TERMINO_SERVICO = this.getForwardDate(parada.sauPgis)
-          parada.DT_HORA_INICIO_SERVICO = this.getBackwardDate(parada.sauPgis)
-        }
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'AAPRV'
-        )
+        return this.execucaoFluxoService.handleExecNext(parada, authorization)
         break
       case 'AAPRV':
-        parada.DT_CONCLUSAO = parada.DATE_UPDATE
-        parada.CD_USUARIO_CONCLUSAO = parada.USER_UPDATE
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'CONCL'
-        )
+        return this.execucaoFluxoService.handleAgAprOpeNext(parada, authorization)
         break
+      default:
+        throw new Error('Documento nao pode avançar no fluxo.')
     }
-
-    await this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
-    return this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
-  }
-
-  public getForwardDate(pgis: Pgi[]): Date {
-    let forward = pgis[0].DT_FIM
-
-    for (const di of pgis) {
-      if (moment(di.DT_FIM).isAfter(forward)) {
-        forward = di.DT_FIM
-      }
-    }
-
-    return forward
-  }
-
-  public getBackwardDate(pgis: Pgi[]): Date {
-    let backward = pgis[0].DT_INICIO
-
-    for (const di of pgis) {
-      if (moment(di.DT_INICIO).isBefore(backward)) {
-        backward = di.DT_INICIO
-      }
-    }
-
-    return backward
   }
 
   public async selectFinalStatus(parada: ProgramacaoParada): Promise<any> {

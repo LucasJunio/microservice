@@ -13,6 +13,7 @@ export const TYPE = {
   MapaService: Symbol.for('MapaService'),
   RestricaoService: Symbol.for('RestricaoService'),
   PgiIntegrationService: Symbol.for('PgiIntegrationService'),
+  FluxoUtilsService: Symbol.for('FluxoUtilsService'),
 
   // Repositories
   SauUsinaRepository: Symbol.for('SauUsinaRepository'),
