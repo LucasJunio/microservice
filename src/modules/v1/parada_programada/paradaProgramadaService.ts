@@ -22,7 +22,7 @@ import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
 import * as moment from 'moment'
 import { parseISO } from 'date-fns'
-import { get } from 'lodash'
+import { get, isNil } from 'lodash'
 import { PpVariables } from '../../../util/notificationVariables'
 import { logger } from '../../../util/logger'
 import { apiFluxo, getUsuario } from '../../../util/api'
@@ -291,7 +291,13 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     previous: ProgramacaoParada,
     authorization: string
   ): Promise<void> {
-    await this.fluxoNotificacao(previous, actual, authorization)
+    const ppAtual = await this.sauProgramacaoParadaRepository.getById(actual.CD_PROGRAMACAO_PARADA)
+    let ppAnterior = null
+    if (!isNil(previous)) {
+      ppAnterior = await this.sauProgramacaoParadaRepository.getById(actual.CD_PROGRAMACAO_PARADA)
+    }
+
+    await this.fluxoNotificacao(ppAnterior, ppAtual, authorization)
   }
 
   public getPgiVersion(cdPp: number): Promise<number> {
