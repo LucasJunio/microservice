@@ -1,7 +1,5 @@
 import { inject, injectable } from 'inversify'
 import * as moment from 'moment'
-
-import { ProgramacaoParada } from '../../../../entities/programacaoParada'
 import { Pgi } from '../../../../entities/pgi'
 
 export interface IFluxoUtilsService {
