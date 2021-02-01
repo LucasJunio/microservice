@@ -1,15 +1,12 @@
 import { inject, injectable } from 'inversify'
 import { TYPE } from '../../../../constants/types'
-import * as moment from 'moment'
 
 import { SauItemLookUpRepository } from '../../../../repositories/sauItemLookupRepository'
 import { SauProgramacaoParadaRepository } from '../../../../repositories/sauProgramacaoParadaRepository'
 import { SauHistProgramacaoParadaRepository } from '../../../../repositories/sauHistProgramacaoParadaRepository'
 import { ProgramacaoParada } from '../../../../entities/programacaoParada'
-import { HistProgramacaoParada } from '../../../../entities/histProgramacaoParada'
 import { ParadaProgramadaService } from '../../parada_programada/paradaProgramadaService'
 import { PgiIntegrationService } from '../../pgiIntegration/pgiIntegrationService'
-import { isEmpty } from 'lodash'
 
 export interface IProgramacaoFluxoService {
   handleRascunho(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
