@@ -69,7 +69,7 @@ export class ExecucaoFluxoService implements IExecucaoFluxoService {
   }
 
   public async handleExecPrev(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
-    if (!isEmpty(parada.sauPgis)) {
+    if (!isEmpty(parada.sauPgis) && parada.FL_VINCULO_DI === 1) {
       throw new Error("Existe DI's vinculados a esse documento")
     }
 
@@ -97,7 +97,7 @@ export class ExecucaoFluxoService implements IExecucaoFluxoService {
   }
 
   public async handleAgAprOpePrev(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
-    if (!isEmpty(parada.sauPgis)) {
+    if (!isEmpty(parada.sauPgis) && parada.FL_VINCULO_DI === 1) {
       throw new Error("Existe DI's vinculados a esse documento")
     }
 
