@@ -22,10 +22,8 @@ import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
 import promiseTimeout from '../../../util/promiseTimeout'
 import { AuthService, FluxoService } from '../../../constants/services'
-import { Usina } from '../../../entities/usina'
 import * as moment from 'moment'
 import fetch from 'node-fetch'
-
 import { parseISO } from 'date-fns'
 import { get } from 'lodash'
 import { PpVariables } from '../../../util/notificationVariables'
@@ -276,7 +274,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       sgSistema: 'SAU',
       cdTela: 'SAU3100',
       aplicacoes: [usina.SG_CONJUNTO_USINA],
-      link: `/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
+      link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
       variaveis: this.getVariaveisPp(atual, usina, userUpdate),
       userCreate: userUpdate,
       ...this.getTipo(atual),
@@ -312,7 +310,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       cdTela: 'SAU3100',
       aplicacoes: [usina.SG_CONJUNTO_USINA],
       userCreate: userUpdate,
-      link: `/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
+      link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
       variaveis: this.getVariaveisPp(atual, usina, userUpdate),
       statusDe: '*',
       statusPara: '',
