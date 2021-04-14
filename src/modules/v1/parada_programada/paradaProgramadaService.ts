@@ -20,14 +20,7 @@ import { PpConsultaDto } from '../../../entities/ppConsultaDto'
 import { ConsultaPPV } from '../../../entities/consultaPPV'
 import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
-<<<<<<< HEAD
 import * as moment from 'moment'
-=======
-import promiseTimeout from '../../../util/promiseTimeout'
-import { AuthService, FluxoService } from '../../../constants/services'
-import * as moment from 'moment'
-import fetch from 'node-fetch'
->>>>>>> SAU-2691
 import { parseISO } from 'date-fns'
 import { get, isNil } from 'lodash'
 import { PpVariables } from '../../../util/notificationVariables'
@@ -218,27 +211,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       atual.CD_CONJUNTO_USINA,
       atual.ID_CONJUNTO_USINA
     )
-<<<<<<< HEAD
     const userUpdate = await getUsuario(atual.USER_UPDATE, authorization)
 
-=======
-    const userUpdate = await this.getUsuario(atual.USER_UPDATE, authorization)
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: authorization
-    }
-    const body = JSON.stringify({
-      sgSistema: 'SAU',
-      cdTela: 'SAU3100',
-      aplicacoes: [usina.SG_CONJUNTO_USINA],
-      link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
-      variaveis: this.getVariaveisPp(atual, usina, userUpdate),
-      userCreate: userUpdate,
-      ...this.getTipo(atual),
-      ...this.getStatusDe(previus, atual),
-      ...this.getStatusPara(atual)
-    })
->>>>>>> SAU-2691
     try {
       apiFluxo(authorization).post('/', {
         sgSistema: 'SAU',
@@ -268,27 +242,8 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       atual.CD_CONJUNTO_USINA,
       atual.ID_CONJUNTO_USINA
     )
-<<<<<<< HEAD
     const userUpdate = await getUsuario(atual.USER_UPDATE, authorization)
 
-=======
-    const userUpdate = await this.getUsuario(atual.USER_UPDATE, authorization)
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: authorization
-    }
-    const body = JSON.stringify({
-      sgSistema: 'SAU',
-      cdTela: 'SAU3100',
-      aplicacoes: [usina.SG_CONJUNTO_USINA],
-      userCreate: userUpdate,
-      link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
-      variaveis: this.getVariaveisPp(atual, usina, userUpdate),
-      statusDe: '*',
-      statusPara: '',
-      ...this.getTipo(previus)
-    })
->>>>>>> SAU-2691
     try {
       apiFluxo(authorization).post('/', {
         sgSistema: 'SAU',
