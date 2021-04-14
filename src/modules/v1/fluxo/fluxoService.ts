@@ -123,6 +123,7 @@ export class FluxoService implements IFluxoService {
   }
 
   public async prevLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
+<<<<<<< HEAD
     if (parada.ID_STATUS_PROGRAMACAO === 'P') {
       return this.programacaoFluxoService.handlePrevLevel(parada, authorization)
     }
@@ -134,6 +135,47 @@ export class FluxoService implements IFluxoService {
     }
     if (parada.ID_STATUS_PROGRAMACAO === 'E') {
       return this.execucaoFluxoService.handlePrevLevel(parada, authorization)
+=======
+    let historico = null
+
+    switch (parada.idStatus.ID_ITEM_LOOKUP) {
+      case 'AAPRV_USINA':
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'RASCUNHO'
+        )
+        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+          parada,
+          'RASCUNHO',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
+        )
+        break
+      case 'AAPRV_OPE':
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'RASCUNHO'
+        )
+        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+          parada,
+          'RASCUNHO',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
+        )
+        break
+      case 'APRV':
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'RASCUNHO'
+        )
+        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+          parada,
+          'RASCUNHO',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
+        )
+        break
+>>>>>>> SAU-2691
     }
   }
 
