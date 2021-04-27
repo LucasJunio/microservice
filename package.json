@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.553.0",
+    "axios": "^0.21.1",
     "bluebird": "^3.5.5",
     "cors": "^2.8.5",
     "date-fns": "^2.9.0",

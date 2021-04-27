@@ -1,14 +1,12 @@
 import { inject, injectable } from 'inversify'
-import { TYPE } from '../../../constants/types'
-import * as moment from 'moment'
+import { TYPE } from '../../../../constants/types'
 
-import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
-import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
-import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
-import { ProgramacaoParada } from '../../../entities/programacaoParada'
-import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
-import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
-import { PgiIntegrationService } from '../pgiIntegration/pgiIntegrationService'
+import { SauItemLookUpRepository } from '../../../../repositories/sauItemLookupRepository'
+import { SauProgramacaoParadaRepository } from '../../../../repositories/sauProgramacaoParadaRepository'
+import { SauHistProgramacaoParadaRepository } from '../../../../repositories/sauHistProgramacaoParadaRepository'
+import { ProgramacaoParada } from '../../../../entities/programacaoParada'
+import { ParadaProgramadaService } from '../../parada_programada/paradaProgramadaService'
+import { PgiIntegrationService } from '../../pgiIntegration/pgiIntegrationService'
 
 export interface IProgramacaoFluxoService {
   handleRascunho(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
@@ -125,5 +123,31 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
     )
 
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
+  }
+
+  public async handlePrevLevel(
+    parada: ProgramacaoParada,
+    authorization: string
+  ): Promise<ProgramacaoParada | PromiseLike<ProgramacaoParada>> {
+    switch (parada.idStatus.ID_ITEM_LOOKUP) {
+      case 'AAPRV_USINA':
+      case 'AAPRV_OPE':
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'RASCUNHO'
+        )
+        const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+          parada,
+          'RASCUNHO',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
+        )
+        await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
+        return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
+        break
+
+      default:
+        throw new Error('Documento nao pode voltar no fluxo.')
+    }
   }
 }

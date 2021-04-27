@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify'
 import * as moment from 'moment'
 
-import { ProgramacaoParada } from '../../../entities/programacaoParada'
-import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
-import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
-import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
-import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
-import { TYPE } from '../../../constants/types'
+import { ProgramacaoParada } from '../../../../entities/programacaoParada'
+import { ParadaProgramadaService } from '../../parada_programada/paradaProgramadaService'
+import { SauItemLookUpRepository } from '../../../../repositories/sauItemLookupRepository'
+import { SauProgramacaoParadaRepository } from '../../../../repositories/sauProgramacaoParadaRepository'
+import { SauHistProgramacaoParadaRepository } from '../../../../repositories/sauHistProgramacaoParadaRepository'
+import { TYPE } from '../../../../constants/types'
 
 export interface ICancelamentoFluxoService {
   handleAgAprUsina(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
@@ -88,5 +88,29 @@ export class CancelamentoFluxoService implements ICancelamentoFluxoService {
       await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
+  }
+
+  public async handlePrevLevel(
+    parada: ProgramacaoParada,
+    authorization: string
+  ): Promise<ProgramacaoParada | PromiseLike<ProgramacaoParada>> {
+    switch (parada.idStatusCancelamento.ID_ITEM_LOOKUP) {
+      case 'AAPRV_OPE':
+        parada.idStatusCancelamento = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'AAPRV_USINA'
+        )
+        const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+          parada,
+          'EM ANALISE USINA',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
+        )
+        await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
+        return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
+        break
+      default:
+        throw new Error('Documento nao pode voltar no fluxo.')
+    }
   }
 }

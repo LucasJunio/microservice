@@ -2,10 +2,7 @@ import { injectable } from 'inversify'
 import { Repository, getRepository, EntityRepository } from 'typeorm'
 import { HistProgramacaoParada } from '../entities/histProgramacaoParada'
 import { ProgramacaoParada } from '../entities/programacaoParada'
-import createDate from '../util/createDate'
-import { AuthService } from '../constants/services'
-import fetch from 'node-fetch'
-
+import { getUsuario } from '../util/api'
 export interface ISauHistProgramacaoParadaRepository {
   findHistoricoById(id: number): Promise<HistProgramacaoParada[]>
   saveHistoricoPp(historico: HistProgramacaoParada, authorization: string): Promise<HistProgramacaoParada>
@@ -32,7 +29,7 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     historico: HistProgramacaoParada,
     authorization: string
   ): Promise<HistProgramacaoParada> {
-    const userUpdade = await this.getUsuario(historico.NM_USUARIO, authorization)
+    const userUpdade = await getUsuario(historico.NM_USUARIO, authorization)
     const idHistorico = await this.getHistoricoSeq()
     historico.CD_HISTORICO = idHistorico[0].ID
     historico.NM_USUARIO = userUpdade.NM_USUARIO
@@ -75,24 +72,5 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     historico.cdSubclassifProgrParada = parada.cdSubclassifProgrParada
 
     return historico
-  }
-
-  private async getUsuario(cdUsuario: string, authorization: string): Promise<any> {
-    if (!cdUsuario) {
-      return null
-    }
-
-    try {
-      const usuario = await fetch(`${AuthService.URL_LOAD_USUARIO}${cdUsuario}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: authorization
-        }
-      })
-      return usuario.json()
-    } catch (e) {
-      return null
-    }
   }
 }
