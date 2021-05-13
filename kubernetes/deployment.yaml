@@ -71,9 +71,11 @@ spec:
               protocol: TCP
           resources:
             limits:
-              cpu: 400m
+              cpu: 50m
+              memory: 250mi
             requests:
-              cpu: 100m
+              cpu: 19m
+              memory: 128mi
       nodeSelector:
         ENVIRONMENT: __NODE__
 
