@@ -72,10 +72,10 @@ spec:
           resources:
             limits:
               cpu: 50m
-              memory: 250mi
+              memory: 250Mi
             requests:
               cpu: 19m
-              memory: 128mi
+              memory: 128Mi
       nodeSelector:
         ENVIRONMENT: __NODE__
 
