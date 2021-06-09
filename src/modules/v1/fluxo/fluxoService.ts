@@ -158,7 +158,30 @@ export class FluxoService implements IFluxoService {
 
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'AAPRV_USINA':
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'RASCUNHO'
+        )
+        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+          parada,
+          'RASCUNHO',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
+        )
+        break
       case 'AAPRV_OPE':
+        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'RASCUNHO'
+        )
+        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+          parada,
+          'RASCUNHO',
+          parada.ID_STATUS_PROGRAMACAO,
+          parada.USER_UPDATE
+        )
+        break
+      case 'APRV':
         parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
           'STATUS_PROG_PARADA',
           'RASCUNHO'
