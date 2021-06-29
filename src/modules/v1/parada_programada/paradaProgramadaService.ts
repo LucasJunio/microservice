@@ -26,6 +26,7 @@ import { get, isNil } from 'lodash'
 import { PpVariables } from '../../../util/notificationVariables'
 import { logger } from '../../../util/logger'
 import { apiFluxo, getUsuario } from '../../../util/api'
+import { PgiIntegrationService } from '../pgiIntegration/pgiIntegrationService'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]>
@@ -73,6 +74,9 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   @inject(TYPE.SauProgramacaoParadaUgRepository)
   private readonly sauProgramacaoParadaUgRepository: SauProgramacaoParadaUgRepository
+
+  @inject(TYPE.PgiIntegrationService)
+  private readonly pgiIntegrationService: PgiIntegrationService
 
   public getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]> {
     return this.sauClassificacaoParadaRepository.getClassificacoesParada(sgUsina)
@@ -263,6 +267,14 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   public async getById(id: number): Promise<ProgramacaoParada> {
     const pp = await this.sauProgramacaoParadaRepository.getById(id)
+    const updatedPp = await this.pgiIntegrationService.handleLinkWithPgi(pp)
+
+    if (!isNil(updatedPp)) {
+      pp.DT_HORA_INICIO_SERVICO = updatedPp.DT_HORA_INICIO_SERVICO
+      pp.DT_HORA_TERMINO_SERVICO = updatedPp.DT_HORA_TERMINO_SERVICO
+      await this.sauProgramacaoParadaRepository.saveProgramacaoParada(pp)
+    }
+
     return pp
   }
 
