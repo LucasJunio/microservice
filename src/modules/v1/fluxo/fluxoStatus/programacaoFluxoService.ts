@@ -73,7 +73,7 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
         parada.ID_STATUS_PROGRAMACAO,
         parada.USER_UPDATE
       )
-      await this.pgiIntegrationService.handleLinkWithPgi(parada, authorization)
+      await this.pgiIntegrationService.handleLinkWithPgi(parada)
     } else {
       parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
         'STATUS_PROG_PARADA',
@@ -111,7 +111,7 @@ export class ProgramacaoFluxoService implements IProgramacaoFluxoService {
       await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
     }
 
-    await this.pgiIntegrationService.handleLinkWithPgi(parada, authorization)
+    await this.pgiIntegrationService.handleLinkWithPgi(parada)
     return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
   }
 
