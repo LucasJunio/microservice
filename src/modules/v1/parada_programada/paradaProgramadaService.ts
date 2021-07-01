@@ -154,7 +154,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     cdClassificacao: number,
     idTipoUsina: string
   ): Promise<SubclassificacaoParada[]> {
-    // const cdAplicacaoUsina = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(idTipoUsina, 19)
     return this.sauSubClassificacaoParadaRepository.getSubClassificacaoParada(cdClassificacao, idTipoUsina)
   }
 
