@@ -265,11 +265,11 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     }
   }
 
-  public async getById(id: number): Promise<ProgramacaoParada> {
+  public async getById(id: number, handleLink: boolean = true): Promise<ProgramacaoParada> {
     const pp = await this.sauProgramacaoParadaRepository.getById(id)
     const updatedPp = await this.pgiIntegrationService.handleLinkWithPgi(pp)
 
-    if (!isNil(updatedPp)) {
+    if (!isNil(updatedPp) && handleLink) {
       pp.DT_HORA_INICIO_SERVICO = updatedPp.DT_HORA_INICIO_SERVICO
       pp.DT_HORA_TERMINO_SERVICO = updatedPp.DT_HORA_TERMINO_SERVICO
       await this.sauProgramacaoParadaRepository.saveProgramacaoParada(pp)
