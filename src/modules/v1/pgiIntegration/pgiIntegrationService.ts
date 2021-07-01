@@ -17,7 +17,7 @@ export class PgiIntegrationService implements IPgiIntegrationService {
   private readonly sauItemLookUpRepository: SauItemLookUpRepository
 
   public async handleLinkWithPgi(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
-    if (parada.sauPgis.length === 0 || parada.FL_VINCULO_DI === 0) {
+    if (parada.sauPgis.length === 0 || parada.FL_VINCULO_DI === 0 || parada.idStatus.ID_ITEM_LOOKUP === 'CONCL') {
       return
     }
 

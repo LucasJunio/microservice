@@ -154,7 +154,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     cdClassificacao: number,
     idTipoUsina: string
   ): Promise<SubclassificacaoParada[]> {
-    // const cdAplicacaoUsina = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(idTipoUsina, 19)
     return this.sauSubClassificacaoParadaRepository.getSubClassificacaoParada(cdClassificacao, idTipoUsina)
   }
 
@@ -222,7 +221,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
         sgSistema: 'SAU',
         cdTela: 'SAU3100',
         aplicacoes: [usina.SG_CONJUNTO_USINA],
-        link: `/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
+        link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
         variaveis: this.getVariaveisPp(atual, usina, userUpdate),
         userCreate: userUpdate,
         ...this.getTipo(atual),
@@ -254,7 +253,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
         cdTela: 'SAU3100',
         aplicacoes: [usina.SG_CONJUNTO_USINA],
         userCreate: userUpdate,
-        link: `/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
+        link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
         variaveis: this.getVariaveisPp(atual, usina, userUpdate),
         statusDe: '*',
         statusPara: '',
@@ -265,11 +264,11 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     }
   }
 
-  public async getById(id: number): Promise<ProgramacaoParada> {
+  public async getById(id: number, handleLink: boolean = true): Promise<ProgramacaoParada> {
     const pp = await this.sauProgramacaoParadaRepository.getById(id)
     const updatedPp = await this.pgiIntegrationService.handleLinkWithPgi(pp)
 
-    if (!isNil(updatedPp)) {
+    if (!isNil(updatedPp) && handleLink) {
       pp.DT_HORA_INICIO_SERVICO = updatedPp.DT_HORA_INICIO_SERVICO
       pp.DT_HORA_TERMINO_SERVICO = updatedPp.DT_HORA_TERMINO_SERVICO
       await this.sauProgramacaoParadaRepository.saveProgramacaoParada(pp)

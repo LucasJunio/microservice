@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify'
-import { isEmpty } from 'lodash'
-
+import { isEmpty, isEqual } from 'lodash'
+import jwtDecode from 'jwt-decode'
 import { ProgramacaoParada } from '../../../../entities/programacaoParada'
 import { ParadaProgramadaService } from '../../parada_programada/paradaProgramadaService'
 import { SauItemLookUpRepository } from '../../../../repositories/sauItemLookupRepository'
@@ -8,6 +8,10 @@ import { SauProgramacaoParadaRepository } from '../../../../repositories/sauProg
 import { SauHistProgramacaoParadaRepository } from '../../../../repositories/sauHistProgramacaoParadaRepository'
 import { TYPE } from '../../../../constants/types'
 import { FluxoUtilsService } from '../utils/fluxoUtilsService'
+export interface IUser {
+  usuario: string
+  perfil: string
+}
 
 export interface IExecucaoFluxoService {
   handleExecPrev(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
@@ -61,6 +65,7 @@ export class ExecucaoFluxoService implements IExecucaoFluxoService {
     )
 
     await this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
+
     return this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
   }
 
@@ -137,6 +142,8 @@ export class ExecucaoFluxoService implements IExecucaoFluxoService {
     parada: ProgramacaoParada,
     authorization: string
   ): Promise<ProgramacaoParada | PromiseLike<ProgramacaoParada>> {
+    const { perfil } = jwtDecode(authorization) as IUser
+
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'EXECUCAO':
         return this.handleExecPrev(parada, authorization)
@@ -145,6 +152,9 @@ export class ExecucaoFluxoService implements IExecucaoFluxoService {
         return this.handleAgAprOpePrev(parada, authorization)
         break
       case 'CONCL':
+        if (isEqual(perfil, 'Administrador Operação') && parada.FL_VINCULO_DI === 0) {
+          return this.handleAgAprOpePrev(parada, authorization)
+        }
         return this.handleConclPrev(parada, authorization)
         break
       default:
