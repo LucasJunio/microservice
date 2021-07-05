@@ -13,9 +13,10 @@ import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaSe
 import { TemLookup } from '../../../entities/temLookup'
 import { Pgi } from '../../../entities/pgi'
 import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
-import { ProgramacaoFluxoService } from './programacaoFluxoService'
-import { ReprogramacaoFluxoService } from './reprogramacaoFluxoService'
-import { CancelamentoFluxoService } from './cancelamentoFluxoService'
+import { ProgramacaoFluxoService } from './fluxoStatus/programacaoFluxoService'
+import { ReprogramacaoFluxoService } from './fluxoStatus/reprogramacaoFluxoService'
+import { CancelamentoFluxoService } from './fluxoStatus/cancelamentoFluxoService'
+import { ExecucaoFluxoService } from './fluxoStatus/execucaoFluxoService'
 
 export interface IFluxoService {
   nextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
@@ -39,6 +40,9 @@ export class FluxoService implements IFluxoService {
   @inject(TYPE.CancelamentoFluxoService)
   private readonly cancelamentoFluxoService: CancelamentoFluxoService
 
+  @inject(TYPE.ExecucaoFluxoService)
+  private readonly execucaoFluxoService: ExecucaoFluxoService
+
   // REPOSITORIES
   @inject(TYPE.SauItemLookUpRepository)
   private readonly sauItemLookUpRepository: SauItemLookUpRepository
@@ -52,51 +56,14 @@ export class FluxoService implements IFluxoService {
   public async execNextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     switch (parada.idStatus.ID_ITEM_LOOKUP) {
       case 'EXECUCAO':
-        if (parada.sauPgis.length !== 0) {
-          parada.DT_HORA_TERMINO_SERVICO = this.getForwardDate(parada.sauPgis)
-          parada.DT_HORA_INICIO_SERVICO = this.getBackwardDate(parada.sauPgis)
-        }
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'AAPRV'
-        )
+        return this.execucaoFluxoService.handleExecNext(parada, authorization)
         break
       case 'AAPRV':
-        parada.DT_CONCLUSAO = parada.DATE_UPDATE
-        parada.CD_USUARIO_CONCLUSAO = parada.USER_UPDATE
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'CONCL'
-        )
+        return this.execucaoFluxoService.handleAgAprOpeNext(parada, authorization)
         break
+      default:
+        throw new Error('Documento nao pode avançar no fluxo.')
     }
-
-    await this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
-    return this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
-  }
-
-  public getForwardDate(pgis: Pgi[]): Date {
-    let forward = pgis[0].DT_FIM
-
-    for (const di of pgis) {
-      if (moment(di.DT_FIM).isAfter(forward)) {
-        forward = di.DT_FIM
-      }
-    }
-
-    return forward
-  }
-
-  public getBackwardDate(pgis: Pgi[]): Date {
-    let backward = pgis[0].DT_INICIO
-
-    for (const di of pgis) {
-      if (moment(di.DT_INICIO).isBefore(backward)) {
-        backward = di.DT_INICIO
-      }
-    }
-
-    return backward
   }
 
   public async selectFinalStatus(parada: ProgramacaoParada): Promise<any> {
@@ -137,6 +104,7 @@ export class FluxoService implements IFluxoService {
           return this.programacaoFluxoService.handleAprv(parada, authorization)
           break
         default:
+          throw new Error('Documento nao pode avançar no fluxo.')
           break
       }
     } else if (parada.ID_STATUS_PROGRAMACAO === 'C') {
@@ -148,55 +116,25 @@ export class FluxoService implements IFluxoService {
           return this.cancelamentoFluxoService.handleAgAprOpe(parada, authorization)
           break
         default:
+          throw new Error('Documento nao pode voltar no fluxo.')
           break
       }
     }
   }
 
   public async prevLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
-    let historico = null
-
-    switch (parada.idStatus.ID_ITEM_LOOKUP) {
-      case 'AAPRV_USINA':
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'RASCUNHO'
-        )
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          'RASCUNHO',
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
-        )
-        break
-      case 'AAPRV_OPE':
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'RASCUNHO'
-        )
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          'RASCUNHO',
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
-        )
-        break
-      case 'APRV':
-        parada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'RASCUNHO'
-        )
-        historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-          parada,
-          'RASCUNHO',
-          parada.ID_STATUS_PROGRAMACAO,
-          parada.USER_UPDATE
-        )
-        break
+    if (parada.ID_STATUS_PROGRAMACAO === 'P') {
+      return this.programacaoFluxoService.handlePrevLevel(parada, authorization)
     }
-
-    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
-    return this.paradaProgramadaService.saveProgramacaoParada(parada, authorization)
+    if (parada.ID_STATUS_PROGRAMACAO === 'C') {
+      return this.cancelamentoFluxoService.handlePrevLevel(parada, authorization)
+    }
+    if (parada.ID_STATUS_PROGRAMACAO === 'R') {
+      return this.reprogramacaoFluxoService.handlePrevLevel(parada, authorization)
+    }
+    if (parada.ID_STATUS_PROGRAMACAO === 'E') {
+      return this.execucaoFluxoService.handlePrevLevel(parada, authorization)
+    }
   }
 
   public async reprNextLevel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
@@ -245,5 +183,57 @@ export class FluxoService implements IFluxoService {
         )
         return
     }
+  }
+
+  public async back_program(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
+    const previus = await this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
+
+    const statusAprov = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+      'STATUS_PROG_PARADA',
+      'APRV'
+    )
+
+    const from = parada.ID_STATUS_PROGRAMACAO
+
+    if (parada.ID_STATUS_PROGRAMACAO === 'C') {
+      if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
+        parada.ID_STATUS_PROGRAMACAO = 'R'
+        parada.idStatusReprogramacao = statusAprov
+      } else {
+        parada.ID_STATUS_PROGRAMACAO = 'P'
+        parada.idStatus = statusAprov
+        parada.idStatusReprogramacao = null
+      }
+    }
+
+    if (parada.ID_STATUS_PROGRAMACAO === 'R') {
+      if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
+        parada.ID_STATUS_PROGRAMACAO = 'R'
+        parada.idStatusReprogramacao = statusAprov
+      } else {
+        parada.ID_STATUS_PROGRAMACAO = 'P'
+        parada.idStatus = statusAprov
+        parada.idStatusReprogramacao = null
+      }
+    }
+
+    const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
+      parada,
+      'DEVOLVIDO',
+      from,
+      parada.USER_UPDATE,
+      `O documento foi devolvido para o fluxo de ${
+        parada.ID_STATUS_PROGRAMACAO === 'P' ? 'PROGRAMAÇÃO' : 'REPROGRAMAÇÃO'
+      }`
+    )
+
+    await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
+
+    delete parada.sauProgramacaoParadaUgs
+    await this.sauProgramacaoParadaRepository.saveProgramacaoParada(parada)
+    const paradaRet = await this.paradaProgramadaService.getById(parada.CD_PROGRAMACAO_PARADA)
+
+    this.paradaProgramadaService.fluxoNotificacaoCancRepr(previus, paradaRet, authorization)
+    return paradaRet
   }
 }

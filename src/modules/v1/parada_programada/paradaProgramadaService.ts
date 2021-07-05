@@ -20,14 +20,13 @@ import { PpConsultaDto } from '../../../entities/ppConsultaDto'
 import { ConsultaPPV } from '../../../entities/consultaPPV'
 import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
-import promiseTimeout from '../../../util/promiseTimeout'
-import { AuthService, FluxoService } from '../../../constants/services'
 import * as moment from 'moment'
-import fetch from 'node-fetch'
 import { parseISO } from 'date-fns'
-import { get } from 'lodash'
+import { get, isNil } from 'lodash'
 import { PpVariables } from '../../../util/notificationVariables'
 import { logger } from '../../../util/logger'
+import { apiFluxo, getUsuario } from '../../../util/api'
+import { PgiIntegrationService } from '../pgiIntegration/pgiIntegrationService'
 
 export interface IParadaProgramadaService {
   getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]>
@@ -75,6 +74,9 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
   @inject(TYPE.SauProgramacaoParadaUgRepository)
   private readonly sauProgramacaoParadaUgRepository: SauProgramacaoParadaUgRepository
+
+  @inject(TYPE.PgiIntegrationService)
+  private readonly pgiIntegrationService: PgiIntegrationService
 
   public getClassificacoesParada(sgUsina: string): Promise<ClassificacaoParada[]> {
     return this.sauClassificacaoParadaRepository.getClassificacoesParada(sgUsina)
@@ -130,58 +132,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     return true
   }
 
-  public async back_program(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
-    const previus = await this.getById(parada.CD_PROGRAMACAO_PARADA)
-    await getConnection().transaction(async manager => {
-      const histRepository = manager.getCustomRepository(SauHistProgramacaoParadaRepository)
-      const progParadaRepository = manager.getCustomRepository(SauProgramacaoParadaRepository)
-
-      const statusAprov = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('APRV', 13)
-
-      const from = parada.ID_STATUS_PROGRAMACAO
-
-      if (parada.ID_STATUS_PROGRAMACAO === 'C') {
-        if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
-          parada.ID_STATUS_PROGRAMACAO = 'R'
-          parada.idStatusReprogramacao = statusAprov
-        } else {
-          parada.ID_STATUS_PROGRAMACAO = 'P'
-          parada.idStatus = statusAprov
-          parada.idStatusReprogramacao = null
-        }
-      }
-
-      if (parada.ID_STATUS_PROGRAMACAO === 'R') {
-        if (parada.NR_REPROGRAMACOES_APROVADAS !== 0) {
-          parada.ID_STATUS_PROGRAMACAO = 'R'
-          parada.idStatusReprogramacao = statusAprov
-        } else {
-          parada.ID_STATUS_PROGRAMACAO = 'P'
-          parada.idStatus = statusAprov
-          parada.idStatusReprogramacao = null
-        }
-      }
-
-      const historico = histRepository.createDefaultHistorico(
-        parada,
-        'DEVOLVIDO',
-        from,
-        parada.USER_UPDATE,
-        `O documento foi devolvido para o fluxo de ${
-          parada.ID_STATUS_PROGRAMACAO === 'P' ? 'PROGRAMAÇÃO' : 'REPROGRAMAÇÃO'
-        }`
-      )
-
-      await histRepository.saveHistoricoPp(historico, authorization)
-
-      delete parada.sauProgramacaoParadaUgs
-      await progParadaRepository.saveProgramacaoParada(parada)
-    })
-    const paradaRet = await this.getById(parada.CD_PROGRAMACAO_PARADA)
-    this.fluxoNotificacaoCancRepr(previus, paradaRet, authorization)
-    return paradaRet
-  }
-
   public async cancel(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
     parada.ID_STATUS_PROGRAMACAO = 'C'
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
@@ -204,7 +154,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     cdClassificacao: number,
     idTipoUsina: string
   ): Promise<SubclassificacaoParada[]> {
-    // const cdAplicacaoUsina = await this.sauItemLookUpRepository.getItemLookUpByCdAndId(idTipoUsina, 19)
     return this.sauSubClassificacaoParadaRepository.getSubClassificacaoParada(cdClassificacao, idTipoUsina)
   }
 
@@ -234,7 +183,7 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
 
     const paradaRet = await this.getById(parada.CD_PROGRAMACAO_PARADA)
 
-    this.fluxoNotificacao(previus, paradaRet, authorization)
+    await this.fluxoNotificacao(previus, paradaRet, authorization)
 
     if (!saveHistorico) {
       return paradaRet
@@ -265,24 +214,20 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       atual.CD_CONJUNTO_USINA,
       atual.ID_CONJUNTO_USINA
     )
-    const userUpdate = await this.getUsuario(atual.USER_UPDATE, authorization)
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: authorization
-    }
-    const body = JSON.stringify({
-      sgSistema: 'SAU',
-      cdTela: 'SAU3100',
-      aplicacoes: [usina.SG_CONJUNTO_USINA],
-      link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
-      variaveis: this.getVariaveisPp(atual, usina, userUpdate),
-      userCreate: userUpdate,
-      ...this.getTipo(atual),
-      ...this.getStatusDe(previus, atual),
-      ...this.getStatusPara(atual)
-    })
+    const userUpdate = await getUsuario(atual.USER_UPDATE, authorization)
+
     try {
-      await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
+      apiFluxo(authorization).post('/', {
+        sgSistema: 'SAU',
+        cdTela: 'SAU3100',
+        aplicacoes: [usina.SG_CONJUNTO_USINA],
+        link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
+        variaveis: this.getVariaveisPp(atual, usina, userUpdate),
+        userCreate: userUpdate,
+        ...this.getTipo(atual),
+        ...this.getStatusDe(previus, atual),
+        ...this.getStatusPara(atual)
+      })
     } catch (error) {
       logger.error(`Erro ao invocar o fluxo: ${error}`)
     }
@@ -300,31 +245,35 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       atual.CD_CONJUNTO_USINA,
       atual.ID_CONJUNTO_USINA
     )
-    const userUpdate = await this.getUsuario(atual.USER_UPDATE, authorization)
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: authorization
-    }
-    const body = JSON.stringify({
-      sgSistema: 'SAU',
-      cdTela: 'SAU3100',
-      aplicacoes: [usina.SG_CONJUNTO_USINA],
-      userCreate: userUpdate,
-      link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
-      variaveis: this.getVariaveisPp(atual, usina, userUpdate),
-      statusDe: '*',
-      statusPara: '',
-      ...this.getTipo(previus)
-    })
+    const userUpdate = await getUsuario(atual.USER_UPDATE, authorization)
+
     try {
-      await promiseTimeout(3000, fetch(FluxoService.URL, { method: 'POST', headers, body }))
+      apiFluxo(authorization).post('/', {
+        sgSistema: 'SAU',
+        cdTela: 'SAU3100',
+        aplicacoes: [usina.SG_CONJUNTO_USINA],
+        userCreate: userUpdate,
+        link: `/painel/pp/documento/${atual.CD_PROGRAMACAO_PARADA}`,
+        variaveis: this.getVariaveisPp(atual, usina, userUpdate),
+        statusDe: '*',
+        statusPara: '',
+        ...this.getTipo(previus)
+      })
     } catch (error) {
-      // console.log(`Erro ao invocar o fluxo: ${error}`)
+      logger.error(`Erro ao invocar o fluxo: ${error}`)
     }
   }
 
-  public async getById(id: number): Promise<ProgramacaoParada> {
+  public async getById(id: number, handleLink: boolean = true): Promise<ProgramacaoParada> {
     const pp = await this.sauProgramacaoParadaRepository.getById(id)
+    const updatedPp = await this.pgiIntegrationService.handleLinkWithPgi(pp)
+
+    if (!isNil(updatedPp) && handleLink) {
+      pp.DT_HORA_INICIO_SERVICO = updatedPp.DT_HORA_INICIO_SERVICO
+      pp.DT_HORA_TERMINO_SERVICO = updatedPp.DT_HORA_TERMINO_SERVICO
+      await this.sauProgramacaoParadaRepository.saveProgramacaoParada(pp)
+    }
+
     return pp
   }
 
@@ -353,31 +302,17 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
     previous: ProgramacaoParada,
     authorization: string
   ): Promise<void> {
-    await this.fluxoNotificacao(previous, actual, authorization)
-    return null
+    const ppAtual = await this.sauProgramacaoParadaRepository.getById(actual.CD_PROGRAMACAO_PARADA)
+    let ppAnterior = null
+    if (!isNil(previous)) {
+      ppAnterior = await this.sauProgramacaoParadaRepository.getById(actual.CD_PROGRAMACAO_PARADA)
+    }
+
+    await this.fluxoNotificacao(ppAnterior, ppAtual, authorization)
   }
 
   public getPgiVersion(cdPp: number): Promise<number> {
     return this.sauProgramacaoParadaRepository.getPpVersion(cdPp)
-  }
-
-  private async getUsuario(cdUsuario: string, authorization: string): Promise<any> {
-    if (!cdUsuario) {
-      return null
-    }
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: authorization
-    }
-    try {
-      const usuario = await promiseTimeout(
-        3000,
-        fetch(`${AuthService.URL_LOAD_USUARIO}${cdUsuario}`, { method: 'GET', headers })
-      )
-      return usuario.json()
-    } catch (e) {
-      return null
-    }
   }
 
   private getVariaveisPp(pp: ProgramacaoParada, usina, userUpdate): any {
@@ -500,7 +435,6 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       newUg.DATE_CREATE = parada.DATE_UPDATE
       newUg.cdProgramacaoParada = parada
       list.push(newUg)
-      // falta informaçes aqui
     }
     return list
   }

@@ -76,6 +76,12 @@ export class ParamProgramacaoParadas {
   })
   public NR_HORAS_MINIMA_PARADA: number | null
 
+  @Column('number', {
+    name: 'NR_MIN_URG_INTEMPST',
+    nullable: true
+  })
+  public NR_MIN_URG_INTEMPST: number | null
+
   @Column('varchar2', {
     nullable: true,
     length: 30,
