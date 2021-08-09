@@ -24,7 +24,6 @@ export class SauUsinaRepository implements ISauUsinaRepository {
                   FROM sau_usina
                   ORDER BY sg_usina
                   `
-    // WHERE fl_ativo = 1
   }
 
   public getUsinas(): Promise<Usina[]> {
@@ -75,15 +74,3 @@ export class SauUsinaRepository implements ISauUsinaRepository {
     )
   }
 }
-
-// consulta usina antiga
-//             UNION
-//                   SELECT scu.sg_conjunto sg_conjunto_usina,
-//                          scu.cd_conjunto cd_conjunto_usina,
-//                          'C'             id_conjunto_usina,
-//                          'E'             id_tipo_usina
-//                   FROM sau_agrup_conjunto_usina acu,
-//                        sau_conjunto_usina scu
-//                   WHERE scu.fl_ativo = 1
-//                     AND acu.cd_conjunto = scu.cd_conjunto
-//                   ORDER BY 1

@@ -3,35 +3,21 @@ import * as moment from 'moment'
 import * as _ from 'lodash'
 
 import { ProgramacaoParada } from '../../../entities/programacaoParada'
-import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
-import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
-import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
 import { TYPE } from '../../../constants/types'
 import { Pgi } from '../../../entities/pgi'
 
 export interface IPgiIntegrationService {
-  handleLinkWithPgi(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
+  handleLinkWithPgi(parada: ProgramacaoParada): Promise<ProgramacaoParada>
 }
 
 @injectable()
 export class PgiIntegrationService implements IPgiIntegrationService {
-  // SERVICES
-  @inject(TYPE.ParadaProgramadaService)
-  private readonly paradaProgramadaService: ParadaProgramadaService
-
-  // REPOSITORIES
   @inject(TYPE.SauItemLookUpRepository)
   private readonly sauItemLookUpRepository: SauItemLookUpRepository
 
-  @inject(TYPE.SauProgramacaoParadaRepository)
-  private readonly sauProgramacaoParadaRepository: SauProgramacaoParadaRepository
-
-  @inject(TYPE.SauHistProgramacaoParadaRepository)
-  private readonly sauHistProgramacaoParadaRepository: SauHistProgramacaoParadaRepository
-
-  public async handleLinkWithPgi(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada> {
-    if (parada.sauPgis.length === 0) {
+  public async handleLinkWithPgi(parada: ProgramacaoParada): Promise<ProgramacaoParada> {
+    if (parada.sauPgis.length === 0 || parada.FL_VINCULO_DI === 0 || parada.idStatus.ID_ITEM_LOOKUP === 'CONCL') {
       return
     }
 
@@ -58,16 +44,6 @@ export class PgiIntegrationService implements IPgiIntegrationService {
       isConcl ? 'AAPRV' : 'EXECUCAO'
     )
 
-    // const historico = await this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
-    //   parada,
-    //   parada.idStatus.DS_ITEM_LOOKUP,
-    //   'P',
-    //   parada.USER_UPDATE,
-    //   `Parada enviada para execução`
-    // )
-    // await this.sauHistProgramacaoParadaRepository.saveHistoricoPp(historico, authorization)
-
-    // await this.sauProgramacaoParadaRepository.saveProgramacaoParada(parada)
     return parada
   }
 

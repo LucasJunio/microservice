@@ -69,6 +69,20 @@ export class FluxoController implements interfaces.Controller {
     }
   }
 
+  @httpPost('/repr/back_program')
+  public async back_program(
+    @response() res: Response,
+    @requestBody() parada: any,
+    @requestHeaders('authorization') authorization: string
+  ): Promise<Response> {
+    try {
+      const data = await this.fluxoService.back_program(parada, authorization)
+      return Handlers.onSuccess(res, data)
+    } catch (error) {
+      return Handlers.onError(res, error.message, error)
+    }
+  }
+
   @httpPut('/prog/prev_level', CheckVersionPP)
   public async prevLevel(
     @response() res: Response,

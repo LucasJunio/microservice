@@ -4,6 +4,7 @@ export const TYPE = {
   UsinaService: Symbol.for('UsinaService'),
   UnidadeGeradoraService: Symbol.for('UnidadeGeradoraService'),
   FluxoService: Symbol.for('FluxoService'),
+  ExecucaoFluxoService: Symbol.for('ExecucaoFluxoService'),
   ReprogramacaoParadaService: Symbol.for('ReprogramacaoParadaService'),
   ParamsService: Symbol.for('ParamsService'),
   ProgramacaoFluxoService: Symbol.for('ProgramacaoFluxoService'),
@@ -12,6 +13,7 @@ export const TYPE = {
   MapaService: Symbol.for('MapaService'),
   RestricaoService: Symbol.for('RestricaoService'),
   PgiIntegrationService: Symbol.for('PgiIntegrationService'),
+  FluxoUtilsService: Symbol.for('FluxoUtilsService'),
 
   // Repositories
   SauUsinaRepository: Symbol.for('SauUsinaRepository'),
