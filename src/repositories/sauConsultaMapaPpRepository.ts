@@ -220,7 +220,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     query
       .orderBy('SG_CONJUNTO_USINA')
       .addOrderBy('SG_UNIDADE_GERADORA')
-      .addOrderBy('DT_HORA_INICIO_PROGRAMACAO', 'DESC')
+      .addOrderBy('DT_HORA_INICIO_PROGRAMACAO')
 
     const paradas = await query.getRawMany()
     const paradasPosDtHist = this.handleDtHistorica(paradas)
