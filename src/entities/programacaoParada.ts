@@ -17,11 +17,14 @@ export class ProgramacaoParada {
   })
   public CD_PROGRAMACAO_PARADA: number
 
-  // @Column('number', {
-  //   nullable: false,
-  //   name: 'CD_PARADA'
-  // })
-  // public CD_PARADA: number
+  @Column('number', {
+    nullable: true,
+    default: () => '0',
+    precision: 1,
+    scale: 0,
+    name: 'EXPURGO_FID'
+  })
+  public EXPURGO_FID: number | null
 
   @Column('number', {
     nullable: false,
