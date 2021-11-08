@@ -22,9 +22,9 @@ export class ProgramacaoParada {
     default: () => '0',
     precision: 1,
     scale: 0,
-    name: 'EXPURGO_FID'
+    name: 'FL_EXPURGO_FID'
   })
-  public EXPURGO_FID: number | null
+  public FL_EXPURGO_FID: number | null
 
   @Column('number', {
     nullable: false,
