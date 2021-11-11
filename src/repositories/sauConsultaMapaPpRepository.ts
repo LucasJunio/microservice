@@ -211,13 +211,12 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
         }
       })
     )
-    // query.andWhere('DT_PRORROGACAO_PGI is not null')
 
     query
-      .orderBy('ORDEM_USINA')
-      .addOrderBy('REGIONAL_USINA')
-      .addOrderBy('SG_CONJUNTO_USINA')
+      .orderBy('SG_CONJUNTO_USINA')
       .addOrderBy('SG_UNIDADE_GERADORA')
+      .addOrderBy('DT_HORA_INICIO_PROGRAMACAO')
+
     const paradas = await query.getRawMany()
 
     filter.paradas = this.handleDtHistorica(paradas)
