@@ -89,20 +89,6 @@ export class ConsultaMapaPgiV {
   })
   public DS_STATUS: string | null
 
-  @Column('varchar2', {
-    nullable: true,
-    length: 4000,
-    name: 'DS_SERVICO'
-  })
-  public DS_SERVICO: string | null
-
-  @Column('varchar2', {
-    nullable: true,
-    length: 400,
-    name: 'SITUACAO'
-  })
-  public SITUACAO: string | null
-
   @Column('number', {
     nullable: true,
     name: 'CD_PROGRAMACAO_PARADA'
