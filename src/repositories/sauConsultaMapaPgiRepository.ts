@@ -48,10 +48,9 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
       'ORDEM_USINA',
       'REGIONAL_USINA',
       'DT_INICIO_REPROG',
-      'DT_FIM_REPROG',
-      'SITUACAO',
-      'DS_SERVICO'
+      'DT_FIM_REPROG'
     ]
+    
     const query = this.sauConsultaMapaPgiRepository.createQueryBuilder('SAU_MAPA_PGI_V').select(columns)
 
     query.where('1 = 1')
