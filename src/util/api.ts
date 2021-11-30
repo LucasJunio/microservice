@@ -9,6 +9,10 @@ export const AuthService = {
   URL: `http://${process.env.SAU_GATEWAY_HOST}/auth/api/usuario/`
 }
 
+export const NivelAcessoService = {
+  URL: `http://${process.env.SAU_NIVEL_ACESSO_HOST}/nivel-acesso/usuario-logado/`
+}
+
 const apiAuth = auth =>
   axios.create({
     baseURL: AuthService.URL,
@@ -27,6 +31,25 @@ const apiFluxo = auth =>
     }
   })
 
+const apiNivelAcesso = auth =>
+  axios.create({
+    baseURL: NivelAcessoService.URL,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + auth
+    }
+  })
+
+const getNivelAcessoUsuario = async (authorization: string) => {
+  try {
+    const response = await apiAuth(authorization).get(`/`)
+    return response.data
+  } catch (error) {
+    logger.error(error)
+    return null
+  }
+}
+
 const getUsuario = async (cdUsuario: string, authorization: string) => {
   if (!cdUsuario) {
     return null
@@ -41,4 +64,4 @@ const getUsuario = async (cdUsuario: string, authorization: string) => {
   }
 }
 
-export { apiFluxo, getUsuario }
+export { apiFluxo, getUsuario, getNivelAcessoUsuario }

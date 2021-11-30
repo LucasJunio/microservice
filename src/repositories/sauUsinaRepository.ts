@@ -30,9 +30,9 @@ export class SauUsinaRepository implements ISauUsinaRepository {
     return this.sauUsinaRepository.query(this.query)
   }
 
-  public getUsinasAll(itemLookUp): Promise<Usina[]> {
+  public getUsinasAll(itemLookUp, usinasUsuario?): Promise<Usina[]> {
     const { CD_ITEM_LOOKUP } = itemLookUp
-    const query = `
+    let query = `
           SELECT  su.sg_usina       sg_conjunto_usina,
                   su.cd_usina       cd_conjunto_usina,
                   'U'               id_conjunto_usina,
@@ -47,6 +47,10 @@ export class SauUsinaRepository implements ISauUsinaRepository {
           FROM sau_conjunto_usina scu
             WHERE scu.fl_ativo = 1
           `
+
+    if (usinasUsuario) {
+      query += ` AND su.SG_USINA IN (${usinasUsuario.join()})`
+    }
 
     return this.sauUsinaRepository.query(query)
   }

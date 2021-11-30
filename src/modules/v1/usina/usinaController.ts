@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { inject } from 'inversify'
-import { controller, httpGet, response, interfaces } from 'inversify-express-utils'
+import { controller, httpGet, response, interfaces, requestHeaders } from 'inversify-express-utils'
 import { TYPE } from '../../../constants/types'
 import Handlers from '../../../core/handlers'
 import { UsinaService } from './usinaService'
@@ -21,9 +21,12 @@ export class UsinaController implements interfaces.Controller {
   }
 
   @httpGet('/all')
-  public async getUsinasAll(@response() res: Response): Promise<Response> {
+  public async getUsinasAll(
+    @response() res: Response,
+    @requestHeaders('authorization') authorization: string
+  ): Promise<Response> {
     try {
-      const data = await this.usinaService.getUsinasAll()
+      const data = await this.usinaService.getUsinasAll(authorization)
       return Handlers.onSuccess(res, data)
     } catch (error) {
       return Handlers.onError(res, error.message, error)
