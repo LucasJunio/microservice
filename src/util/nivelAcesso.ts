@@ -8,17 +8,12 @@ const obterItensNiveisAcesso = async (authorization: string, nivelAcesso?: strin
     console.log(response)
 
     if (nivelAcesso) {
-      return response.data.filter(item => item.nivelAcesso === nivelAcesso)
+      return response?.filter(item => item.nivelAcesso === nivelAcesso)
     }
 
-    return response.data
+    return response
   } catch (error) {
-    // throw new HttpError({
-    //   statusCode: 503,
-    //   description: 'Erro no serviço de nível de acesso',
-    //   message: 'Houve um erro na requisição ao serviço de nível de acesso',
-    //   details: error,
-    // });
+    throw new Error('Houve um erro na requisição ao serviço de nível de acesso.')
   }
 }
 
