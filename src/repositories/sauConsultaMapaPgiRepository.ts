@@ -50,7 +50,7 @@ export class SauConsultaMapaPgiRepository implements ISauConsultaMapaPgiReposito
       'DT_INICIO_REPROG',
       'DT_FIM_REPROG'
     ]
-    
+
     const query = this.sauConsultaMapaPgiRepository.createQueryBuilder('SAU_MAPA_PGI_V').select(columns)
 
     query.where('1 = 1')

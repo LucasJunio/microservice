@@ -7,12 +7,14 @@ import { RestricaoService } from './restricaoService'
 
 @controller('/api/v1/restricao')
 export class RestricaoController implements interfaces.Controller {
-
   @inject(TYPE.RestricaoService)
   private readonly restricaoService: RestricaoService
 
   @httpGet('/:cdUsina')
-  public async getRestricaoByUsina(@response() res: Response, @requestParam('cdUsina') cdUsina: number): Promise<Response> {
+  public async getRestricaoByUsina(
+    @response() res: Response,
+    @requestParam('cdUsina') cdUsina: number
+  ): Promise<Response> {
     try {
       const data = await this.restricaoService.getRestricoesByUsina(cdUsina)
       return Handlers.onSuccess(res, data)
@@ -30,5 +32,4 @@ export class RestricaoController implements interfaces.Controller {
       return Handlers.onError(res, error.message, error)
     }
   }
-  
 }
