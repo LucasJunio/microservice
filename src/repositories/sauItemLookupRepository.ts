@@ -1,14 +1,6 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
-import {
-  setYear,
-  differenceInHours,
-  isAfter,
-  isSameYear,
-  isBefore,
-  addYears,
-  differenceInYears
-} from 'date-fns'
+import { setYear, differenceInHours, isAfter, isSameYear, isBefore, addYears, differenceInYears } from 'date-fns'
 
 import { TemLookup } from '../entities/temLookup'
 import { ParamProgramacaoParadas } from '../entities/paramProgramacaoParadas'
