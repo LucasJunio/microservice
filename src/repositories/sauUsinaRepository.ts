@@ -32,22 +32,35 @@ export class SauUsinaRepository implements ISauUsinaRepository {
 
   public getUsinasAll(itemLookUp, usinasUsuario?): Promise<Usina[]> {
     const { CD_ITEM_LOOKUP } = itemLookUp
-    let query = `
-          SELECT  su.sg_usina       sg_conjunto_usina,
-                  su.cd_usina       cd_conjunto_usina,
-                  'U'               id_conjunto_usina,
-                  su.id_tipo_usina  id_tipo_usina
-          FROM sau_usina su
-            WHERE su.fl_ativo = 1
-            ${usinasUsuario ? ` AND su.SG_USINA IN (${usinasUsuario.map(u => `'${u}'`)})` : ''}
-        UNION
-          SELECT scu.sg_conjunto  sg_conjunto_usina,
-                 scu.cd_conjunto  cd_conjunto_usina,
-                 'C'              id_conjunto_usina,
-                 ${CD_ITEM_LOOKUP}             id_tipo_usina
-          FROM sau_conjunto_usina scu
-            WHERE scu.fl_ativo = 1
-          `
+
+    let query;
+
+    if (usinasUsuario) {
+      query = `
+        SELECT  su.sg_usina       sg_conjunto_usina,
+                su.cd_usina       cd_conjunto_usina,
+                'U'               id_conjunto_usina,
+                su.id_tipo_usina  id_tipo_usina
+        FROM sau_usina su
+          WHERE su.fl_ativo = 1
+                AND su.SG_USINA IN (${usinasUsuario.map(u => `'${u}'`)})`
+    } else {
+      query = `
+        SELECT  su.sg_usina       sg_conjunto_usina,
+                su.cd_usina       cd_conjunto_usina,
+                'U'               id_conjunto_usina,
+                su.id_tipo_usina  id_tipo_usina
+        FROM sau_usina su
+          WHERE su.fl_ativo = 1
+      UNION
+        SELECT scu.sg_conjunto  sg_conjunto_usina,
+              scu.cd_conjunto  cd_conjunto_usina,
+              'C'              id_conjunto_usina,
+              ${CD_ITEM_LOOKUP}             id_tipo_usina
+        FROM sau_conjunto_usina scu
+          WHERE scu.fl_ativo = 1
+        `
+    }
 
     return this.sauUsinaRepository.query(query)
   }

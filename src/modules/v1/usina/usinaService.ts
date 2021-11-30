@@ -43,13 +43,6 @@ export class UsinaService implements IUsinaService {
       }
 
       return this.sauUsinaRepository.getUsinasAll(itemLookUp, usinasUsuario)
-
-      // queryBuilderUsina.andWhere('qb.SG_USINA IN (:...usinasUsuario)', {
-      //   usinasUsuario,
-      // });
-      // queryBuilderPosto.andWhere('qb.SG_USINA IN (:...usinasUsuario)', {
-      //   usinasUsuario,
-      // });
     }
 
     return this.sauUsinaRepository.getUsinasAll(itemLookUp)
