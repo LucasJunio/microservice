@@ -22,9 +22,7 @@ const obterItensNiveisAcesso = async (authorization: string, nivelAcesso?: strin
 const contemItemNivelAcesso = async (nivelAcesso: string, itemNivelAcesso: string, authorization: string) => {
   let itensNiveisAcesso = await obterItensNiveisAcesso(authorization)
 
-  itensNiveisAcesso = itensNiveisAcesso.filter(
-    item => item.nivelAcesso === nivelAcesso
-  );
+  itensNiveisAcesso = itensNiveisAcesso.filter(item => item.nivelAcesso === nivelAcesso)
 
   for (const item of itensNiveisAcesso) {
     if (item.itemNivelAcesso === itemNivelAcesso) {
@@ -36,14 +34,8 @@ const contemItemNivelAcesso = async (nivelAcesso: string, itemNivelAcesso: strin
 }
 
 const validaManutencaoUsina = async (siglaUsina: string, authorization: string) => {
-  if (
-    !(await contemItemNivelAcesso('USINA', siglaUsina, authorization))
-  ) {
-    //   throw new HttpError({
-    //     statusCode: 403,
-    //     description: 'Usuário não possui item de nível de acesso',
-    //     message: `O usuário '${this.usuario}' não possui o item de nível de acesso '${siglaUsina}' no nível de acesso 'USINA'`,
-    //   });
+  if (!(await contemItemNivelAcesso('USINA', siglaUsina, authorization))) {
+      throw new Error(`O usuário não possui o item de nível de acesso '${siglaUsina}' no nível de acesso 'USINA'`);
   }
 }
 
