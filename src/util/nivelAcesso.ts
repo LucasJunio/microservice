@@ -24,19 +24,19 @@ const contemItemNivelAcesso = async (
   itemNivelAcesso: string,
   authorization: string
 ) => {
-  let itensNiveisAcesso = await obterItensNiveisAcesso(authorization);
+  let itensNiveisAcesso = await obterItensNiveisAcesso(authorization)
 
   itensNiveisAcesso = itensNiveisAcesso.filter(
-    item => item.nivelAcesso === nivelAcesso,
+    item => item.nivelAcesso === nivelAcesso
   );
 
   for (const item of itensNiveisAcesso) {
     if (item.itemNivelAcesso === itemNivelAcesso) {
-      return true;
+      return true
     }
   }
 
-  return false;
+  return false
 }
 
 const validaManutencaoUsina = async (siglaUsina: string, authorization: string) => {
@@ -53,12 +53,12 @@ const validaManutencaoUsina = async (siglaUsina: string, authorization: string) 
 
 const validaAcessoUsina = async (siglaUsina: string, authorization: string) => {
   if (await contemItemNivelAcesso('USINARESTRITA', 'S', authorization)) {
-    await validaManutencaoUsina(siglaUsina, authorization);
+    await validaManutencaoUsina(siglaUsina, authorization)
   }
 }
 
 const obterAcessoUsinas = async (authorization: string) => {
-  return await (await obterItensNiveisAcesso(authorization, 'USINA')).map(item => item.itemNivelAcesso);
+  return await (await obterItensNiveisAcesso(authorization, 'USINA')).map(item => item.itemNivelAcesso)
 }
 
 export { validaManutencaoUsina, validaAcessoUsina, obterItensNiveisAcesso, contemItemNivelAcesso, obterAcessoUsinas }
