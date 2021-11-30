@@ -42,7 +42,7 @@ const apiNivelAcesso = auth =>
 
 const getNivelAcessoUsuario = async (authorization: string) => {
   try {
-    const response = await apiAuth(authorization).get(`/`)
+    const response = await apiNivelAcesso(authorization).get(`/`)
     return response.data
   } catch (error) {
     logger.error(error)
