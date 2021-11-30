@@ -10,7 +10,7 @@ export const AuthService = {
 }
 
 export const NivelAcessoService = {
-  URL: `http://${process.env.SAU_NIVEL_ACESSO_API}/nivel-acesso/usuario-logado/`
+  URL: `${process.env.SAU_NIVEL_ACESSO_API}/nivel-acesso/usuario-logado/`
 }
 
 const apiAuth = auth =>
