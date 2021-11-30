@@ -4,9 +4,6 @@ const obterItensNiveisAcesso = async (authorization: string, nivelAcesso?: strin
   try {
     const response = await getNivelAcessoUsuario(authorization)
 
-    console.log('response nivel acesso')
-    console.log(response)
-
     if (nivelAcesso) {
       return response?.filter(item => item.nivelAcesso === nivelAcesso)
     }
