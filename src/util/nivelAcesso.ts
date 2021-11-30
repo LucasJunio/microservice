@@ -19,9 +19,7 @@ const obterItensNiveisAcesso = async (authorization: string, nivelAcesso?: strin
   }
 }
 
-const contemItemNivelAcesso = async (
-  nivelAcesso: string, itemNivelAcesso: string, authorization: string
-) => {
+const contemItemNivelAcesso = async (nivelAcesso: string, itemNivelAcesso: string, authorization: string) => {
   let itensNiveisAcesso = await obterItensNiveisAcesso(authorization)
 
   itensNiveisAcesso = itensNiveisAcesso.filter(
