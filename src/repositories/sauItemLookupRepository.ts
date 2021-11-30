@@ -7,10 +7,7 @@ import {
   isSameYear,
   isBefore,
   addYears,
-  differenceInYears,
-  differenceInDays,
-  getYear,
-  parseISO
+  differenceInYears
 } from 'date-fns'
 
 import { TemLookup } from '../entities/temLookup'

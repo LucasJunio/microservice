@@ -4,7 +4,7 @@ import { TYPE } from '../../../constants/types'
 import { SauUsinaRepository } from '../../../repositories/sauUsinaRepository'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
 
-import { contemItemNivelAcesso, obterAcessoUsinas } from '../../../util/nivelAcesso'
+import { obterAcessoUsinas } from '../../../util/nivelAcesso'
 import jwtDecode from 'jwt-decode'
 import { isEqual } from 'lodash'
 
@@ -36,20 +36,20 @@ export class UsinaService implements IUsinaService {
     const { perfil } = jwtDecode(authorization) as IUser
 
     if (isEqual(perfil, 'Empregados Terceirizados') || isEqual(perfil, 'Empregados Terceirizados - Consulta')) {
-      const usinasUsuario = await obterAcessoUsinas(authorization);
+      const usinasUsuario = await obterAcessoUsinas(authorization)
 
-        if (usinasUsuario.length === 0) {
-          return [];
-        }
+      if (usinasUsuario.length === 0) {
+        return []
+      }
 
-        return this.sauUsinaRepository.getUsinasAll(itemLookUp, usinasUsuario)
-  
-        // queryBuilderUsina.andWhere('qb.SG_USINA IN (:...usinasUsuario)', {
-        //   usinasUsuario,
-        // });
-        // queryBuilderPosto.andWhere('qb.SG_USINA IN (:...usinasUsuario)', {
-        //   usinasUsuario,
-        // });
+      return this.sauUsinaRepository.getUsinasAll(itemLookUp, usinasUsuario)
+
+      // queryBuilderUsina.andWhere('qb.SG_USINA IN (:...usinasUsuario)', {
+      //   usinasUsuario,
+      // });
+      // queryBuilderPosto.andWhere('qb.SG_USINA IN (:...usinasUsuario)', {
+      //   usinasUsuario,
+      // });
     }
 
     return this.sauUsinaRepository.getUsinasAll(itemLookUp)

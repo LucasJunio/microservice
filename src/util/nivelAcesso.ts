@@ -35,7 +35,7 @@ const contemItemNivelAcesso = async (nivelAcesso: string, itemNivelAcesso: strin
 
 const validaManutencaoUsina = async (siglaUsina: string, authorization: string) => {
   if (!(await contemItemNivelAcesso('USINA', siglaUsina, authorization))) {
-      throw new Error(`O usuário não possui o item de nível de acesso '${siglaUsina}' no nível de acesso 'USINA'`);
+    throw new Error(`O usuário não possui o item de nível de acesso '${siglaUsina}' no nível de acesso 'USINA'`)
   }
 }
 
@@ -46,7 +46,7 @@ const validaAcessoUsina = async (siglaUsina: string, authorization: string) => {
 }
 
 const obterAcessoUsinas = async (authorization: string) => {
-  return await (await obterItensNiveisAcesso(authorization, 'USINA')).map(item => item.itemNivelAcesso)
+  return (await obterItensNiveisAcesso(authorization, 'USINA')).map(item => item.itemNivelAcesso)
 }
 
 export { validaManutencaoUsina, validaAcessoUsina, obterItensNiveisAcesso, contemItemNivelAcesso, obterAcessoUsinas }
