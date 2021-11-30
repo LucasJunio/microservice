@@ -49,7 +49,7 @@ export class SauUsinaRepository implements ISauUsinaRepository {
           `
 
     if (usinasUsuario) {
-      query += ` AND su.SG_USINA IN (${usinasUsuario.join()})`
+      query += ` AND su.SG_USINA IN (${usinasUsuario.map(u => `'${u}'`)})`
     }
 
     return this.sauUsinaRepository.query(query)
