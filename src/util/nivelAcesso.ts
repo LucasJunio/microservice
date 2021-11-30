@@ -1,14 +1,14 @@
-import { getNivelAcessoUsuario } from "./api";
+import { getNivelAcessoUsuario } from './api'
 
 const obterItensNiveisAcesso = async (authorization: string, nivelAcesso?: string) => {
   try {
     const response = await getNivelAcessoUsuario(authorization)
 
     if (nivelAcesso) {
-      return response.data.filter(item => item.nivelAcesso === nivelAcesso);
+      return response.data.filter(item => item.nivelAcesso === nivelAcesso)
     }
 
-    return response.data;
+    return response.data
   } catch (error) {
     // throw new HttpError({
     //   statusCode: 503,
@@ -20,9 +20,7 @@ const obterItensNiveisAcesso = async (authorization: string, nivelAcesso?: strin
 }
 
 const contemItemNivelAcesso = async (
-  nivelAcesso: string,
-  itemNivelAcesso: string,
-  authorization: string
+  nivelAcesso: string, itemNivelAcesso: string, authorization: string
 ) => {
   let itensNiveisAcesso = await obterItensNiveisAcesso(authorization)
 
