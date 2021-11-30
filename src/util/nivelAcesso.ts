@@ -4,6 +4,9 @@ const obterItensNiveisAcesso = async (authorization: string, nivelAcesso?: strin
   try {
     const response = await getNivelAcessoUsuario(authorization)
 
+    console.log('response nivel acesso')
+    console.log(response)
+
     if (nivelAcesso) {
       return response.data.filter(item => item.nivelAcesso === nivelAcesso)
     }
@@ -46,7 +49,7 @@ const validaAcessoUsina = async (siglaUsina: string, authorization: string) => {
 }
 
 const obterAcessoUsinas = async (authorization: string) => {
-  return (await obterItensNiveisAcesso(authorization, 'USINA')).map(item => item.itemNivelAcesso)
+  return (await obterItensNiveisAcesso(authorization, 'USINA'))?.map(item => item.itemNivelAcesso)
 }
 
 export { validaManutencaoUsina, validaAcessoUsina, obterItensNiveisAcesso, contemItemNivelAcesso, obterAcessoUsinas }
