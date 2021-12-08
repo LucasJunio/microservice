@@ -142,6 +142,9 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       })
     )
 
+    console.log(query.getQuery())
+    console.log(query.getSql())
+
     if (!isEmpty(usinas)) {
       const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
       query.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
