@@ -1,5 +1,4 @@
 import { inject, injectable } from 'inversify'
-import * as moment from 'moment'
 
 import { ProgramacaoParada } from '../../../../entities/programacaoParada'
 import { ParadaProgramadaService } from '../../parada_programada/paradaProgramadaService'

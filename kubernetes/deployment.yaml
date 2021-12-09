@@ -66,6 +66,11 @@ spec:
               envFrom:
                 secretRef:
                   name: sau-database
+            - name: SAU_NIVEL_ACESSO_API
+              valueFrom:
+                configMapKeyRef:
+                  name: novosau-config
+                  key: SAU_NIVEL_ACESSO_API_URL
           ports:
             - containerPort: 8080
               protocol: TCP

@@ -12,7 +12,6 @@ export interface IRestricaoService {
 
 @injectable()
 export class RestricaoService implements IRestricaoService {
-
   @inject(TYPE.RestricaoRepository)
   private readonly restricaoRepository: SauGrupoRestricaoRepository
 
@@ -26,5 +25,4 @@ export class RestricaoService implements IRestricaoService {
   public getConflictingPp(params: any): Promise<ProgramacaoParada[]> {
     return this.programacaoParadaRepository.getConflictingPp(params)
   }
-
 }

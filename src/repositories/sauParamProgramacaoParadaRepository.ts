@@ -1,7 +1,6 @@
 import { injectable } from 'inversify'
 import { Repository, getRepository } from 'typeorm'
 import { ParamProgramacaoParadas } from '../entities/paramProgramacaoParadas'
-import moment = require('moment')
 
 export interface ISauParamProgramacaoParadaRepository {
   getParamProgramacaoParada(year: string): Promise<ParamProgramacaoParadas>
