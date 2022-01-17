@@ -173,6 +173,13 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       previus = await this.sauProgramacaoParadaRepository.getById(programcaoParada.CD_PROGRAMACAO_PARADA)
     }
 
+    if (programcaoParada.DT_HORA_TERMINO_SERVICO === null) {
+      programcaoParada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+        'STATUS_PROG_PARADA',
+        'EXECUCAO'
+      )
+    }
+
     const parada = await this.createAndSavePp(programcaoParada)
 
     const paradaWithCdParada = new ProgramacaoParada()
