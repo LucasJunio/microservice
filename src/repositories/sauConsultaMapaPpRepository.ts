@@ -3,17 +3,19 @@ import { getRepository, Repository, Brackets } from 'typeorm'
 import { isEmpty, reduce } from 'lodash'
 
 import { ConsultaMapaPPV } from '../entities/consultaMapaPPV'
+import { Pgi } from '../entities/pgi'
 import ConsultaMapaVDto from '../entities/consultaMapaVDto'
 import formatDate from '../util/formatDate'
 
 export interface ISauConsultaMapaPpRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
+  getAllDtTerminoPgiExecucao(numParada: number): any
 }
 
 @injectable()
 export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository {
   private readonly sauConsultaMapaPpRepository: Repository<ConsultaMapaPPV>
-
+  private readonly sauPgiRepository: Repository<Pgi>
   constructor() {
     this.sauConsultaMapaPpRepository = getRepository(ConsultaMapaPPV)
   }
@@ -219,8 +221,8 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       .addOrderBy('SG_CONJUNTO_USINA')
       .addOrderBy('SG_UNIDADE_GERADORA')
     const paradas = await query.getRawMany()
-
-    filter.paradas = this.handleDtHistorica(paradas)
+    const paradasPosDtHist = this.handleDtHistorica(paradas)
+    filter.paradas = this.handleDtTermino(paradasPosDtHist)
 
     return filter
   }
@@ -239,4 +241,33 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
 
     return consultaPp
   }
+
+  public handleDtTermino(paradas: ConsultaMapaPPV[]): ConsultaMapaPPV[] {
+    const filtroPPexecucao = paradas.filter(parada => parada.STATUS_PARADA === 'EXECUCAO')
+
+    if(filtroPPexecucao.length !== 0){
+      filtroPPexecucao.forEach(parada => {
+        const vetDtTermino = this.getAllDtTerminoPgiExecucao(parada.CD_PROGRAMACAO_PARADA)
+
+        if(vetDtTermino.length !== 0){
+          const vetDtTerInt = vetDtTermino.map(dtTermino => Date.parse(dtTermino));
+          const maiorDtTer = Math.max(...vetDtTerInt);
+          parada.DT_HORA_TERMINO_PROGRAMACAO = new Date(maiorDtTer)
+        }
+      })
+    }
+
+    return paradas
+  }
+
+  public getAllDtTerminoPgiExecucao(numParada: number): any {
+    return this.sauPgiRepository.find({
+      select: ['DT_FIM_PREVISTO'],
+      where: {
+        CD_PROGRAMACAO_PARADA: numParada,
+        idStatus: {"ID_ITEM_LOOKUP":"EXECUCAO"}
+      }
+    })
+  }
+
 }
