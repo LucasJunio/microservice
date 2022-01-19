@@ -244,7 +244,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     return consultaPp
   }
 
-  
+
   public handleDtTermino(paradas: ConsultaMapaPPV[]): ConsultaMapaPPV[] {
     const filtroPPexecucao = paradas.filter(parada => parada.STATUS_PARADA === 'EXECUCAO')
 
