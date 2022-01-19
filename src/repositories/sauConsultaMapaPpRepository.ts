@@ -262,7 +262,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
 
     return paradas
   }
-
+ 
   public getAllDtTerminoPgiExecucao(numParada: number): any {
     return this.sauPgiRepository.find({
       select: ['DT_FIM_PREVISTO'],
