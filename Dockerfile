@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:10-alpine AS builder
 
 RUN apk add --no-cache libaio gcompat libnsl
 
@@ -20,12 +20,18 @@ ENV ORACLE_HOME /usr/lib/instantclient_12_1
 WORKDIR /pp-api
 
 COPY ./package.json ./package.json
-
 COPY  ./dist ./dist
 COPY  ./node_modules ./node_modules
 
 RUN mkdir logs
 RUN chmod 777 -R logs/
+
+FROM node:10-alpine
+WORKDIR /pp-api
+COPY --from=builder /pp-api/package.json ./package.json
+COPY --from=builder /pp-api/dist ./
+COPY --from=builder /pp-api/node_modules ./
+RUN npm install --production
 
 EXPOSE 8080
 
