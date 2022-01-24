@@ -20,7 +20,6 @@ ENV ORACLE_HOME /usr/lib/instantclient_12_1
 WORKDIR /pp-api
 
 COPY ./package.json ./package.json
-COPY  ./dist ./dist
 COPY  ./node_modules ./node_modules
 
 RUN mkdir logs
