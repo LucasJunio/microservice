@@ -19,8 +19,7 @@ ENV ORACLE_HOME /usr/lib/instantclient_12_1
 
 WORKDIR /pp-api
 
-COPY ./package.json ./package.json
-COPY  ./node_modules ./node_modules
+COPY . .
 
 RUN mkdir logs
 RUN chmod 777 -R logs/
