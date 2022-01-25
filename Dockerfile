@@ -29,6 +29,7 @@ RUN npm install --production
 RUN mkdir logs
 RUN chmod 777 -R logs/
 
+<<<<<<< HEAD
 FROM node:10-alpine
 WORKDIR /pp-api
 COPY --from=builder /pp-api/package.json ./package.json
@@ -40,3 +41,9 @@ RUN mkdir /usr/app/temp
 RUN chmod 1777 /usr/app/temp
 EXPOSE 3000
 CMD [ "node", "src/main.js" ]
+=======
+EXPOSE 8080
+
+# Start the app
+CMD ["npm", "run", "start-prod"]
+>>>>>>> b508824... SAUA-433
