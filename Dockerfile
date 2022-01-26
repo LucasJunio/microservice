@@ -29,14 +29,7 @@ RUN npm install --production
 RUN mkdir logs
 RUN chmod 777 -R logs/
 
-FROM node:10-alpine
-WORKDIR /pp-api
-COPY --from=builder /pp-api/package.json ./package.json
-COPY --from=builder /pp-api/dist ./
-COPY --from=builder /pp-api/node_modules ./
-RUN npm install --production
-ENV FILE_TEMP_FOLDER = "temp"
-RUN mkdir /usr/app/temp
-RUN chmod 1777 /usr/app/temp
-EXPOSE 3000
-CMD [ "node", "src/main.js" ]
+EXPOSE 8080
+
+# Start the app
+CMD ["npm", "run", "start-prod"]
