@@ -1,30 +1,28 @@
-FROM node:14-alpine AS builder
-WORKDIR /node/src/app
-COPY . .
-RUN npm install && npm run build
+FROM node:10-alpine
 
-FROM node:14-buster-slim AS base 
+RUN apk add --no-cache libaio gcompat libnsl
 
-WORKDIR /opt/oracle
-ENV ORACLE_CLIENT_NAME="instantclient-sdk-linux.x64-19.9.0.0.0dbru"
-RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
-RUN wget https://download.oracle.com/otn_software/linux/instantclient/199000/${ORACLE_CLIENT_NAME}.zip
+COPY instantclient_12_1.zip ./
+RUN unzip instantclient_12_1.zip && \
+  mv instantclient_12_1/ /usr/lib/ && \
+  rm instantclient_12_1.zip && \
+  ln /usr/lib/instantclient_12_1/libclntsh.so.12.1 /usr/lib/libclntsh.so && \
+  ln /usr/lib/instantclient_12_1/libocci.so.12.1 /usr/lib/libocci.so && \
+  ln /usr/lib/instantclient_12_1/libociei.so /usr/lib/libociei.so && \
+  ln /usr/lib/instantclient_12_1/libnnz12.so /usr/lib/libnnz12.so && \
+  ln /usr/lib/libnsl.so.2 /usr/lib/libnsl.so.1
 
-RUN  apt-get update -y && \
-  apt-get upgrade -y && \
-  apt-get dist-upgrade -y && \
-  apt-get -y autoremove && \
-  apt-get clean
-RUN apt-get install -y unzip
+ENV ORACLE_BASE /usr/lib/instantclient_12_1
+ENV LD_LIBRARY_PATH /usr/lib/instantclient_12_1
+ENV TNS_ADMIN /usr/lib/instantclient_12_1
+ENV ORACLE_HOME /usr/lib/instantclient_12_1
 
-RUN  unzip ${ORACLE_CLIENT_NAME}.zip && rm -f ${ORACLE_CLIENT_NAME}.zip && \
-  cd /opt/oracle/instantclient* && rm -f *jdbc* *occi* *mysql* *mql1* *ipc1* *jar uidrvci genezi adrci && \
-  echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf && ldconfig
+WORKDIR /pp-api
 
-WORKDIR /usr/app
-COPY --from=builder /node/src/app/dist ./dist
-COPY --from=builder /node/src/app/package.json ./package.json
-RUN npm install --production
+COPY ./package.json ./package.json
+
+COPY  ./dist ./dist
+COPY  ./node_modules ./node_modules
 
 RUN mkdir logs
 RUN chmod 777 -R logs/
