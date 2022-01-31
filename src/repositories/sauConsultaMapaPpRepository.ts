@@ -9,7 +9,7 @@ import formatDate from '../util/formatDate'
 
 export interface ISauConsultaMapaPpRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
-  getAllDtTerminoPgiExecucao(numParada: number): any
+  // getAllDtTerminoPgiExecucao(numParada: number): any
 }
 
 @injectable()
@@ -223,8 +223,9 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       .addOrderBy('DT_HORA_INICIO_PROGRAMACAO')
 
     const paradas = await query.getRawMany()
-    const paradasPosDtHist = this.handleDtHistorica(paradas)
-    filter.paradas = this.handleDtTermino(paradasPosDtHist)
+    filter.paradas = this.handleDtHistorica(paradas)
+    // const paradasPosDtHist = this.handleDtHistorica(paradas)
+    // filter.paradas = this.handleDtTermino(paradasPosDtHist)
 
     return filter
   }
@@ -244,31 +245,31 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     return consultaPp
   }
 
-  public handleDtTermino(paradas: ConsultaMapaPPV[]): ConsultaMapaPPV[] {
-    const filtroPPexecucao = paradas.filter(parada => parada.STATUS_PARADA === 'EXECUCAO')
+  // public handleDtTermino(paradas: ConsultaMapaPPV[]): ConsultaMapaPPV[] {
+  //   const filtroPPexecucao = paradas.filter(parada => parada.STATUS_PARADA === 'EXECUCAO')
 
-    if(filtroPPexecucao.length !== 0){
-      filtroPPexecucao.forEach(parada => {
-        const vetDtTermino = this.getAllDtTerminoPgiExecucao(parada.CD_PROGRAMACAO_PARADA)
+  //   if(filtroPPexecucao.length !== 0){
+  //     filtroPPexecucao.forEach(parada => {
+  //       const vetDtTermino = this.getAllDtTerminoPgiExecucao(parada.CD_PROGRAMACAO_PARADA)
 
-        if(vetDtTermino.length !== 0){
-          const vetDtTerInt = vetDtTermino.map(dtTermino => Date.parse(dtTermino));
-          const maiorDtTer = Math.max(...vetDtTerInt);
-          parada.DT_HORA_TERMINO_PROGRAMACAO = new Date(maiorDtTer)
-        }
-      })
-    }
+  //       if(vetDtTermino.length !== 0){
+  //         const vetDtTerInt = vetDtTermino.map(dtTermino => Date.parse(dtTermino));
+  //         const maiorDtTer = Math.max(...vetDtTerInt);
+  //         parada.DT_HORA_TERMINO_PROGRAMACAO = new Date(maiorDtTer)
+  //       }
+  //     })
+  //   }
 
-    return paradas
-  }
-  public getAllDtTerminoPgiExecucao(numParada: number): any {
-    return this.sauPgiRepository.find({
-      select: ['DT_FIM_PREVISTO'],
-      where: {
-        CD_PROGRAMACAO_PARADA: numParada,
-        idStatus: {"ID_ITEM_LOOKUP":"EXECUCAO"}
-      }
-    })
-  }
+  //   return paradas
+  // }
+  // public getAllDtTerminoPgiExecucao(numParada: number): any {
+  //   return this.sauPgiRepository.find({
+  //     select: ['DT_FIM_PREVISTO'],
+  //     where: {
+  //       CD_PROGRAMACAO_PARADA: numParada,
+  //       idStatus: {"ID_ITEM_LOOKUP":"EXECUCAO"}
+  //     }
+  //   })
+  // }
 
 }
