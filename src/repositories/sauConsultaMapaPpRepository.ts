@@ -8,7 +8,7 @@ import ConsultaMapaVDto from '../entities/consultaMapaVDto'
 import formatDate from '../util/formatDate'
 export interface ISauConsultaMapaPpRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
-  // getAllDtTerminoPgiExecucao(numParada: number): any
+  getAllDtTerminoPgiExecucao(numParada: number): any
 }
 
 @injectable()
