@@ -4,23 +4,28 @@ import { isEmpty, reduce } from 'lodash'
 
 import { ConsultaMapaPPV } from '../entities/consultaMapaPPV'
 import { Pgi } from '../entities/pgi'
+import { ProrrogacaoPgi } from '../entities/prorrogacaoPgi'
 import ConsultaMapaVDto from '../entities/consultaMapaVDto'
 import formatDate from '../util/formatDate'
 export interface ISauConsultaMapaPpRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
-  getAllDtTerminoPgiExecucao(numParada: number): any
+  getAllDtTerminoPgi(numParada: number): Promise<Pgi[]>
 }
 
 @injectable()
 export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository {
   private readonly sauConsultaMapaPpRepository: Repository<ConsultaMapaPPV>
   private readonly sauPgiRepository: Repository<Pgi>
+  private readonly sauProrrogacaoPgiRepository: Repository<ProrrogacaoPgi>
+  
   constructor() {
     this.sauConsultaMapaPpRepository = getRepository(ConsultaMapaPPV)
     this.sauPgiRepository = getRepository(Pgi)
+    this.sauProrrogacaoPgiRepository = getRepository(ProrrogacaoPgi)
   }
 
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
+    
     const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas, usinasToShow } = filter
 
     const columns = [
@@ -222,7 +227,9 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     const paradas = await query.getRawMany()
     const paradasPosDtHist = this.handleDtHistorica(paradas)
 
-    filter.paradas  = await this.handleDtTermino(paradasPosDtHist)
+    console.log(paradasPosDtHist)
+
+    filter.paradas  = await this.handleProrrogacaoPgi(paradasPosDtHist)
 
     return filter
   }
@@ -242,15 +249,16 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     return consultaPp
   }
 
-  public async handleDtTermino(paradas: ConsultaMapaPPV[]): Promise<ConsultaMapaPPV[]> {
+  public async handleProrrogacaoPgi(paradas: ConsultaMapaPPV[]): Promise<ConsultaMapaPPV[]> {
 
     const promises = paradas.map(async parada => {
       if(parada.STATUS_PARADA === 'EXECUCAO'){          
         
-        const vetDtTermino = await this.getAllDtTerminoPgiExecucao(parada.CD_PROGRAMACAO_PARADA)
+        const vetDtTerminoPgi = await this.getAllDtTerminoPgi(parada.CD_PROGRAMACAO_PARADA)
+        const vetDtProrrogadaPgi = await this.getAllDtProrrogacaoPgi(parada.CD_PGI)
 
-        if(vetDtTermino.length !== 0){
-          const vetDtTerInt = vetDtTermino.map(dtTermino => Date.parse(`${dtTermino.DT_FIM_PREVISTO}`));
+        if(vetDtTerminoPgi.length !== 0){
+          const vetDtTerInt = vetDtTerminoPgi.map(dtTermino => Date.parse(`${dtTermino.DT_FIM_PREVISTO}`));
           const maiorDtTer = Math.max(...vetDtTerInt);
           parada.DT_HORA_TERMINO_PROGRAMACAO = new Date(maiorDtTer)
         }
@@ -262,13 +270,29 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     return paradas
   }
 
-  public async getAllDtTerminoPgiExecucao(numParada: number): Promise<Pgi[]> {
+  public async getAllDtTerminoPgi(numParada: number): Promise<Pgi[]> {
     
     const query = this.sauPgiRepository.createQueryBuilder('SAU_PGI').select('DT_FIM_PREVISTO')
     
     return await query
-      .where('CD_PROGRAMACAO_PARADA = :numParada', { numParada })
-      .andWhere('ID_STATUS = 5')
+      .where('CD_PROGRAMACAO_PARADA = :numParada', { numParada })      
       .getRawMany()
+  }
+
+  public async getAllDtProrrogacaoPgi(AllCdPgi: string): Promise<ProrrogacaoPgi[]> {
+
+    var vetCdPgi = AllCdPgi.split(',')
+
+    const promises = vetCdPgi.map(async cdPgi => {
+
+      const query = this.sauProrrogacaoPgiRepository.createQueryBuilder('SAU_PRORROGACAO_PGI').select('DT_PRORROGADA')
+      query
+        .where('CD_PGI = :cdPgi', { cdPgi })      
+        .getRawMany()
+    });
+
+    await Promise.all(promises);
+  
+      return []
   }
 }
