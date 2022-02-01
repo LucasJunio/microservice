@@ -6,7 +6,6 @@ import { ConsultaMapaPPV } from '../entities/consultaMapaPPV'
 import { Pgi } from '../entities/pgi'
 import ConsultaMapaVDto from '../entities/consultaMapaVDto'
 import formatDate from '../util/formatDate'
-
 export interface ISauConsultaMapaPpRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
   getAllDtTerminoPgiExecucao(numParada: number): any
@@ -18,6 +17,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
   private readonly sauPgiRepository: Repository<Pgi>
   constructor() {
     this.sauConsultaMapaPpRepository = getRepository(ConsultaMapaPPV)
+    this.sauPgiRepository = getRepository(Pgi)
   }
 
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
@@ -213,16 +213,16 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
         }
       })
     )
-    // query.andWhere('DT_PRORROGACAO_PGI is not null')
 
     query
-      .orderBy('ORDEM_USINA')
-      .addOrderBy('REGIONAL_USINA')
-      .addOrderBy('SG_CONJUNTO_USINA')
+      .orderBy('SG_CONJUNTO_USINA')
       .addOrderBy('SG_UNIDADE_GERADORA')
+      .addOrderBy('DT_HORA_INICIO_PROGRAMACAO')
+
     const paradas = await query.getRawMany()
     const paradasPosDtHist = this.handleDtHistorica(paradas)
-    filter.paradas = this.handleDtTermino(paradasPosDtHist)
+
+    filter.paradas  = await this.handleDtTermino(paradasPosDtHist)
 
     return filter
   }
@@ -242,32 +242,33 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     return consultaPp
   }
 
-  public handleDtTermino(paradas: ConsultaMapaPPV[]): ConsultaMapaPPV[] {
-    const filtroPPexecucao = paradas.filter(parada => parada.STATUS_PARADA === 'EXECUCAO')
+  public async handleDtTermino(paradas: ConsultaMapaPPV[]): Promise<ConsultaMapaPPV[]> {
 
-    if(filtroPPexecucao.length !== 0){
-      filtroPPexecucao.forEach(parada => {
-        const vetDtTermino = this.getAllDtTerminoPgiExecucao(parada.CD_PROGRAMACAO_PARADA)
+    const promises = paradas.map(async parada => {
+      if(parada.STATUS_PARADA === 'EXECUCAO'){          
+        
+        const vetDtTermino = await this.getAllDtTerminoPgiExecucao(parada.CD_PROGRAMACAO_PARADA)
 
         if(vetDtTermino.length !== 0){
-          const vetDtTerInt = vetDtTermino.map(dtTermino => Date.parse(dtTermino));
+          const vetDtTerInt = vetDtTermino.map(dtTermino => Date.parse(`${dtTermino.DT_FIM_PREVISTO}`));
           const maiorDtTer = Math.max(...vetDtTerInt);
           parada.DT_HORA_TERMINO_PROGRAMACAO = new Date(maiorDtTer)
         }
-      })
-    }
+      }
+    });
 
+    await Promise.all(promises);
+      
     return paradas
   }
 
-  public getAllDtTerminoPgiExecucao(numParada: number): any {
-    return this.sauPgiRepository.find({
-      select: ['DT_FIM_PREVISTO'],
-      where: {
-        CD_PROGRAMACAO_PARADA: numParada,
-        idStatus: {"ID_ITEM_LOOKUP":"EXECUCAO"}
-      }
-    })
+  public async getAllDtTerminoPgiExecucao(numParada: number): Promise<Pgi[]> {
+    
+    const query = this.sauPgiRepository.createQueryBuilder('SAU_PGI').select('DT_FIM_PREVISTO')
+    
+    return await query
+      .where('CD_PROGRAMACAO_PARADA = :numParada', { numParada })
+      .andWhere('ID_STATUS = 5')
+      .getRawMany()
   }
-
 }
