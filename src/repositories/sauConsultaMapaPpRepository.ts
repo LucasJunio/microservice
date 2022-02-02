@@ -4,23 +4,28 @@ import { isEmpty, reduce } from 'lodash'
 
 import { ConsultaMapaPPV } from '../entities/consultaMapaPPV'
 import { Pgi } from '../entities/pgi'
+import { ProrrogacaoPgi } from '../entities/prorrogacaoPgi'
 import ConsultaMapaVDto from '../entities/consultaMapaVDto'
 import formatDate from '../util/formatDate'
 export interface ISauConsultaMapaPpRepository {
   getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto>
-  getAllDtTerminoPgiExecucao(numParada: number): any
+  getAllDtTerminoPgi(numParada: number): Promise<Array<{DT_FIM_PREVISTO: string}>>
 }
 
 @injectable()
 export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository {
   private readonly sauConsultaMapaPpRepository: Repository<ConsultaMapaPPV>
   private readonly sauPgiRepository: Repository<Pgi>
+  private readonly sauProrrogacaoPgiRepository: Repository<ProrrogacaoPgi>
+  
   constructor() {
     this.sauConsultaMapaPpRepository = getRepository(ConsultaMapaPPV)
     this.sauPgiRepository = getRepository(Pgi)
+    this.sauProrrogacaoPgiRepository = getRepository(ProrrogacaoPgi)
   }
 
   public async getAll(filter: ConsultaMapaVDto): Promise<ConsultaMapaVDto> {
+    
     const { dtFim, dtInicio, dtHistorica, usinas, status, tipoParadas, tipoUsinas, usinasToShow } = filter
 
     const columns = [
@@ -144,9 +149,6 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       })
     )
 
-    console.log(query.getQuery())
-    console.log(query.getSql())
-
     if (!isEmpty(usinas)) {
       const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
       query.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
@@ -225,7 +227,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     const paradas = await query.getRawMany()
     const paradasPosDtHist = this.handleDtHistorica(paradas)
 
-    filter.paradas  = await this.handleDtTermino(paradasPosDtHist)
+    filter.paradas  = await this.handleProrrogacaoPgi(paradasPosDtHist)
 
     return filter
   }
@@ -245,17 +247,22 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     return consultaPp
   }
 
-  public async handleDtTermino(paradas: ConsultaMapaPPV[]): Promise<ConsultaMapaPPV[]> {
+  public async handleProrrogacaoPgi(paradas: ConsultaMapaPPV[]): Promise<ConsultaMapaPPV[]> {
 
     const promises = paradas.map(async parada => {
       if(parada.STATUS_PARADA === 'EXECUCAO'){          
         
-        const vetDtTermino = await this.getAllDtTerminoPgiExecucao(parada.CD_PROGRAMACAO_PARADA)
+        const vetDtTerminoPgi: Array<{DT_FIM_PREVISTO: string}> = await this.getAllDtTerminoPgi(parada.CD_PROGRAMACAO_PARADA)
+        const vetDtProrrogadacaoPgi: Array<{DT_FIM_PREVISTO: string}> = await this.getAllDtProrrogacaoPgi(parada.CD_PGI)
 
-        if(vetDtTermino.length !== 0){
-          const vetDtTerInt = vetDtTermino.map(dtTermino => Date.parse(`${dtTermino.DT_FIM_PREVISTO}`));
+        vetDtProrrogadacaoPgi.forEach(dtProrogacaoPgi => {
+          vetDtTerminoPgi.push(dtProrogacaoPgi)
+        })
+
+        if(vetDtTerminoPgi.length !== 0){
+          const vetDtTerInt = vetDtTerminoPgi.map(dtTermino => Date.parse(`${dtTermino.DT_FIM_PREVISTO}`));
           const maiorDtTer = Math.max(...vetDtTerInt);
-          parada.DT_HORA_TERMINO_PROGRAMACAO = new Date(maiorDtTer)
+          parada.DT_PRORROGACAO_PGI = new Date(maiorDtTer)
         }
       }
     });
@@ -265,13 +272,42 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
     return paradas
   }
 
-  public async getAllDtTerminoPgiExecucao(numParada: number): Promise<Pgi[]> {
+  public async getAllDtTerminoPgi(numParada: number): Promise<Array<{DT_FIM_PREVISTO: string}>> {
     
     const query = this.sauPgiRepository.createQueryBuilder('SAU_PGI').select('DT_FIM_PREVISTO')
     
     return await query
-      .where('CD_PROGRAMACAO_PARADA = :numParada', { numParada })
-      .andWhere('ID_STATUS = 5')
+      .where('CD_PROGRAMACAO_PARADA = :numParada', { numParada })      
       .getRawMany()
+  }
+
+  public async getAllDtProrrogacaoPgi(AllCdPgi: string): Promise<Array<{DT_FIM_PREVISTO: string}>> {
+
+    let vetCdPgi = AllCdPgi.split(',')
+    let AllDtProrrogacaoAllPgi = []
+
+    const promises = vetCdPgi.map(async cdPgi => {
+
+      const query = this.sauProrrogacaoPgiRepository.createQueryBuilder('p').select('DT_PRORROGADA AS DT_FIM_PREVISTO')
+      query
+        .innerJoin('p.cdPgi', 'cdPgi')
+        .innerJoin('cdPgi.idStatus', 'idStatus')
+        .innerJoin('idStatus.cdLookup', 'cdLookup')
+        .where('cdLookup.ID_LOOKUP = :statusPgi', { statusPgi:'STATUS_PGI'})
+        .andWhere('p.cdPgi = :cdPgi', {cdPgi})        
+        .andWhere('idStatus.ID_ITEM_LOOKUP != :idItemIndeferido', { idItemIndeferido: 'INDEFERIDO' })
+        .andWhere('idStatus.ID_ITEM_LOOKUP != :idItemCancelado', { idItemCancelado: 'CANCELADO' })
+        .getRawMany()    
+
+        let AllDtProrrogacaoPgi = await query.getRawMany()
+
+        AllDtProrrogacaoPgi.forEach(dtProrogacaoPgi => {
+          AllDtProrrogacaoAllPgi.push(dtProrogacaoPgi)
+        })
+      });
+      
+    await Promise.all(promises);
+    
+    return AllDtProrrogacaoAllPgi
   }
 }
