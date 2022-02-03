@@ -250,16 +250,18 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
   public async handleProrrogacaoPgi(paradas: ConsultaMapaPPV[]): Promise<ConsultaMapaPPV[]> {
 
     const promises = paradas.map(async parada => {
-      if(parada.STATUS_PARADA === 'EXECUCAO'){          
-        
+      if(parada.STATUS_PARADA === 'EXECUCAO'){     
+
         const vetDtTerminoPgi: Array<{DT_FIM_PREVISTO: string}> = await this.getAllDtTerminoPgi(parada.CD_PROGRAMACAO_PARADA)
         const vetDtProrrogadacaoPgi: Array<{DT_FIM_PREVISTO: string}> = await this.getAllDtProrrogacaoPgi(parada.CD_PGI)
 
-        vetDtProrrogadacaoPgi.forEach(dtProrogacaoPgi => {
-          vetDtTerminoPgi.push(dtProrogacaoPgi)
-        })
-
-        if(vetDtTerminoPgi.length !== 0){
+        if(!!vetDtProrrogadacaoPgi){
+          vetDtProrrogadacaoPgi.forEach(dtProrogacaoPgi => {
+            vetDtTerminoPgi.push(dtProrogacaoPgi)
+          })
+        }
+        
+        if(!!vetDtTerminoPgi){
           const vetDtTerInt = vetDtTerminoPgi.map(dtTermino => Date.parse(`${dtTermino.DT_FIM_PREVISTO}`));
           const maiorDtTer = Math.max(...vetDtTerInt);
           parada.DT_PRORROGACAO_PGI = new Date(maiorDtTer)
@@ -283,31 +285,36 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
 
   public async getAllDtProrrogacaoPgi(AllCdPgi: string): Promise<Array<{DT_FIM_PREVISTO: string}>> {
 
-    let vetCdPgi = AllCdPgi.split(',')
-    let AllDtProrrogacaoAllPgi = []
+    if(!!AllCdPgi){
 
-    const promises = vetCdPgi.map(async cdPgi => {
+      let vetCdPgi = AllCdPgi.split(',')
+      
+      let AllDtProrrogacaoAllPgi = []
+
+      const promises = vetCdPgi.map(async cdPgi => {
 
       const query = this.sauProrrogacaoPgiRepository.createQueryBuilder('p').select('DT_PRORROGADA AS DT_FIM_PREVISTO')
-      query
-        .innerJoin('p.cdPgi', 'cdPgi')
-        .innerJoin('cdPgi.idStatus', 'idStatus')
-        .innerJoin('idStatus.cdLookup', 'cdLookup')
-        .where('cdLookup.ID_LOOKUP = :statusPgi', { statusPgi:'STATUS_PGI'})
-        .andWhere('p.cdPgi = :cdPgi', {cdPgi})        
-        .andWhere('idStatus.ID_ITEM_LOOKUP != :idItemIndeferido', { idItemIndeferido: 'INDEFERIDO' })
-        .andWhere('idStatus.ID_ITEM_LOOKUP != :idItemCancelado', { idItemCancelado: 'CANCELADO' })
-        .getRawMany()    
+        query
+          .innerJoin('p.cdPgi', 'cdPgi')
+          .innerJoin('cdPgi.idStatus', 'idStatus')
+          .innerJoin('idStatus.cdLookup', 'cdLookup')
+          .where('cdLookup.ID_LOOKUP = :statusPgi', { statusPgi:'STATUS_PGI'})
+          .andWhere('p.cdPgi = :cdPgi', {cdPgi})        
+          .andWhere('idStatus.ID_ITEM_LOOKUP != :idItemIndeferido', { idItemIndeferido: 'INDEFERIDO' })
+          .andWhere('idStatus.ID_ITEM_LOOKUP != :idItemCancelado', { idItemCancelado: 'CANCELADO' })
+          .getRawMany()    
 
         let AllDtProrrogacaoPgi = await query.getRawMany()
 
         AllDtProrrogacaoPgi.forEach(dtProrogacaoPgi => {
-          AllDtProrrogacaoAllPgi.push(dtProrogacaoPgi)
+            AllDtProrrogacaoAllPgi.push(dtProrogacaoPgi)
         })
       });
       
-    await Promise.all(promises);
-    
-    return AllDtProrrogacaoAllPgi
+      await Promise.all(promises);
+      
+      return AllDtProrrogacaoAllPgi
+    }
+    return null
   }
 }
