@@ -22,7 +22,7 @@ import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoParadaUG } from '../../../entities/programacaoParadaUG'
 import * as moment from 'moment'
 import { parseISO } from 'date-fns'
-import { get, isEmpty, isNil } from 'lodash'
+import { get, isEmpty, isNil, isNull } from 'lodash'
 import { PpVariables } from '../../../util/notificationVariables'
 import { logger } from '../../../util/logger'
 import { apiFluxo, getUsuario } from '../../../util/api'
@@ -173,11 +173,19 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       previus = await this.sauProgramacaoParadaRepository.getById(programcaoParada.CD_PROGRAMACAO_PARADA)
     }
 
-    if (isEmpty(programcaoParada.sauPgis) && programcaoParada.idStatus.ID_ITEM_LOOKUP === 'AAPRV' && programcaoParada.DT_HORA_TERMINO_SERVICO === null) {
-      programcaoParada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdItemLookup('EXECUCAO')
+    if (isEmpty(programcaoParada.sauPgis) && programcaoParada.idStatus.ID_ITEM_LOOKUP === 'AAPRV' && isNull(programcaoParada.DT_HORA_TERMINO_SERVICO)) {
+      saveHistorico = true
+      programcaoParada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+        'STATUS_PROG_PARADA',
+        'EXECUCAO'
+      )
     } else {
-      if (isEmpty(programcaoParada.sauPgis) && programcaoParada.idStatus.ID_ITEM_LOOKUP === 'EXECUCAO') {
-        programcaoParada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdItemLookup('AAPRV')
+      if (isEmpty(programcaoParada.sauPgis) && programcaoParada.idStatus.ID_ITEM_LOOKUP === 'EXECUCAO' && !isNull(programcaoParada.DT_HORA_TERMINO_SERVICO)) {
+        saveHistorico = true
+        programcaoParada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
+          'STATUS_PROG_PARADA',
+          'AAPRV'
+        )
       }
     }
 
