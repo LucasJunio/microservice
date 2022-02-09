@@ -173,20 +173,14 @@ export class ParadaProgramadaService implements IParadaProgramadaService {
       previus = await this.sauProgramacaoParadaRepository.getById(programcaoParada.CD_PROGRAMACAO_PARADA)
     }
 
-    if (isEmpty(programcaoParada.sauPgis) && programcaoParada.idStatus.ID_ITEM_LOOKUP === 'AAPRV' && isNull(programcaoParada.DT_HORA_TERMINO_SERVICO)) {
-      saveHistorico = true
+    if (isEmpty(programcaoParada.sauPgis) 
+        && ((programcaoParada.idStatus.ID_ITEM_LOOKUP === 'AAPRV' 
+        && isNull(programcaoParada.DT_HORA_TERMINO_SERVICO)) 
+        || programcaoParada.idStatus.ID_ITEM_LOOKUP === 'EXECUCAO')) {
       programcaoParada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
         'STATUS_PROG_PARADA',
         'EXECUCAO'
       )
-    } else {
-      if (isEmpty(programcaoParada.sauPgis) && programcaoParada.idStatus.ID_ITEM_LOOKUP === 'EXECUCAO' && !isNull(programcaoParada.DT_HORA_TERMINO_SERVICO)) {
-        saveHistorico = true
-        programcaoParada.idStatus = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
-          'STATUS_PROG_PARADA',
-          'AAPRV'
-        )
-      }
     }
 
     const parada = await this.createAndSavePp(programcaoParada)
