@@ -1,6 +1,6 @@
 import { injectable } from 'inversify'
 import { getRepository, Repository, Brackets } from 'typeorm'
-import { isEmpty, reduce } from 'lodash'
+import { isEmpty, isNull, reduce } from 'lodash'
 
 import { ConsultaMapaPPV } from '../entities/consultaMapaPPV'
 import { Pgi } from '../entities/pgi'
@@ -255,16 +255,18 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
         const vetDtTerminoPgi: Array<{DT_FIM_PREVISTO: string}> = await this.getAllDtTerminoPgi(parada.CD_PROGRAMACAO_PARADA)
         const vetDtProrrogadacaoPgi: Array<{DT_FIM_PREVISTO: string}> = await this.getAllDtProrrogacaoPgi(parada.CD_PGI)
 
-        if(!!vetDtProrrogadacaoPgi){
+        if(!(isEmpty(vetDtProrrogadacaoPgi) || isNull(vetDtProrrogadacaoPgi))){
           vetDtProrrogadacaoPgi.forEach(dtProrogacaoPgi => {
             vetDtTerminoPgi.push(dtProrogacaoPgi)
           })
         }
         
-        if(!!vetDtTerminoPgi){
+        if(!(isEmpty(vetDtTerminoPgi) || isNull(vetDtTerminoPgi))){
           const vetDtTerInt = vetDtTerminoPgi.map(dtTermino => Date.parse(`${dtTermino.DT_FIM_PREVISTO}`));
           const maiorDtTer = Math.max(...vetDtTerInt);
           parada.DT_PRORROGACAO_PGI = new Date(maiorDtTer)
+        } else {
+          parada.DT_HORA_TERMINO_SERVICO = new Date()
         }
       }
     });
