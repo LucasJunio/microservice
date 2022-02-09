@@ -21,7 +21,6 @@ export interface ISauItemLookUpRepository {
   getItemLookUpByCdAndId(idItemLookup, cdLookup): Promise<TemLookup>
   getTipoParadaByDate(dateFrom: Date, dateTo: Date): Promise<TemLookup>
   getItemLookUpByIdLookupAndIdItemLookup(idLookup, idItemLookup): Promise<TemLookup>
-  getItemLookUpByIdItemLookup(idItemLookup): Promise<TemLookup>
 }
 
 @injectable()
@@ -49,14 +48,6 @@ export class SauItemLookUpRepository implements ISauItemLookUpRepository {
       select: ['ID_ITEM_LOOKUP', 'DS_ITEM_LOOKUP', 'CD_ITEM_LOOKUP'],
       where: {
         cdLookup,
-        ID_ITEM_LOOKUP: idItemLookup
-      }
-    })
-  }
-
-  public getItemLookUpByIdItemLookup(idItemLookup:string): Promise<TemLookup> {
-    return this.sauItemLookUpRepository.findOne({      
-      where: {
         ID_ITEM_LOOKUP: idItemLookup
       }
     })
