@@ -4,7 +4,7 @@ import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepo
 import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHistProgramacaoParadaRepository'
 import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
-
+import formatDate from '../../../util/formatDate'
 export interface IReprogramacaoParadaService {
   saveReprogramacaoParada(repro: any, authorization: string)
 }
@@ -42,7 +42,8 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       cdSubclasReprogrParada: repro.subClassificacao,
       DS_OBSERVACAO_REPROGR_PARADA: null,
       NM_AREA_ORIGEM_REPROGRAMACAO: null,
-      USER_UPDATE: repro.user
+      USER_UPDATE: repro.user,
+      DATE_UPDATE: formatDate(),
     }
 
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
