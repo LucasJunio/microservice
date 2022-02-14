@@ -31,7 +31,7 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
     const newParada = {
       ...parada,
       ID_STATUS_PROGRAMACAO: 'R',
-      DT_HORA_INICIO_REPROGRAMACAO: formatDate(),
+      DT_HORA_INICIO_REPROGRAMACAO: repro.dataInicio,
       DT_HORA_TERMINO_REPROGRAMACAO: repro.dataTermino,
       idStatusReprogramacao: statusReprog,
       idOrigemReprogramacao: null,
@@ -42,7 +42,8 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       cdSubclasReprogrParada: repro.subClassificacao,
       DS_OBSERVACAO_REPROGR_PARADA: null,
       NM_AREA_ORIGEM_REPROGRAMACAO: null,
-      USER_UPDATE: repro.user
+      USER_UPDATE: repro.user,
+      DATE_UPDATE: formatDate(),
     }
 
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
