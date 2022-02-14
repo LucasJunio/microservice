@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify'
 import * as _ from 'lodash'
-import * as moment from 'moment'
 
 import { TYPE } from '../../../constants/types'
 import { SauItemLookUpRepository } from '../../../repositories/sauItemLookupRepository'
@@ -11,8 +10,6 @@ import { ProgramacaoParada } from '../../../entities/programacaoParada'
 
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
 import { TemLookup } from '../../../entities/temLookup'
-import { Pgi } from '../../../entities/pgi'
-import { HistProgramacaoParada } from '../../../entities/histProgramacaoParada'
 import { ProgramacaoFluxoService } from './fluxoStatus/programacaoFluxoService'
 import { ReprogramacaoFluxoService } from './fluxoStatus/reprogramacaoFluxoService'
 import { CancelamentoFluxoService } from './fluxoStatus/cancelamentoFluxoService'

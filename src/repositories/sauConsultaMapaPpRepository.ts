@@ -144,6 +144,9 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
       })
     )
 
+    console.log(query.getQuery())
+    console.log(query.getSql())
+
     if (!isEmpty(usinas)) {
       const filterUsinas = reduce(usinas, (acc, usina) => [...acc, usina.SG_CONJUNTO_USINA], [])
       query.andWhere('SG_CONJUNTO_USINA IN (:...filterUsinas)', { filterUsinas })
@@ -213,13 +216,12 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
         }
       })
     )
-    // query.andWhere('DT_PRORROGACAO_PGI is not null')
 
     query
-      .orderBy('ORDEM_USINA')
-      .addOrderBy('REGIONAL_USINA')
-      .addOrderBy('SG_CONJUNTO_USINA')
+      .orderBy('SG_CONJUNTO_USINA')
       .addOrderBy('SG_UNIDADE_GERADORA')
+      .addOrderBy('DT_HORA_INICIO_PROGRAMACAO')
+
     const paradas = await query.getRawMany()
     const paradasPosDtHist = this.handleDtHistorica(paradas)
     filter.paradas = this.handleDtTermino(paradasPosDtHist)
@@ -259,7 +261,7 @@ export class SauConsultaMapaPpRepository implements ISauConsultaMapaPpRepository
 
     return paradas
   }
-
+ 
   public getAllDtTerminoPgiExecucao(numParada: number): any {
     return this.sauPgiRepository.find({
       select: ['DT_FIM_PREVISTO'],

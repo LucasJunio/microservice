@@ -1,6 +1,5 @@
 import { ConsultaMapaPPV } from './consultaMapaPPV'
 import { TemLookup } from './temLookup'
-import { Usina } from './usina'
 import { ConsultaMapaPgiV } from './consultaMapaPgiV'
 
 class ConsultaMapaVDto {
