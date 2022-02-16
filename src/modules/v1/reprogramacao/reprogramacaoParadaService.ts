@@ -5,6 +5,7 @@ import { SauHistProgramacaoParadaRepository } from '../../../repositories/sauHis
 import { SauProgramacaoParadaRepository } from '../../../repositories/sauProgramacaoParadaRepository'
 import { ParadaProgramadaService } from '../parada_programada/paradaProgramadaService'
 import formatDate from '../../../util/formatDate'
+import { parseISO } from 'date-fns'
 export interface IReprogramacaoParadaService {
   saveReprogramacaoParada(repro: any, authorization: string)
 }
@@ -28,6 +29,11 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
     const parada = await this.sauProgramacaoParadaRepository.getById(repro.cdPp)
     const statusReprog = await this.sauItemLookUpRepository.getItemLookUpByCdAndId('AAPRV_USINA', 13)
 
+    parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
+      parseISO(parada.DT_CRIACAO_PARADA.toString()),
+      parseISO(parada.DT_HORA_INICIO_REPROGRAMACAO.toString())
+    )
+    
     const newParada = {
       ...parada,
       ID_STATUS_PROGRAMACAO: 'R',
