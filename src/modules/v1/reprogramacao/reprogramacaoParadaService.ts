@@ -51,7 +51,7 @@ export class ReprogramacaoParadaService implements IReprogramacaoParadaService {
       USER_UPDATE: repro.user,
       DATE_UPDATE: formatDate(),
     }
-
+ 
     const historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
       newParada,
       'EM ANÁLISE USINA',
