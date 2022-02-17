@@ -81,8 +81,8 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
       )
       
       parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
-        parseISO(parada.DT_CRIACAO_PARADA.toString()),
-        parseISO(formatDate().toString())
+        parseISO(formatDate().toString()),
+        parseISO(parada.DT_HORA_INICIO_REPROGRAMACAO.toString())
       )
 
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
@@ -141,8 +141,8 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
     )
 
     parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
-      parseISO(parada.DT_CRIACAO_PARADA.toString()),
-      parseISO(formatDate().toString())
+      parseISO(formatDate().toString()),
+      parseISO(parada.DT_HORA_INICIO_REPROGRAMACAO.toString())
     )
 
     historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
