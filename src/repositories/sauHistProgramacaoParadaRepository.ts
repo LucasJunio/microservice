@@ -29,10 +29,10 @@ export class SauHistProgramacaoParadaRepository implements ISauHistProgramacaoPa
     historico: HistProgramacaoParada,
     authorization: string
   ): Promise<HistProgramacaoParada> {
-    const userUpdade = await getUsuario(historico.NM_USUARIO, authorization)
+    // const userUpdade = await getUsuario(historico.NM_USUARIO, authorization)
     const idHistorico = await this.getHistoricoSeq()
     historico.CD_HISTORICO = idHistorico[0].ID
-    historico.NM_USUARIO = userUpdade.NM_USUARIO
+    historico.NM_USUARIO = 'PL6326'
     return this.sauHistProgramacaoParadaRepository.save(historico)
   }
 

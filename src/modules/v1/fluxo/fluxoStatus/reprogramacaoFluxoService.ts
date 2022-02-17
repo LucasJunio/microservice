@@ -8,6 +8,7 @@ import { SauProgramacaoParadaRepository } from '../../../../repositories/sauProg
 import { SauHistProgramacaoParadaRepository } from '../../../../repositories/sauHistProgramacaoParadaRepository'
 import { TYPE } from '../../../../constants/types'
 import { parseISO } from 'date-fns'
+import formatDate from '../../../../util/formatDate'
 
 export interface IReprogramacaoFluxoService {
   handleAgAprUsina(parada: ProgramacaoParada, authorization: string): Promise<ProgramacaoParada>
@@ -78,10 +79,10 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
         'SITUACAO_PROG_PARADA',
         'R'
       )
-
+      
       parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
         parseISO(parada.DT_CRIACAO_PARADA.toString()),
-        parseISO(parada.DT_HORA_INICIO_REPROGRAMACAO.toString())
+        parseISO(formatDate().toString())
       )
 
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
@@ -141,7 +142,7 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
 
     parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
       parseISO(parada.DT_CRIACAO_PARADA.toString()),
-      parseISO(parada.DT_HORA_INICIO_REPROGRAMACAO.toString())
+      parseISO(formatDate().toString())
     )
 
     historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
