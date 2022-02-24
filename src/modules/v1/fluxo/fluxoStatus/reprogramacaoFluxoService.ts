@@ -64,6 +64,7 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PI' ||
       parada.idTipoParada.ID_ITEM_LOOKUP === 'PL'
     ) {
+      
       parada.idStatusReprogramacao = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
         'STATUS_PROG_PARADA',
         'APRV'
@@ -78,13 +79,13 @@ export class ReprogramacaoFluxoService implements IReprogramacaoFluxoService {
       parada.idTipoProgramacao = await this.sauItemLookUpRepository.getItemLookUpByIdLookupAndIdItemLookup(
         'SITUACAO_PROG_PARADA',
         'R'
-      )          
+      )    
       
       parada.idTipoParada = await this.sauItemLookUpRepository.getTipoParadaByDate(
-        parseISO(formatDate().toString()),
+        formatDate(),
         parseISO(parada.DT_HORA_INICIO_REPROGRAMACAO.toString())
       )
-
+      
       historico = this.sauHistProgramacaoParadaRepository.createDefaultHistorico(
         parada,
         'APROVADA',
